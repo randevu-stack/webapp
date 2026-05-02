@@ -185,12 +185,22 @@
     }
 
     // ======================
-    // 🔙 НАЗАД
+    // 🔙 НАЗАД (ИСПРАВЛЕНО)
     // ======================
     function goBack() {
         document.getElementById("cardView").style.display = "none";
         document.getElementById("list").style.display = "grid";
         document.getElementById("search").style.display = "block";
+
+        const q = document.getElementById("search").value.toLowerCase();
+
+        const filtered = drugs.filter(d =>
+            d.name.toLowerCase().includes(q) ||
+            d.indications.toLowerCase().includes(q) ||
+            d.group.toLowerCase().includes(q)
+        );
+
+        render(filtered); // 🔥 фикс
     }
 
     // ======================
