@@ -108,6 +108,13 @@
         li {
             margin-bottom: 6px;
         }
+
+        .section-title {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            text-align: left;
+        }
     </style>
 </head>
 
@@ -125,18 +132,32 @@
     tg.expand();
 
     // ======================
-    // 🧠 ПРАВИЛЬНЫЕ ПОКАЗАНИЯ (ТОЛЬКО ;)
+    // 🧠 ФОРМАТ ПОКАЗАНИЙ
     // ======================
     function formatIndications(text) {
         if (!text) return "";
 
-        let parts = text.split(";"); // 🔥 только ;
+        let parts = text.split(":");
 
-        parts = parts
+        let title = "";
+        let body = text;
+
+        if (parts.length > 1) {
+            title = parts[0].trim();
+            body = parts.slice(1).join(":");
+        }
+
+        let items = body.split(";")
             .map(p => p.trim())
             .filter(p => p.length > 0);
 
-        return "<ul>" + parts.map(p => `<li>${p}</li>`).join("") + "</ul>";
+        let listHTML = "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
+
+        if (title) {
+            return `<p class="section-title">${title}:</p>` + listHTML;
+        }
+
+        return listHTML;
     }
 
     // ======================
