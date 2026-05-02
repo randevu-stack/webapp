@@ -20,7 +20,7 @@ for _, row in df.iterrows():
     })
 
 # сохраняем в data.js
-with open("webapp/data.js", "w", encoding="utf-8") as f:
+with open("data.js", "w", encoding="utf-8") as f:
     f.write("const drugs = ")
     json.dump(data, f, ensure_ascii=False, indent=2)
 
