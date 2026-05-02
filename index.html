@@ -115,10 +115,14 @@ function render(data){
             <div class="desc">
                 ${d.sostav || ''}
                 ${d.form ? '<br>' + d.form : ''}
-                ${d.dosage ? ' ' + d.dosage : ''}
+                ${d.dosage 
+                    ? (d.dosage.includes('(') 
+                        ? ' ' + d.dosage 
+                        : ' (' + d.dosage + ')') 
+                    : ''}
             </div>
 
-            <div class="btn" onclick="openLink('${d.url || '#'}')">
+            <div class="btn" onclick="openLink('${d.url || ''}')">
                 Открыть
             </div>
 
@@ -148,7 +152,7 @@ function search(){
 
 // КНОПКА
 function openLink(url){
-    if(!url || url === '#'){
+    if(!url){
         alert("Ссылка не добавлена");
         return;
     }
