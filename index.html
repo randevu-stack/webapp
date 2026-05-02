@@ -85,6 +85,13 @@ button {
     color: black;
 }
 
+.btn-group {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
 .card-full {
     background: white;
     padding: 15px;
@@ -144,12 +151,12 @@ ul {
 
 <h3>💊 Каталог</h3>
 
-<input id="search" placeholder="Поиск...">
+<input id="search" placeholder="Поиск по названию или симптомам...">
 
 <div id="list"></div>
 <div id="cardView"></div>
 
-<!-- 🔥 ZOOM -->
+<!-- ZOOM -->
 <div id="zoomModal" onclick="closeZoom()">
     <img id="zoomImg">
 </div>
@@ -159,15 +166,30 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 // ===================
-// 🔍 ПОИСК
+// 🔍 УМНЫЙ ПОИСК
 // ===================
 document.getElementById("search").addEventListener("input", e => {
-    const q = e.target.value.toLowerCase();
+    const q = e.target.value.toLowerCase().trim();
 
-    render(drugs.filter(d =>
-        d.name.toLowerCase().includes(q) ||
-        d.indications.toLowerCase().includes(q)
-    ));
+    if (!q) {
+        render(drugs);
+        return;
+    }
+
+    const words = q.split(/\s+/);
+
+    const filtered = drugs.filter(d => {
+        const text = `
+            ${d.name || ""}
+            ${d.indications || ""}
+            ${d.group || ""}
+            ${d.sostav || ""}
+        `.toLowerCase();
+
+        return words.every(word => text.includes(word));
+    });
+
+    render(filtered);
 });
 
 // ===================
@@ -200,6 +222,7 @@ function render(data) {
 // ===================
 function openCard(name) {
     const d = drugs.find(x => x.name === name);
+    if (!d) return;
 
     document.getElementById("list").style.display = "none";
     document.getElementById("search").style.display = "none";
@@ -208,8 +231,6 @@ function openCard(name) {
     view.style.display = "block";
 
     view.innerHTML = `
-        <button class="back-btn" onclick="goBack()">⬅️ Назад</button>
-
         <div class="card-full">
             <img src="${d.photo}" onclick="zoomImage('${d.photo}')">
 
@@ -223,8 +244,11 @@ function openCard(name) {
             <p><b>Показания:</b></p>
             ${formatIndications(d.indications)}
 
-            <button onclick="selectDrug('${d.name}')">Выбрать</button>
-            <button class="btn-secondary" onclick="window.open('${d.url}')">🌐 Сайт</button>
+            <div class="btn-group">
+                <button onclick="selectDrug('${d.name}')">Выбрать</button>
+                <button class="btn-secondary" onclick="window.open('${d.url}')">🌐 Сайт</button>
+                <button class="back-btn" onclick="goBack()">⬅️ Назад</button>
+            </div>
         </div>
     `;
 }
@@ -239,10 +263,10 @@ function goBack() {
 }
 
 // ===================
-// 🧠 ФОРМАТ ПОКАЗАНИЙ
+// 🧠 ПОКАЗАНИЯ
 // ===================
 function formatIndications(text) {
-    if (!text) return "<p>—</p>";
+    if (!text || text.trim() === "") return "<p>—</p>";
 
     if (text.includes("<table")) return text;
 
