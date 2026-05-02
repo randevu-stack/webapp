@@ -135,30 +135,48 @@
     // 🧠 ФОРМАТ ПОКАЗАНИЙ
     // ======================
     function formatIndications(text) {
-        if (!text) return "";
+    if (!text) return "<p>—</p>";
 
+    text = text.trim();
+
+    // есть ли :
+    if (text.includes(":")) {
         let parts = text.split(":");
 
-        let title = "";
-        let body = text;
+        let title = parts[0].trim();
+        let body = parts.slice(1).join(":").trim();
 
-        if (parts.length > 1) {
-            title = parts[0].trim();
-            body = parts.slice(1).join(":");
+        // если есть ; → список
+        if (body.includes(";")) {
+            let items = body.split(";")
+                .map(p => p.trim())
+                .filter(p => p.length > 0);
+
+            return `
+                <p class="section-title">${title}:</p>
+                <ul>${items.map(i => `<li>${i}</li>`).join("")}</ul>
+            `;
         }
 
-        let items = body.split(";")
+        // если нет ; → просто текст
+        return `
+            <p class="section-title">${title}:</p>
+            <p>${body}</p>
+        `;
+    }
+
+    // если нет : но есть ;
+    if (text.includes(";")) {
+        let items = text.split(";")
             .map(p => p.trim())
             .filter(p => p.length > 0);
 
-        let listHTML = "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
-
-        if (title) {
-            return `<p class="section-title">${title}:</p>` + listHTML;
-        }
-
-        return listHTML;
+        return "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
     }
+
+    // просто текст
+    return `<p>${text}</p>`;
+}
 
     // ======================
     // 📦 СПИСОК
