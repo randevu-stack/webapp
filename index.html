@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Аптечный AI</title>
 
-<script src="data.js"></script>
-
 <style>
 body {
     margin: 0;
@@ -111,6 +109,25 @@ button {
 
 <script>
 
+// глобально
+let drugs = [];
+
+// --------------------
+// ЗАГРУЗКА JSON
+// --------------------
+async function loadData(){
+    try {
+        let res = await fetch("drugs.json");
+        drugs = await res.json();
+
+        console.log("Загружено препаратов:", drugs.length);
+
+        render(drugs);
+    } catch(e) {
+        console.error("Ошибка загрузки JSON:", e);
+    }
+}
+
 // --------------------
 // РЕНДЕР
 // --------------------
@@ -139,7 +156,7 @@ function showAll(){
 }
 
 // --------------------
-// AI ПОИСК (ТОЛЬКО ПО КНОПКЕ)
+// AI ПОИСК
 // --------------------
 async function askAI(){
     try{
@@ -197,10 +214,8 @@ function closeModal(){
     document.getElementById("imgModal").style.display = "none";
 }
 
-// --------------------
-// СТАРТ (ТОЛЬКО ВСЕ ПРЕПАРАТЫ)
-// --------------------
-render(drugs);
+// старт
+loadData();
 
 </script>
 
