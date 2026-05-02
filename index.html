@@ -139,18 +139,48 @@
 
     text = text.trim();
 
-    // есть ли :
-    if (text.includes(":")) {
-        let parts = text.split(":");
+    // разбиваем по блокам 1. 2. 3.
+    let sections = text.split(/\n?\d+\.\s/).filter(s => s.trim());
+
+    // если нет нумерации → обычный режим
+    if (sections.length === 1) {
+        return simpleFormat(text);
+    }
+
+    let result = "";
+
+    sections.forEach((section, index) => {
+        let parts = section.split(":");
 
         let title = parts[0].trim();
         let body = parts.slice(1).join(":").trim();
 
-        // если есть ; → список
+        let items = body.split(";")
+            .map(i => i.trim())
+            .filter(i => i.length > 0);
+
+        result += `
+            <div class="block">
+                <p class="section-title">${index + 1}. ${title}:</p>
+                <ul>${items.map(i => `<li>${i}</li>`).join("")}</ul>
+            </div>
+        `;
+    });
+
+    return result;
+}
+
+// простой формат (если нет 1. 2.)
+function simpleFormat(text) {
+    if (text.includes(":")) {
+        let parts = text.split(":");
+        let title = parts[0].trim();
+        let body = parts.slice(1).join(":").trim();
+
         if (body.includes(";")) {
             let items = body.split(";")
-                .map(p => p.trim())
-                .filter(p => p.length > 0);
+                .map(i => i.trim())
+                .filter(i => i.length > 0);
 
             return `
                 <p class="section-title">${title}:</p>
@@ -158,23 +188,17 @@
             `;
         }
 
-        // если нет ; → просто текст
-        return `
-            <p class="section-title">${title}:</p>
-            <p>${body}</p>
-        `;
+        return `<p><b>${title}:</b> ${body}</p>`;
     }
 
-    // если нет : но есть ;
     if (text.includes(";")) {
         let items = text.split(";")
-            .map(p => p.trim())
-            .filter(p => p.length > 0);
+            .map(i => i.trim())
+            .filter(i => i.length > 0);
 
         return "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
     }
 
-    // просто текст
     return `<p>${text}</p>`;
 }
 
