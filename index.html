@@ -139,14 +139,14 @@ function showAll(){
 }
 
 // --------------------
-// AI ПОИСК
+// AI ПОИСК (ТОЛЬКО ПО КНОПКЕ)
 // --------------------
 async function askAI(){
     try{
         let q = document.getElementById("search").value;
 
         if (!q.trim()) {
-            render(drugs);
+            alert("Введите запрос");
             return;
         }
 
@@ -161,33 +161,15 @@ async function askAI(){
         console.log("AI:", data);
 
         if (!data.drugs) {
-            render(drugs);
+            alert("Ошибка AI");
             return;
         }
 
-        // 1. AI результаты
-let aiResults = drugs.filter(d =>
-    data.drugs.some(name =>
-        name.toLowerCase() === d.name.toLowerCase()
-    )
-);
-
-// 2. обычный поиск (по тексту)
-let qLower = q.toLowerCase();
-
-let otherResults = drugs.filter(d => {
-    let text = (d.name + " " + (d.indications || "")).toLowerCase();
-    return text.includes(qLower);
-});
-
-// 3. объединяем без дублей
-let result = [...aiResults];
-
-otherResults.forEach(d => {
-    if (!result.some(r => r.name === d.name)) {
-        result.push(d);
-    }
-});
+        let result = drugs.filter(d =>
+            data.drugs.some(name =>
+                name.toLowerCase() === d.name.toLowerCase()
+            )
+        );
 
         if (result.length === 0) {
             document.getElementById("list").innerHTML =
@@ -199,6 +181,7 @@ otherResults.forEach(d => {
 
     } catch(e){
         console.error("Ошибка:", e);
+        alert("Ошибка AI");
     }
 }
 
@@ -214,7 +197,9 @@ function closeModal(){
     document.getElementById("imgModal").style.display = "none";
 }
 
-// старт
+// --------------------
+// СТАРТ (ТОЛЬКО ВСЕ ПРЕПАРАТЫ)
+// --------------------
 render(drugs);
 
 </script>
