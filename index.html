@@ -1,3 +1,4 @@
+<script src="data.js"></script>
 <!DOCTYPE html>
 <html>
 <head>
@@ -46,12 +47,7 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // 🔥 ТЕСТОВЫЕ ДАННЫЕ (потом заменим на твои)
-    const drugs = [
-        {name: "Торасса", info: "Сердце"},
-        {name: "Амиодарон", info: "Аритмия"},
-        {name: "Добутамин", info: "Сердце"}
-    ];
+    let filtered = drugs;
 
     function render(data) {
         const list = document.getElementById("list");
@@ -62,9 +58,14 @@
             div.className = "card";
 
             div.innerHTML = `
+                <img src="${d.photo}" width="100%" style="border-radius:10px"><br>
                 <b>${d.name}</b><br>
-                ${d.info}<br>
+                🧬 ${d.sostav}<br>
+                💊 ${d.form} (${d.dosage})<br>
+                🤒 ${d.indications}<br>
+
                 <button onclick="selectDrug('${d.name}')">Выбрать</button>
+                <button onclick="openLink('${d.url}')">🌐 Сайт</button>
             `;
 
             list.appendChild(div);
@@ -78,14 +79,23 @@
         }));
     }
 
+    function openLink(url) {
+        window.open(url, "_blank");
+    }
+
     document.getElementById("search").addEventListener("input", (e) => {
         const q = e.target.value.toLowerCase();
-        const filtered = drugs.filter(d => d.name.toLowerCase().includes(q));
+
+        filtered = drugs.filter(d =>
+            d.name.toLowerCase().includes(q) ||
+            d.indications.toLowerCase().includes(q) ||
+            d.group.toLowerCase().includes(q)
+        );
+
         render(filtered);
     });
 
     render(drugs);
 </script>
-
 </body>
 </html>
