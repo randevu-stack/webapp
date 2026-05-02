@@ -8,11 +8,16 @@
 <script src="data.js"></script>
 
 <style>
-body {
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 10px;
     font-family: Arial;
     background: #f5f5f5;
-    padding: 10px;
-    margin: 0;
+    overflow-x: hidden; /* 🔥 фикс уезда вправо */
 }
 
 h3 {
@@ -27,10 +32,18 @@ input {
     border: 1px solid #ccc;
 }
 
+/* 📱 АДАПТИВНАЯ СЕТКА */
 #list {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+}
+
+/* 📱 если что-то пойдет не так */
+@media (max-width: 350px) {
+    #list {
+        grid-template-columns: 1fr;
+    }
 }
 
 .card {
@@ -43,6 +56,7 @@ input {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 100%;
 }
 
 .photo {
@@ -50,10 +64,14 @@ input {
     max-width: 120px;
     height: 120px;
     object-fit: contain;
-    background: white;
     margin: 0 auto 8px;
     border-radius: 10px;
     cursor: pointer;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
 }
 
 .name {
@@ -115,16 +133,6 @@ ul {
     text-align: left;
 }
 
-.section-title {
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-.block {
-    margin-bottom: 10px;
-}
-
-/* 🔥 ZOOM */
 #zoomModal {
     position: fixed;
     top: 0;
@@ -165,16 +173,11 @@ ul {
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-// ===================
-// 🔍 УМНЫЙ ПОИСК
-// ===================
+// 🔍 ПОИСК
 document.getElementById("search").addEventListener("input", e => {
     const q = e.target.value.toLowerCase().trim();
 
-    if (!q) {
-        render(drugs);
-        return;
-    }
+    if (!q) return render(drugs);
 
     const words = q.split(/\s+/);
 
@@ -186,15 +189,13 @@ document.getElementById("search").addEventListener("input", e => {
             ${d.sostav || ""}
         `.toLowerCase();
 
-        return words.every(word => text.includes(word));
+        return words.every(w => text.includes(w));
     });
 
     render(filtered);
 });
 
-// ===================
 // 📦 СПИСОК
-// ===================
 function render(data) {
     const list = document.getElementById("list");
     list.innerHTML = "";
@@ -217,9 +218,7 @@ function render(data) {
     });
 }
 
-// ===================
 // 📖 КАРТОЧКА
-// ===================
 function openCard(name) {
     const d = drugs.find(x => x.name === name);
     if (!d) return;
@@ -253,18 +252,14 @@ function openCard(name) {
     `;
 }
 
-// ===================
 // 🔙 НАЗАД
-// ===================
 function goBack() {
     document.getElementById("cardView").style.display = "none";
     document.getElementById("list").style.display = "grid";
     document.getElementById("search").style.display = "block";
 }
 
-// ===================
 // 🧠 ПОКАЗАНИЯ
-// ===================
 function formatIndications(text) {
     if (!text || text.trim() === "") return "<p>—</p>";
 
@@ -278,9 +273,7 @@ function formatIndications(text) {
     return `<p>${text}</p>`;
 }
 
-// ===================
 // 🔥 ZOOM
-// ===================
 function zoomImage(src) {
     document.getElementById("zoomImg").src = src;
     document.getElementById("zoomModal").style.display = "flex";
@@ -290,9 +283,7 @@ function closeZoom() {
     document.getElementById("zoomModal").style.display = "none";
 }
 
-// ===================
 // 📤 В БОТА
-// ===================
 function selectDrug(name) {
     tg.sendData(JSON.stringify({name}));
 }
