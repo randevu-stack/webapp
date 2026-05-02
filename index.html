@@ -32,7 +32,6 @@ input {
     margin: 10px 0;
 }
 
-/* GRID */
 #list {
     display: grid;
     gap: 12px;
@@ -48,7 +47,6 @@ input {
     #list { grid-template-columns: 1fr 1fr 1fr; }
 }
 
-/* карточка */
 .card {
     background: white;
     border-radius: 16px;
@@ -80,7 +78,6 @@ input {
     -webkit-line-clamp: 2;
 }
 
-/* кнопка */
 button {
     width: 90%;
     margin: 0 auto;
@@ -91,7 +88,6 @@ button {
     color: white;
 }
 
-/* карточка товара */
 .card-full {
     background: white;
     border-radius: 16px;
@@ -114,7 +110,6 @@ button {
 .btn-secondary { background: #4caf50; }
 .back-btn { background: #ddd; color: black; }
 
-/* показания */
 .indications {
     font-size: 14px;
     line-height: 1.5;
@@ -122,7 +117,6 @@ button {
 
 .indications ul { padding-left: 18px; }
 
-/* zoom */
 #zoomModal {
     position: fixed;
     inset: 0;
@@ -254,25 +248,37 @@ function goBack() {
     }, 50);
 }
 
-/* ✅ ВАЖНО: свайп ТОЛЬКО внутри карточки */
+/* ✅ СВАЙП ЛОГИКА */
 let startX = 0;
+let startY = 0;
 
 document.addEventListener("touchstart", e => {
     startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
 });
 
 document.addEventListener("touchend", e => {
     let endX = e.changedTouches[0].clientX;
+    let endY = e.changedTouches[0].clientY;
 
-    const isCardOpen = document.getElementById("cardView").style.display === "block";
+    let dx = endX - startX;
+    let dy = Math.abs(endY - startY);
 
-    // 👉 если карточка открыта — перехватываем
-    if (isCardOpen && startX < 50 && endX > startX + 80) {
-        goBack();
+    // только горизонтальный свайп
+    if (startX < 40 && dx > 100 && dy < 50) {
+
+        const isCardOpen = document.getElementById("cardView").style.display === "block";
+
+        if (isCardOpen) {
+            // внутри товара → назад
+            goBack();
+        } else {
+            // на главной → пробуем закрыть (иногда сработает)
+            try {
+                tg.close();
+            } catch(e) {}
+        }
     }
-
-    // 👉 если НЕ открыта — ничего не делаем
-    // Telegram сам обработает свайп и закроет WebApp
 });
 
 /* формат */
