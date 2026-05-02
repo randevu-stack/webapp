@@ -12,7 +12,7 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, Arial;
     background: #f2f2f2;
 }
 
@@ -26,7 +26,6 @@ body {
 /* заголовок */
 h3 {
     text-align: center;
-    margin-bottom: 10px;
 }
 
 /* поиск */
@@ -35,7 +34,7 @@ input {
     padding: 12px;
     border-radius: 12px;
     border: none;
-    margin-bottom: 12px;
+    margin: 10px 0;
 }
 
 /* сетка */
@@ -171,7 +170,16 @@ tg.expand();
 
 let currentDrug = null;
 
-/* поиск */
+/* 🔙 TELEGRAM BACK */
+tg.BackButton.show();
+
+tg.BackButton.onClick(() => {
+    if (document.getElementById("cardView").style.display === "block") {
+        goBack();
+    }
+});
+
+/* 🔍 поиск */
 document.getElementById("search").addEventListener("input", e => {
     const q = e.target.value.toLowerCase();
 
@@ -183,7 +191,7 @@ document.getElementById("search").addEventListener("input", e => {
     render(filtered);
 });
 
-/* список */
+/* 📦 список */
 function render(data) {
     const list = document.getElementById("list");
     list.innerHTML = "";
@@ -200,10 +208,12 @@ function render(data) {
     });
 }
 
-/* открыть карточку */
+/* 📖 открыть */
 function openCard(name) {
     const d = drugs.find(x => x.name === name);
     currentDrug = d;
+
+    history.pushState({page: "card"}, "");
 
     document.getElementById("list").style.display = "none";
     document.getElementById("search").style.display = "none";
@@ -234,14 +244,38 @@ function openCard(name) {
     `;
 }
 
-/* назад */
+/* 🔙 назад */
 function goBack() {
     document.getElementById("cardView").style.display = "none";
     document.getElementById("list").style.display = "grid";
     document.getElementById("search").style.display = "block";
 }
 
-/* показания */
+/* 🔁 history back */
+window.onpopstate = function () {
+    if (document.getElementById("cardView").style.display === "block") {
+        goBack();
+    }
+};
+
+/* 👉 свайп */
+let startX = 0;
+
+document.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchend", e => {
+    let endX = e.changedTouches[0].clientX;
+
+    if (startX < 50 && endX > startX + 80) {
+        if (document.getElementById("cardView").style.display === "block") {
+            goBack();
+        }
+    }
+});
+
+/* 📄 показания */
 function formatIndications(text) {
     if (!text) return "<p>—</p>";
 
@@ -249,7 +283,7 @@ function formatIndications(text) {
     return "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
 }
 
-/* zoom */
+/* 🔍 zoom */
 function zoomImage(src) {
     document.getElementById("zoomImg").src = src;
     document.getElementById("zoomModal").style.display = "flex";
@@ -259,7 +293,7 @@ function closeZoom() {
     document.getElementById("zoomModal").style.display = "none";
 }
 
-/* отправка */
+/* 📤 отправка */
 function selectDrug(name) {
     tg.sendData(JSON.stringify({name}));
 }
