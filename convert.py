@@ -1,46 +1,56 @@
 import pandas as pd
 import json
-import os
+import re
 
-INPUT_FILE = "drugs.xlsx"
-OUTPUT_DIR = "webapp"
+INPUT_FILE = "meds.xlsx"
+OUTPUT_FILE = "data.js"
 
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+# -------------------------
+# имя файла картинки
+# -------------------------
+def make_filename(name):
+    name = str(name).lower().strip()
+    name = re.sub(r'[^\w\s-]', '', name)
+    name = re.sub(r'\s+', '_', name)
+    return name + ".webp"
 
-df = pd.read_excel(INPUT_FILE, engine="openpyxl")
-df = df.fillna("")
+# -------------------------
+# читаем Excel
+# -------------------------
+try:
+    df = pd.read_excel(INPUT_FILE)
+except Exception as e:
+    print("❌ Ошибка:", e)
+    exit()
+
+print("📊 Найдено строк:", len(df))
 
 drugs = []
 
 for _, row in df.iterrows():
-    item = {
-        "name": str(row.get("Название", "")).strip(),
-        "sostav": str(row.get("Состав", "")).strip(),
-        "form": str(row.get("Форма", "")).strip(),
-        "dosage": str(row.get("Дозировка", "")).strip(),
-        "group": str(row.get("Группа", "")).strip(),
-        "indications": str(row.get("Показания", "")).strip(),  # 👈 ВАЖНО
-        "photo": str(row.get("Фото", "")).strip(),
-        "url": str(row.get("Ссылка", "")).strip()
-    }
+    name = str(row.get("name", "")).strip()
+    indications = str(row.get("Показания", "")).strip()
 
-    # 👉 чистим переносы
-    item["indications"] = (
-        item["indications"]
-        .replace("\n", " ")
-        .replace("\r", " ")
-        .replace("  ", " ")
-    )
+    if not name or name == "nan":
+        continue
 
-    drugs.append(item)
+    # если в Excel уже есть photo — используем её
+    photo = str(row.get("photo", "")).strip()
 
-# JSON для AI
-with open(os.path.join(OUTPUT_DIR, "drugs.json"), "w", encoding="utf-8") as f:
-    json.dump(drugs, f, ensure_ascii=False, indent=2)
+    if not photo or photo == "nan":
+        photo = "images/" + make_filename(name)
 
-# JS для сайта
-with open(os.path.join(OUTPUT_DIR, "data.js"), "w", encoding="utf-8") as f:
+    drugs.append({
+        "name": name,
+        "indications": indications,
+        "photo": photo
+    })
+
+# -------------------------
+# сохраняем
+# -------------------------
+with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
     f.write("const drugs = ")
     json.dump(drugs, f, ensure_ascii=False, indent=2)
 
-print("✅ Готово: data.js и drugs.json созданы")
+print("✅ Готово:", len(drugs), "препаратов")

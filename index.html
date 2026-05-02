@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Аптечный AI</title>
+<title>Аптечный каталог</title>
+
+<script src="data.js"></script>
 
 <style>
 body {
@@ -13,34 +15,21 @@ body {
 }
 
 .top {
-    display: flex;
-    gap: 10px;
     padding: 10px;
     position: sticky;
     top: 0;
     background: white;
-    z-index: 10;
 }
 
 input {
-    flex: 1;
+    width: 100%;
     padding: 10px;
     border-radius: 10px;
     border: 1px solid #ccc;
 }
 
-button {
-    padding: 10px;
-    border: none;
-    border-radius: 10px;
-    background: black;
-    color: white;
-    cursor: pointer;
-}
-
 #list {
     display: grid;
-    grid-template-columns: 1fr;
     gap: 12px;
     padding: 10px;
 }
@@ -61,14 +50,11 @@ button {
 
 .title {
     font-weight: bold;
-    margin-top: 5px;
 }
 
 .ind {
     font-size: 13px;
     color: #555;
-    max-height: 40px;
-    overflow: hidden;
 }
 
 /* zoom */
@@ -82,13 +68,11 @@ button {
     display:none;
     justify-content:center;
     align-items:center;
-    z-index:999;
 }
 
 .modal img {
     max-width:90%;
     max-height:90%;
-    border-radius:12px;
 }
 </style>
 </head>
@@ -96,41 +80,18 @@ button {
 <body>
 
 <div class="top">
-    <input id="search" placeholder="Введите симптомы или название">
-    <button onclick="askAI()">AI</button>
-    <button onclick="showAll()">Все</button>
+    <input id="search" placeholder="Поиск..." oninput="search()">
 </div>
 
 <div id="list"></div>
 
-<div id="imgModal" class="modal" onclick="closeModal()">
+<div id="modal" class="modal" onclick="closeModal()">
     <img id="modalImg">
 </div>
 
 <script>
 
-// глобально
-let drugs = [];
-
-// --------------------
-// ЗАГРУЗКА JSON
-// --------------------
-async function loadData(){
-    try {
-        let res = await fetch("drugs.json");
-        drugs = await res.json();
-
-        console.log("Загружено препаратов:", drugs.length);
-
-        render(drugs);
-    } catch(e) {
-        console.error("Ошибка загрузки JSON:", e);
-    }
-}
-
-// --------------------
-// РЕНДЕР
-// --------------------
+// рендер
 function render(data){
     let html = "";
 
@@ -147,75 +108,30 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
-// --------------------
-// ПОКАЗ ВСЕХ
-// --------------------
-function showAll(){
-    document.getElementById("search").value = "";
-    render(drugs);
+// поиск
+function search(){
+    let q = document.getElementById("search").value.toLowerCase();
+
+    let result = drugs.filter(d=>{
+        let text = (d.name + " " + (d.indications || "")).toLowerCase();
+        return text.includes(q);
+    });
+
+    render(result);
 }
 
-// --------------------
-// AI ПОИСК
-// --------------------
-async function askAI(){
-    try{
-        let q = document.getElementById("search").value;
-
-        if (!q.trim()) {
-            alert("Введите запрос");
-            return;
-        }
-
-        let res = await fetch("http://127.0.0.1:5000/ai", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ query: q })
-        });
-
-        let data = await res.json();
-
-        console.log("AI:", data);
-
-        if (!data.drugs) {
-            alert("Ошибка AI");
-            return;
-        }
-
-        let result = drugs.filter(d =>
-            data.drugs.some(name =>
-                name.toLowerCase() === d.name.toLowerCase()
-            )
-        );
-
-        if (result.length === 0) {
-            document.getElementById("list").innerHTML =
-                "<p>Ничего не найдено</p>";
-            return;
-        }
-
-        render(result);
-
-    } catch(e){
-        console.error("Ошибка:", e);
-        alert("Ошибка AI");
-    }
-}
-
-// --------------------
-// ZOOM
-// --------------------
+// zoom
 function openModal(src){
-    document.getElementById("imgModal").style.display = "flex";
+    document.getElementById("modal").style.display = "flex";
     document.getElementById("modalImg").src = src;
 }
 
 function closeModal(){
-    document.getElementById("imgModal").style.display = "none";
+    document.getElementById("modal").style.display = "none";
 }
 
 // старт
-loadData();
+render(drugs);
 
 </script>
 
