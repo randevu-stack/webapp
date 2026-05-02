@@ -76,7 +76,6 @@
             background: #4caf50;
         }
 
-        /* экран карточки */
         #cardView {
             display: none;
         }
@@ -119,7 +118,6 @@
 <input type="text" id="search" placeholder="Поиск...">
 
 <div id="list"></div>
-
 <div id="cardView"></div>
 
 <script>
@@ -127,19 +125,22 @@
     tg.expand();
 
     // ======================
-    // 🧠 формат показаний
+    // 🧠 ПРАВИЛЬНЫЕ ПОКАЗАНИЯ (ТОЛЬКО ;)
     // ======================
     function formatIndications(text) {
         if (!text) return "";
 
-        let parts = text.split(/;|\./);
-        parts = parts.map(p => p.trim()).filter(p => p.length > 0);
+        let parts = text.split(";"); // 🔥 только ;
+
+        parts = parts
+            .map(p => p.trim())
+            .filter(p => p.length > 0);
 
         return "<ul>" + parts.map(p => `<li>${p}</li>`).join("") + "</ul>";
     }
 
     // ======================
-    // 📦 РЕНДЕР СПИСКА
+    // 📦 СПИСОК
     // ======================
     function render(data) {
         const list = document.getElementById("list");
