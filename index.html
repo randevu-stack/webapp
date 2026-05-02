@@ -16,17 +16,25 @@ body {
     background: #f2f2f2;
 }
 
-/* контейнер */
 .container {
     max-width: 900px;
     margin: 0 auto;
     padding: 12px;
 }
 
-/* заголовок */
-h3 {
-    text-align: center;
-    margin-bottom: 10px;
+/* header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    background: #ff4d4d;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: white;
 }
 
 /* поиск */
@@ -35,7 +43,7 @@ input {
     padding: 12px;
     border-radius: 12px;
     border: none;
-    margin-bottom: 12px;
+    margin: 10px 0;
 }
 
 /* GRID */
@@ -54,7 +62,7 @@ input {
     #list { grid-template-columns: 1fr 1fr 1fr; }
 }
 
-/* карточка */
+/* карточки */
 .card {
     background: white;
     border-radius: 16px;
@@ -65,22 +73,16 @@ input {
     justify-content: space-between;
 
     height: 240px;
-
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
-/* фото */
 .photo {
     width: 100%;
     height: 110px;
     object-fit: contain;
 }
 
-/* текст */
-.name {
-    font-weight: bold;
-    font-size: 14px;
-}
+.name { font-weight: bold; font-size: 14px; }
 
 .info {
     font-size: 12px;
@@ -92,7 +94,6 @@ input {
     -webkit-box-orient: vertical;
 }
 
-/* кнопка */
 button {
     width: 90%;
     margin: 0 auto;
@@ -103,18 +104,11 @@ button {
     color: white;
 }
 
-/* экран товара */
+/* карточка товара */
 .card-full {
     background: white;
     border-radius: 16px;
     padding: 14px;
-
-    animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; }
 }
 
 .card-full img {
@@ -123,7 +117,6 @@ button {
     object-fit: contain;
 }
 
-/* кнопки */
 .btn-group {
     margin-top: 12px;
     display: flex;
@@ -140,9 +133,7 @@ button {
     line-height: 1.5;
 }
 
-.indications ul {
-    padding-left: 18px;
-}
+.indications ul { padding-left: 18px; }
 
 .indications table {
     width: 100%;
@@ -156,11 +147,9 @@ button {
     padding: 8px;
 }
 
-.indications th {
-    background: #f5f5f5;
-}
+.indications th { background: #f5f5f5; }
 
-/* зум */
+/* zoom */
 #zoomModal {
     position: fixed;
     inset: 0;
@@ -181,7 +170,10 @@ button {
 
 <div class="container">
 
-<h3>💊 Каталог</h3>
+<div class="header">
+    <h3>💊 Каталог</h3>
+    <button class="close-btn" onclick="tg.close()">✖</button>
+</div>
 
 <input id="search" placeholder="Поиск по названию или симптомам...">
 
@@ -226,7 +218,7 @@ function applySearch() {
     render(filtered);
 }
 
-/* рендер */
+/* список */
 function render(data) {
     const list = document.getElementById("list");
     list.innerHTML = "";
@@ -296,7 +288,7 @@ function goBack() {
     }, 50);
 }
 
-/* свайп */
+/* свайп = только назад */
 let startX = 0;
 
 document.addEventListener("touchstart", e => {
@@ -306,19 +298,14 @@ document.addEventListener("touchstart", e => {
 document.addEventListener("touchend", e => {
     let endX = e.changedTouches[0].clientX;
 
-    if (startX < 50 && endX > startX + 80) {
-
-        const isCardOpen = document.getElementById("cardView").style.display === "block";
-
-        if (isCardOpen) {
+    if (startX < 40 && endX > startX + 80) {
+        if (document.getElementById("cardView").style.display === "block") {
             goBack();
-        } else {
-            tg.close();
         }
     }
 });
 
-/* формат показаний */
+/* формат */
 function formatIndications(text) {
     if (!text) return "<p>—</p>";
     if (text.includes("<")) return text;
@@ -327,7 +314,7 @@ function formatIndications(text) {
     return "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
 }
 
-/* зум */
+/* zoom */
 function zoomImage(src) {
     document.getElementById("zoomImg").src = src;
     document.getElementById("zoomModal").style.display = "flex";
