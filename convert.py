@@ -24,33 +24,61 @@ except Exception as e:
     exit()
 
 # =========================
+# 🧠 ПОИСК КОЛОНКИ ПОКАЗАНИЯ (даже если криво названа)
+# =========================
+def find_indications_column(columns):
+    for col in columns:
+        c = col.strip().lower()
+        if c in ["показания", "symptoms", "indications"]:
+            return col
+    return None
+
+ind_col = find_indications_column(df.columns)
+
+if not ind_col:
+    print("⚠️ Колонка 'Показания' не найдена")
+    ind_col = None
+
+# =========================
+# 🔄 ОЧИСТКА ТЕКСТА
+# =========================
+def clean_text(text):
+    text = str(text).strip()
+
+    # убираем мусор
+    if text in ["", "-", "—", ";", ";;"]:
+        return ""
+
+    # убираем лишние пробелы
+    text = " ".join(text.split())
+
+    return text
+
+# =========================
 # 🔄 ПРЕОБРАЗОВАНИЕ
 # =========================
 data = []
 
 for _, row in df.iterrows():
     try:
-        name = str(row.get("name", "")).strip()
+        name = clean_text(row.get("name", ""))
 
-        # пропускаем пустые строки
         if not name:
             continue
 
-        # 🔥 ГЛАВНОЕ — ПРАВИЛЬНЫЕ ПОКАЗАНИЯ
-        indications = (
-            str(row.get("Показания", "")).strip()
-            or str(row.get("Symptoms", "")).strip()
-        )
+        indications = ""
+        if ind_col:
+            indications = clean_text(row.get(ind_col, ""))
 
         item = {
             "name": name,
-            "sostav": str(row.get("sostav", "")).strip(),
-            "form": str(row.get("form", "")).strip(),
-            "dosage": str(row.get("dosage", "")).strip(),
-            "group": str(row.get("group", "")).strip(),
+            "sostav": clean_text(row.get("sostav", "")),
+            "form": clean_text(row.get("form", "")),
+            "dosage": clean_text(row.get("dosage", "")),
+            "group": clean_text(row.get("group", "")),
             "indications": indications,
-            "photo": str(row.get("photo", "")).strip(),
-            "url": str(row.get("url", "")).strip()
+            "photo": clean_text(row.get("photo", "")),
+            "url": clean_text(row.get("url", ""))
         }
 
         data.append(item)
@@ -67,7 +95,7 @@ try:
         json.dump(data, f, ensure_ascii=False, indent=2)
         f.write(";")
 
-    print(f"✅ Готово! {len(data)} препаратов сохранено в data.js")
+    print(f"✅ Готово! {len(data)} препаратов сохранено")
 
 except Exception as e:
     print("❌ Ошибка сохранения:", e)
