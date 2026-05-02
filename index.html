@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Каталог</title>
+<title>AI Каталог</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="data.js"></script>
@@ -24,14 +24,34 @@ body {
 
 h3 { text-align: center; }
 
+/* поиск */
+.search-box {
+    display: flex;
+    gap: 8px;
+}
+
 input {
-    width: 100%;
+    flex: 1;
     padding: 12px;
     border-radius: 12px;
     border: none;
-    margin: 10px 0;
 }
 
+.ai-btn {
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: #7b5cff;
+    color: white;
+}
+
+/* статус */
+.status {
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+/* GRID */
 #list {
     display: grid;
     gap: 12px;
@@ -40,95 +60,31 @@ input {
 @media (max-width: 600px) {
     #list { grid-template-columns: 1fr; }
 }
-@media (min-width: 601px) and (max-width: 900px) {
+@media (min-width: 601px) {
     #list { grid-template-columns: 1fr 1fr; }
 }
-@media (min-width: 901px) {
-    #list { grid-template-columns: 1fr 1fr 1fr; }
-}
 
+/* карточка */
 .card {
     background: white;
     border-radius: 16px;
     padding: 10px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    height: 240px;
-
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    text-align: center;
 }
 
 .photo {
     width: 100%;
-    height: 110px;
+    height: 100px;
     object-fit: contain;
 }
 
-.name { font-weight: bold; }
-
-.info {
-    font-size: 12px;
-    color: #666;
-
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-}
-
 button {
-    width: 90%;
-    margin: 0 auto;
+    margin-top: 8px;
     padding: 8px;
     border-radius: 10px;
     border: none;
     background: #2ea6ff;
     color: white;
-}
-
-.card-full {
-    background: white;
-    border-radius: 16px;
-    padding: 14px;
-}
-
-.card-full img {
-    width: 100%;
-    max-height: 220px;
-    object-fit: contain;
-}
-
-.btn-group {
-    margin-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.btn-secondary { background: #4caf50; }
-.back-btn { background: #ddd; color: black; }
-
-.indications {
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.indications ul { padding-left: 18px; }
-
-#zoomModal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: none;
-    justify-content: center;
-    align-items: center;
-}
-
-#zoomImg {
-    max-width: 90%;
-    max-height: 90%;
 }
 </style>
 </head>
@@ -137,48 +93,74 @@ button {
 
 <div class="container">
 
-<h3>💊 Каталог</h3>
+<h3>💊 AI Каталог</h3>
 
-<input id="search" placeholder="Поиск по названию или симптомам...">
-
-<div id="list"></div>
-<div id="cardView" style="display:none;"></div>
-
+<div class="search-box">
+    <input id="search" placeholder="Например: от давления или температуры">
+    <button class="ai-btn" onclick="askAI()">AI</button>
 </div>
 
-<div id="zoomModal" onclick="closeZoom()">
-    <img id="zoomImg">
+<div id="status" class="status"></div>
+
+<div id="list"></div>
+
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-let scrollPosition = 0;
-let lastSearch = "";
-
-/* BACK BUTTON */
-tg.BackButton.show();
-tg.BackButton.onClick(() => goBack());
-
-/* поиск */
+/* обычный поиск */
 document.getElementById("search").addEventListener("input", e => {
-    lastSearch = e.target.value.toLowerCase();
-    applySearch();
-});
+    let q = e.target.value.toLowerCase();
 
-function applySearch() {
-    if (!lastSearch) return render(drugs);
-
-    const filtered = drugs.filter(d => {
-        const text = `${d.name} ${d.indications} ${d.sostav}`.toLowerCase();
-        return text.includes(lastSearch);
+    let filtered = drugs.filter(d => {
+        let text = `${d.name} ${d.indications}`.toLowerCase();
+        return text.includes(q);
     });
 
     render(filtered);
+});
+
+/* AI поиск */
+async function askAI() {
+    let query = document.getElementById("search").value;
+
+    if (!query) return;
+
+    document.getElementById("status").innerText = "🤖 Подбираю препараты...";
+
+    try {
+        let res = await fetch("https://your-api.onrender.com/ai", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({query})
+        });
+
+        let data = await res.json();
+
+        // 👉 получаем список названий
+        let names = data.drugs || [];
+
+        // 👉 ищем в базе
+        let result = drugs.filter(d =>
+            names.includes(d.name)
+        );
+
+        if (result.length === 0) {
+            document.getElementById("status").innerText = "Ничего не найдено 😢";
+        } else {
+            document.getElementById("status").innerText = "Найдено:";
+        }
+
+        render(result);
+
+    } catch(e) {
+        document.getElementById("status").innerText = "Ошибка AI 😢";
+    }
 }
 
-/* список */
+/* рендер */
 function render(data) {
     const list = document.getElementById("list");
     list.innerHTML = "";
@@ -187,122 +169,11 @@ function render(data) {
         list.innerHTML += `
         <div class="card">
             <img src="${d.photo}" class="photo">
-            <div class="name">${d.name}</div>
-            <div class="info">${d.sostav}<br>${d.form}</div>
-            <button onclick="openCard('${d.name}')">Открыть</button>
+            <b>${d.name}</b>
+            <button onclick="tg.sendData('${d.name}')">Выбрать</button>
         </div>
         `;
     });
-}
-
-/* открыть */
-function openCard(name) {
-    const d = drugs.find(x => x.name === name);
-
-    scrollPosition = window.scrollY;
-
-    history.pushState({page:"card"}, "");
-
-    document.getElementById("list").style.display = "none";
-    document.getElementById("search").style.display = "none";
-
-    const view = document.getElementById("cardView");
-    view.style.display = "block";
-
-    view.innerHTML = `
-        <div class="card-full">
-            <img src="${d.photo}" onclick="zoomImage('${d.photo}')">
-
-            <h3>${d.name}</h3>
-
-            <p><b>Состав:</b> ${d.sostav}</p>
-            <p><b>Форма:</b> ${d.form}</p>
-            <p><b>Дозировка:</b> ${d.dosage}</p>
-            <p><b>Группа:</b> ${d.group}</p>
-
-            <div class="indications">
-                <b>Показания:</b>
-                ${formatIndications(d.indications)}
-            </div>
-
-            <div class="btn-group">
-                <button onclick="selectDrug('${d.name}')">Выбрать</button>
-                <button class="btn-secondary" onclick="window.open('${d.url}')">🌐 Сайт</button>
-                <button class="back-btn" onclick="goBack()">⬅️ Назад</button>
-            </div>
-        </div>
-    `;
-}
-
-/* назад */
-function goBack() {
-    document.getElementById("cardView").style.display = "none";
-    document.getElementById("list").style.display = "grid";
-    document.getElementById("search").style.display = "block";
-
-    document.getElementById("search").value = lastSearch;
-    applySearch();
-
-    setTimeout(() => {
-        window.scrollTo(0, scrollPosition);
-    }, 50);
-}
-
-/* ✅ СВАЙП ЛОГИКА */
-let startX = 0;
-let startY = 0;
-
-document.addEventListener("touchstart", e => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-});
-
-document.addEventListener("touchend", e => {
-    let endX = e.changedTouches[0].clientX;
-    let endY = e.changedTouches[0].clientY;
-
-    let dx = endX - startX;
-    let dy = Math.abs(endY - startY);
-
-    // только горизонтальный свайп
-    if (startX < 40 && dx > 100 && dy < 50) {
-
-        const isCardOpen = document.getElementById("cardView").style.display === "block";
-
-        if (isCardOpen) {
-            // внутри товара → назад
-            goBack();
-        } else {
-            // на главной → пробуем закрыть (иногда сработает)
-            try {
-                tg.close();
-            } catch(e) {}
-        }
-    }
-});
-
-/* формат */
-function formatIndications(text) {
-    if (!text) return "<p>—</p>";
-    if (text.includes("<")) return text;
-
-    let items = text.split(";").filter(i => i.trim());
-    return "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
-}
-
-/* zoom */
-function zoomImage(src) {
-    document.getElementById("zoomImg").src = src;
-    document.getElementById("zoomModal").style.display = "flex";
-}
-
-function closeZoom() {
-    document.getElementById("zoomModal").style.display = "none";
-}
-
-/* отправка */
-function selectDrug(name) {
-    tg.sendData(JSON.stringify({name}));
 }
 
 /* старт */
