@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог препаратов</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 10px;
+            background: #f5f5f5;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 8px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+<h3>💊 Каталог</h3>
+
+<input type="text" id="search" placeholder="Поиск...">
+
+<div id="list"></div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    // 🔥 ТЕСТОВЫЕ ДАННЫЕ (потом заменим на твои)
+    const drugs = [
+        {name: "Торасса", info: "Сердце"},
+        {name: "Амиодарон", info: "Аритмия"},
+        {name: "Добутамин", info: "Сердце"}
+    ];
+
+    function render(data) {
+        const list = document.getElementById("list");
+        list.innerHTML = "";
+
+        data.forEach(d => {
+            const div = document.createElement("div");
+            div.className = "card";
+
+            div.innerHTML = `
+                <b>${d.name}</b><br>
+                ${d.info}<br>
+                <button onclick="selectDrug('${d.name}')">Выбрать</button>
+            `;
+
+            list.appendChild(div);
+        });
+    }
+
+    function selectDrug(name) {
+        tg.sendData(JSON.stringify({
+            action: "select",
+            name: name
+        }));
+    }
+
+    document.getElementById("search").addEventListener("input", (e) => {
+        const q = e.target.value.toLowerCase();
+        const filtered = drugs.filter(d => d.name.toLowerCase().includes(q));
+        render(filtered);
+    });
+
+    render(drugs);
+</script>
+
+</body>
+</html>
