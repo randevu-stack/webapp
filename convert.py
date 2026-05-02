@@ -41,10 +41,13 @@ for _, row in df.iterrows():
         photo = "images/" + make_filename(name)
 
     drugs.append({
-        "name": name,
-        "indications": indications,
-        "photo": photo
-    })
+    "name": name,
+    "indications": indications,
+    "sostav": str(row.get("sostav", "")).strip(),
+    "form": str(row.get("form", "")).strip(),
+    "dosage": str(row.get("dosage", "")).strip(),
+    "photo": photo
+})
 
 # -------------------------
 # сохраняем
