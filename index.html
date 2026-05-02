@@ -32,7 +32,7 @@ input {
     margin: 10px 0;
 }
 
-/* адаптив */
+/* GRID */
 #list {
     display: grid;
     gap: 12px;
@@ -48,6 +48,7 @@ input {
     #list { grid-template-columns: 1fr 1fr 1fr; }
 }
 
+/* CARD */
 .card {
     background: white;
     border-radius: 16px;
@@ -59,7 +60,6 @@ input {
     justify-content: space-between;
 
     height: 230px;
-
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
@@ -94,6 +94,7 @@ button {
     color: white;
 }
 
+/* DETAIL */
 .card-full {
     background: white;
     border-radius: 16px;
@@ -116,6 +117,33 @@ button {
 .btn-secondary { background: #4caf50; }
 .back-btn { background: #ddd; color: black; }
 
+/* INDICATIONS */
+.indications {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.indications ul {
+    padding-left: 18px;
+}
+
+.indications table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+}
+
+.indications th,
+.indications td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+.indications th {
+    background: #f5f5f5;
+}
+
+/* ZOOM */
 #zoomModal {
     position: fixed;
     inset: 0;
@@ -153,7 +181,6 @@ button {
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-let currentDrug = null;
 let scrollPosition = 0;
 let lastSearch = "";
 
@@ -161,30 +188,28 @@ let lastSearch = "";
 tg.BackButton.show();
 tg.BackButton.onClick(() => goBack());
 
-/* ПОИСК */
+/* SEARCH */
 document.getElementById("search").addEventListener("input", e => {
     lastSearch = e.target.value.toLowerCase();
     applySearch();
 });
 
-/* ПРИМЕНЕНИЕ ПОИСКА */
+/* SEARCH APPLY */
 function applySearch() {
-    const q = lastSearch;
-
-    if (!q) {
+    if (!lastSearch) {
         render(drugs);
         return;
     }
 
     const filtered = drugs.filter(d => {
         const text = `${d.name} ${d.indications} ${d.sostav}`.toLowerCase();
-        return text.includes(q);
+        return text.includes(lastSearch);
     });
 
     render(filtered);
 }
 
-/* РЕНДЕР */
+/* RENDER */
 function render(data) {
     const list = document.getElementById("list");
     list.innerHTML = "";
@@ -201,10 +226,9 @@ function render(data) {
     });
 }
 
-/* ОТКРЫТЬ */
+/* OPEN */
 function openCard(name) {
     const d = drugs.find(x => x.name === name);
-    currentDrug = d;
 
     scrollPosition = window.scrollY;
 
@@ -231,8 +255,10 @@ function openCard(name) {
             <p><b>Дозировка:</b> ${d.dosage}</p>
             <p><b>Группа:</b> ${d.group}</p>
 
-            <p><b>Показания:</b></p>
-            ${formatIndications(d.indications)}
+            <div class="indications">
+                <b>Показания:</b>
+                ${formatIndications(d.indications)}
+            </div>
 
             <div class="btn-group">
                 <button onclick="selectDrug('${d.name}')">Выбрать</button>
@@ -243,23 +269,21 @@ function openCard(name) {
     `;
 }
 
-/* НАЗАД */
+/* BACK */
 function goBack() {
     document.getElementById("cardView").style.display = "none";
     document.getElementById("list").style.display = "grid";
     document.getElementById("search").style.display = "block";
 
-    // восстановление поиска
     document.getElementById("search").value = lastSearch;
     applySearch();
 
-    // восстановление позиции
     setTimeout(() => {
         window.scrollTo(0, scrollPosition);
     }, 50);
 }
 
-/* HISTORY BACK */
+/* HISTORY */
 window.onpopstate = function (event) {
     if (event.state && event.state.page === "card") {
         lastSearch = event.state.search || "";
@@ -283,10 +307,14 @@ document.addEventListener("touchend", e => {
     }
 });
 
-/* ПОКАЗАНИЯ */
+/* FORMAT INDICATIONS */
 function formatIndications(text) {
     if (!text) return "<p>—</p>";
 
+    // если уже HTML — просто выводим
+    if (text.includes("<")) return text;
+
+    // иначе делаем список
     let items = text.split(";").filter(i => i.trim());
     return "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
 }
