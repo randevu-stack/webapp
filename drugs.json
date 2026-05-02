@@ -1,0 +1,114 @@
+[
+  {
+    "name": "Торасса",
+    "indications": "отеки, сердечная недостаточность, задержка жидкости",
+    "group": "диуретик",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Ларгин",
+    "indications": "сахарный диабет, контроль уровня глюкозы",
+    "group": "инсулин",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Карблок",
+    "indications": "артериальная гипертензия, повышенное давление",
+    "group": "гипотензивное средство",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Добутамин",
+    "indications": "сердечная недостаточность, кардиогенный шок",
+    "group": "кардиотоническое средство",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Амиодарон",
+    "indications": "аритмия, тахикардия, нарушения сердечного ритма",
+    "group": "антиаритмическое средство",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Энерфос",
+    "indications": "астения, слабость, энергетическая поддержка организма",
+    "group": "метаболическое средство",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Оксиум",
+    "indications": "кислородная недостаточность, гипоксия",
+    "group": "метаболическое средство",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Каспаргин (инфузионный раствор)",
+    "indications": "дефицит калия и магния, сердечные нарушения",
+    "group": "электролиты",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Каспаргин (концентрат)",
+    "indications": "дефицит калия и магния, аритмии",
+    "group": "электролиты",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Кромостаб",
+    "indications": "аллергия, аллергический ринит, конъюнктивит",
+    "group": "антигистаминное средство",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Нубетал",
+    "indications": "гипертензия, сердечно-сосудистые заболевания",
+    "group": "бета-блокатор",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Изивент Дуо",
+    "indications": "бронхиальная астма, ХОБЛ, бронхоспазм",
+    "group": "бронхолитик",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Изивент",
+    "indications": "бронхоспазм, астма, затрудненное дыхание",
+    "group": "бронхолитик",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Ликвин",
+    "indications": "кашель, заболевания дыхательных путей",
+    "group": "муколитик",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Буфесал 3 Гиал",
+    "indications": "заболевания суставов, воспаление, боль",
+    "group": "противовоспалительное средство",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  },
+  {
+    "name": "Буфесал 7 Гиал",
+    "indications": "заболевания суставов, артрит, воспаление",
+    "group": "противовоспалительное средство",
+    "photo": "https://via.placeholder.com/150",
+    "url": ""
+  }
+]

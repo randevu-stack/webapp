@@ -2,102 +2,45 @@ import pandas as pd
 import json
 import os
 
-print("🚀 Запуск конвертации...")
+INPUT_FILE = "drugs.xlsx"
+OUTPUT_DIR = "webapp"
 
-FILE = "meds.xlsx"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# =========================
-# 📂 ПРОВЕРКА ФАЙЛА
-# =========================
-if not os.path.exists(FILE):
-    print(f"❌ Файл {FILE} не найден!")
-    exit()
+df = pd.read_excel(INPUT_FILE, engine="openpyxl")
+df = df.fillna("")
 
-# =========================
-# 📥 ЧТЕНИЕ EXCEL
-# =========================
-try:
-    df = pd.read_excel(FILE).fillna("")
-    print("✅ Excel загружен")
-except Exception as e:
-    print("❌ Ошибка чтения:", e)
-    exit()
-
-# =========================
-# 🧠 ПОИСК КОЛОНКИ ПОКАЗАНИЯ (даже если криво названа)
-# =========================
-def find_indications_column(columns):
-    for col in columns:
-        c = col.strip().lower()
-        if c in ["показания", "symptoms", "indications"]:
-            return col
-    return None
-
-ind_col = find_indications_column(df.columns)
-
-if not ind_col:
-    print("⚠️ Колонка 'Показания' не найдена")
-    ind_col = None
-
-# =========================
-# 🔄 ОЧИСТКА ТЕКСТА
-# =========================
-def clean_text(text):
-    text = str(text).strip()
-
-    # убираем мусор
-    if text in ["", "-", "—", ";", ";;"]:
-        return ""
-
-    # убираем лишние пробелы
-    text = " ".join(text.split())
-
-    return text
-
-# =========================
-# 🔄 ПРЕОБРАЗОВАНИЕ
-# =========================
-data = []
+drugs = []
 
 for _, row in df.iterrows():
-    try:
-        name = clean_text(row.get("name", ""))
+    item = {
+        "name": str(row.get("Название", "")).strip(),
+        "sostav": str(row.get("Состав", "")).strip(),
+        "form": str(row.get("Форма", "")).strip(),
+        "dosage": str(row.get("Дозировка", "")).strip(),
+        "group": str(row.get("Группа", "")).strip(),
+        "indications": str(row.get("Показания", "")).strip(),  # 👈 ВАЖНО
+        "photo": str(row.get("Фото", "")).strip(),
+        "url": str(row.get("Ссылка", "")).strip()
+    }
 
-        if not name:
-            continue
+    # 👉 чистим переносы
+    item["indications"] = (
+        item["indications"]
+        .replace("\n", " ")
+        .replace("\r", " ")
+        .replace("  ", " ")
+    )
 
-        indications = ""
-        if ind_col:
-            indications = clean_text(row.get(ind_col, ""))
+    drugs.append(item)
 
-        item = {
-            "name": name,
-            "sostav": clean_text(row.get("sostav", "")),
-            "form": clean_text(row.get("form", "")),
-            "dosage": clean_text(row.get("dosage", "")),
-            "group": clean_text(row.get("group", "")),
-            "indications": indications,
-            "photo": clean_text(row.get("photo", "")),
-            "url": clean_text(row.get("url", ""))
-        }
+# JSON для AI
+with open(os.path.join(OUTPUT_DIR, "drugs.json"), "w", encoding="utf-8") as f:
+    json.dump(drugs, f, ensure_ascii=False, indent=2)
 
-        data.append(item)
+# JS для сайта
+with open(os.path.join(OUTPUT_DIR, "data.js"), "w", encoding="utf-8") as f:
+    f.write("const drugs = ")
+    json.dump(drugs, f, ensure_ascii=False, indent=2)
 
-    except Exception as e:
-        print("⚠️ Ошибка строки:", e)
-
-# =========================
-# 💾 СОХРАНЕНИЕ
-# =========================
-try:
-    with open("data.js", "w", encoding="utf-8") as f:
-        f.write("const drugs = ")
-        json.dump(data, f, ensure_ascii=False, indent=2)
-        f.write(";")
-
-    print(f"✅ Готово! {len(data)} препаратов сохранено")
-
-except Exception as e:
-    print("❌ Ошибка сохранения:", e)
-
-print("🏁 Завершено")
+print("✅ Готово: data.js и drugs.json созданы")

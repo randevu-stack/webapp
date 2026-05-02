@@ -1,183 +1,204 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>AI Каталог</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аптечный AI</title>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="data.js"></script>
 
 <style>
-* { box-sizing: border-box; }
-
 body {
     margin: 0;
-    font-family: -apple-system, Arial;
-    background: #f2f2f2;
+    font-family: Arial;
+    background: #f5f5f5;
 }
 
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 12px;
-}
-
-h3 { text-align: center; }
-
-/* поиск */
-.search-box {
+.top {
     display: flex;
-    gap: 8px;
+    gap: 10px;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
 }
 
 input {
     flex: 1;
-    padding: 12px;
-    border-radius: 12px;
-    border: none;
-}
-
-.ai-btn {
-    padding: 12px;
-    border-radius: 12px;
-    border: none;
-    background: #7b5cff;
-    color: white;
-}
-
-/* статус */
-.status {
-    margin: 10px 0;
-    font-size: 14px;
-}
-
-/* GRID */
-#list {
-    display: grid;
-    gap: 12px;
-}
-
-@media (max-width: 600px) {
-    #list { grid-template-columns: 1fr; }
-}
-@media (min-width: 601px) {
-    #list { grid-template-columns: 1fr 1fr; }
-}
-
-/* карточка */
-.card {
-    background: white;
-    border-radius: 16px;
     padding: 10px;
-    text-align: center;
-}
-
-.photo {
-    width: 100%;
-    height: 100px;
-    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid #ccc;
 }
 
 button {
-    margin-top: 8px;
-    padding: 8px;
-    border-radius: 10px;
+    padding: 10px;
     border: none;
-    background: #2ea6ff;
+    border-radius: 10px;
+    background: black;
     color: white;
+    cursor: pointer;
+}
+
+#list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 10px;
+}
+
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.card img {
+    width: 100%;
+    height: 160px;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+.title {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.ind {
+    font-size: 13px;
+    color: #555;
+    max-height: 40px;
+    overflow: hidden;
+}
+
+/* zoom */
+.modal {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.9);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.modal img {
+    max-width:90%;
+    max-height:90%;
+    border-radius:12px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
-<h3>💊 AI Каталог</h3>
-
-<div class="search-box">
-    <input id="search" placeholder="Например: от давления или температуры">
-    <button class="ai-btn" onclick="askAI()">AI</button>
+<div class="top">
+    <input id="search" placeholder="Введите симптомы или название">
+    <button onclick="askAI()">AI</button>
+    <button onclick="showAll()">Все</button>
 </div>
-
-<div id="status" class="status"></div>
 
 <div id="list"></div>
 
+<div id="imgModal" class="modal" onclick="closeModal()">
+    <img id="modalImg">
 </div>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.expand();
 
-/* обычный поиск */
-document.getElementById("search").addEventListener("input", e => {
-    let q = e.target.value.toLowerCase();
+// --------------------
+// РЕНДЕР
+// --------------------
+function render(data){
+    let html = "";
 
-    let filtered = drugs.filter(d => {
-        let text = `${d.name} ${d.indications}`.toLowerCase();
-        return text.includes(q);
+    data.forEach(d=>{
+        html += `
+        <div class="card">
+            ${d.photo ? `<img src="${d.photo}" onclick="openModal('${d.photo}')">` : ''}
+            <div class="title">${d.name}</div>
+            <div class="ind">${d.indications || ''}</div>
+        </div>
+        `;
     });
 
-    render(filtered);
-});
+    document.getElementById("list").innerHTML = html;
+}
 
-/* AI поиск */
-async function askAI() {
-    let query = document.getElementById("search").value;
+// --------------------
+// ПОКАЗ ВСЕХ
+// --------------------
+function showAll(){
+    document.getElementById("search").value = "";
+    render(drugs);
+}
 
-    if (!query) return;
+// --------------------
+// AI ПОИСК
+// --------------------
+async function askAI(){
+    try{
+        let q = document.getElementById("search").value;
 
-    document.getElementById("status").innerText = "🤖 Подбираю препараты...";
+        if (!q.trim()) {
+            render(drugs);
+            return;
+        }
 
-    try {
-        let res = await fetch("https://your-api.onrender.com/ai", {
+        let res = await fetch("http://127.0.0.1:5000/ai", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({query})
+            body: JSON.stringify({ query: q })
         });
 
         let data = await res.json();
 
-        // 👉 получаем список названий
-        let names = data.drugs || [];
+        console.log("AI:", data);
 
-        // 👉 ищем в базе
+        if (!data.drugs) {
+            render(drugs);
+            return;
+        }
+
         let result = drugs.filter(d =>
-            names.includes(d.name)
+            data.drugs.some(name =>
+                name.toLowerCase() === d.name.toLowerCase()
+            )
         );
 
         if (result.length === 0) {
-            document.getElementById("status").innerText = "Ничего не найдено 😢";
-        } else {
-            document.getElementById("status").innerText = "Найдено:";
+            document.getElementById("list").innerHTML =
+                "<p>Ничего не найдено</p>";
+            return;
         }
 
         render(result);
 
-    } catch(e) {
-        document.getElementById("status").innerText = "Ошибка AI 😢";
+    } catch(e){
+        console.error("Ошибка:", e);
     }
 }
 
-/* рендер */
-function render(data) {
-    const list = document.getElementById("list");
-    list.innerHTML = "";
-
-    data.forEach(d => {
-        list.innerHTML += `
-        <div class="card">
-            <img src="${d.photo}" class="photo">
-            <b>${d.name}</b>
-            <button onclick="tg.sendData('${d.name}')">Выбрать</button>
-        </div>
-        `;
-    });
+// --------------------
+// ZOOM
+// --------------------
+function openModal(src){
+    document.getElementById("imgModal").style.display = "flex";
+    document.getElementById("modalImg").src = src;
 }
 
-/* старт */
+function closeModal(){
+    document.getElementById("imgModal").style.display = "none";
+}
+
+// старт
 render(drugs);
+
 </script>
 
 </body>
