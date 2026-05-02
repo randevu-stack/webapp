@@ -1,330 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Каталог</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jurabek Laboratories</title>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="data.js"></script>
 
 <style>
-* { box-sizing: border-box; }
-
 body {
     margin: 0;
     font-family: -apple-system, Arial;
-    background: #f2f2f2;
+    background: #f2f2f7;
 }
 
-.container {
-    max-width: 900px;
-    margin: 0 auto;
+/* HEADER */
+.header {
     padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
 }
 
-h3 { text-align: center; margin-bottom: 10px; }
+/* SEARCH */
+.top {
+    padding: 10px;
+}
 
-/* поиск */
 input {
     width: 100%;
     padding: 12px;
     border-radius: 12px;
     border: none;
-    margin-bottom: 12px;
+    background: #e9e9ee;
+    font-size: 14px;
 }
 
-/* GRID */
+/* LIST */
 #list {
     display: grid;
-    gap: 12px;
+    gap: 14px;
+    padding: 10px;
 }
 
-@media (max-width: 600px) {
-    #list { grid-template-columns: 1fr; }
-}
-@media (min-width: 601px) and (max-width: 900px) {
-    #list { grid-template-columns: 1fr 1fr; }
-}
-@media (min-width: 901px) {
-    #list { grid-template-columns: 1fr 1fr 1fr; }
-}
-
-/* карточка */
+/* CARD */
 .card {
     background: white;
     border-radius: 16px;
-    padding: 10px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    height: 240px;
-
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    padding: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
-.photo {
+/* IMAGE */
+.card img {
     width: 100%;
-    height: 110px;
+    height: 140px;
     object-fit: contain;
+    border-radius: 12px;
+    background: #f7f7f7;
 }
 
-.name {
-    font-weight: bold;
-    font-size: 14px;
+/* TITLE */
+.title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 8px;
 }
 
-.info {
-    font-size: 12px;
+/* DESC */
+.desc {
+    font-size: 13px;
     color: #666;
-
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    margin-top: 4px;
+    line-height: 1.3;
 }
 
-button {
-    width: 90%;
-    margin: 0 auto;
-    padding: 8px;
-    border-radius: 10px;
-    border: none;
-    background: #2ea6ff;
+/* BUTTON */
+.btn {
+    margin-top: 10px;
+    background: #0a84ff;
     color: white;
-}
-
-/* детальная карточка */
-.card-full {
-    background: white;
-    border-radius: 16px;
-    padding: 14px;
-    animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; }
-}
-
-.card-full img {
-    width: 100%;
-    max-height: 220px;
-    object-fit: contain;
-}
-
-/* кнопки */
-.btn-group {
-    margin-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.btn-secondary { background: #4caf50; }
-.back-btn { background: #ddd; color: black; }
-
-/* показания */
-.indications {
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.indications ul { padding-left: 18px; }
-
-.indications table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 12px 0;
-}
-
-.indications th,
-.indications td {
-    border: 1px solid #ccc;
-    padding: 8px;
-}
-
-.indications th { background: #f5f5f5; }
-
-/* zoom */
-#zoomModal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: none;
-    justify-content: center;
-    align-items: center;
-}
-
-#zoomImg {
-    max-width: 90%;
-    max-height: 90%;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="header">Jurabek Laboratories 🧬</div>
 
-<h3>💊 Каталог</h3>
-
-<input id="search" placeholder="Поиск по названию или симптомам...">
+<div class="top">
+    <input id="search" placeholder="Введите симптомы или название" oninput="search()">
+</div>
 
 <div id="list"></div>
-<div id="cardView" style="display:none;"></div>
-
-</div>
-
-<div id="zoomModal" onclick="closeZoom()">
-    <img id="zoomImg">
-</div>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.expand();
 
-let scrollPosition = 0;
-let lastSearch = "";
+// РЕНДЕР
+function render(data){
+    let html = "";
 
-/* BACK BUTTON */
-tg.BackButton.show();
-tg.BackButton.onClick(() => goBack());
-
-/* поиск */
-document.getElementById("search").addEventListener("input", e => {
-    lastSearch = e.target.value.toLowerCase();
-    applySearch();
-});
-
-function applySearch() {
-    if (!lastSearch) return render(drugs);
-
-    const filtered = drugs.filter(d => {
-        const text = `${d.name} ${d.indications} ${d.sostav}`.toLowerCase();
-        return text.includes(lastSearch);
-    });
-
-    render(filtered);
-}
-
-/* рендер */
-function render(data) {
-    const list = document.getElementById("list");
-    list.innerHTML = "";
-
-    data.forEach(d => {
-        list.innerHTML += `
+    data.forEach(d=>{
+        html += `
         <div class="card">
-            <img src="${d.photo}" class="photo">
-            <div class="name">${d.name}</div>
-            <div class="info">${d.sostav}<br>${d.form}</div>
-            <button onclick="openCard('${d.name}')">Открыть</button>
+
+            ${d.photo ? `<img src="${d.photo}">` : ''}
+
+            <div class="title">${d.name}</div>
+
+            <div class="desc">
+                ${d.sostav || ''}
+                ${d.form ? '<br>' + d.form : ''}
+                ${d.dosage ? ' ' + d.dosage : ''}
+            </div>
+
+            <div class="btn" onclick="openLink('${d.url || '#'}')">
+                Открыть
+            </div>
+
         </div>
         `;
     });
+
+    document.getElementById("list").innerHTML = html;
 }
 
-/* открыть карточку */
-function openCard(name) {
-    const d = drugs.find(x => x.name === name);
+// ПОИСК
+function search(){
+    let q = document.getElementById("search").value.toLowerCase();
 
-    scrollPosition = window.scrollY;
+    let result = drugs.filter(d=>{
+        let text = (
+            (d.name || '') + " " +
+            (d.indications || '') + " " +
+            (d.sostav || '')
+        ).toLowerCase();
 
-    history.pushState({page:"card"}, "");
+        return text.includes(q);
+    });
 
-    document.getElementById("list").style.display = "none";
-    document.getElementById("search").style.display = "none";
-
-    const view = document.getElementById("cardView");
-    view.style.display = "block";
-
-    view.innerHTML = `
-        <div class="card-full">
-            <img src="${d.photo}" onclick="zoomImage('${d.photo}')">
-
-            <h3>${d.name}</h3>
-
-            <p><b>Состав:</b> ${d.sostav}</p>
-            <p><b>Форма:</b> ${d.form}</p>
-            <p><b>Дозировка:</b> ${d.dosage}</p>
-            <p><b>Группа:</b> ${d.group}</p>
-
-            <div class="indications">
-                <b>Показания:</b>
-                ${formatIndications(d.indications)}
-            </div>
-
-            <div class="btn-group">
-                <button onclick="selectDrug('${d.name}')">Выбрать</button>
-                <button class="btn-secondary" onclick="window.open('${d.url}')">🌐 Сайт</button>
-                <button class="back-btn" onclick="goBack()">⬅️ Назад</button>
-            </div>
-        </div>
-    `;
+    render(result);
 }
 
-/* назад */
-function goBack() {
-    document.getElementById("cardView").style.display = "none";
-    document.getElementById("list").style.display = "grid";
-    document.getElementById("search").style.display = "block";
-
-    document.getElementById("search").value = lastSearch;
-    applySearch();
-
-    setTimeout(() => {
-        window.scrollTo(0, scrollPosition);
-    }, 50);
-}
-
-/* ✅ свайп — ТОЛЬКО внутри карточки */
-let startX = 0;
-
-document.addEventListener("touchstart", e => {
-    startX = e.touches[0].clientX;
-});
-
-document.addEventListener("touchend", e => {
-    let endX = e.changedTouches[0].clientX;
-
-    const isCardOpen = document.getElementById("cardView").style.display === "block";
-
-    // 👉 перехватываем только если открыт товар
-    if (isCardOpen && startX < 40 && endX > startX + 80) {
-        goBack();
+// КНОПКА
+function openLink(url){
+    if(!url || url === '#'){
+        alert("Ссылка не добавлена");
+        return;
     }
-
-    // 👉 если главная — НЕ трогаем (Telegram сам закроет)
-});
-
-/* формат показаний */
-function formatIndications(text) {
-    if (!text) return "<p>—</p>";
-    if (text.includes("<")) return text;
-
-    let items = text.split(";").filter(i => i.trim());
-    return "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
+    window.open(url, "_blank");
 }
 
-/* zoom */
-function zoomImage(src) {
-    document.getElementById("zoomImg").src = src;
-    document.getElementById("zoomModal").style.display = "flex";
-}
-
-function closeZoom() {
-    document.getElementById("zoomModal").style.display = "none";
-}
-
-/* отправка */
-function selectDrug(name) {
-    tg.sendData(JSON.stringify({name}));
-}
-
-/* старт */
+// СТАРТ
 render(drugs);
+
 </script>
 
 </body>
