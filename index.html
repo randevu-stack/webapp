@@ -72,16 +72,32 @@
             cursor: pointer;
         }
 
-        button:hover {
-            background: #1d8fe0;
-        }
-
         .btn-secondary {
             background: #4caf50;
         }
 
-        .btn-secondary:hover {
-            background: #3e9443;
+        /* экран карточки */
+        #cardView {
+            display: none;
+        }
+
+        .card-full {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .card-full img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            background: #ccc;
+            color: black;
         }
     </style>
 </head>
@@ -94,10 +110,15 @@
 
 <div id="list"></div>
 
+<div id="cardView"></div>
+
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
+    // ======================
+    // 📦 РЕНДЕР СПИСКА
+    // ======================
     function render(data) {
         const list = document.getElementById("list");
         list.innerHTML = "";
@@ -113,9 +134,44 @@
 
                 <div class="info">
                     🧬 ${d.sostav}<br>
-                    💊 ${d.form} (${d.dosage})<br>
-                    🤒 ${d.indications}
+                    💊 ${d.form} (${d.dosage})
                 </div>
+
+                <button onclick="openCard('${d.name}')">
+                    Открыть
+                </button>
+            `;
+
+            list.appendChild(div);
+        });
+    }
+
+    // ======================
+    // 📖 ОТКРЫТЬ КАРТОЧКУ
+    // ======================
+    function openCard(name) {
+        const d = drugs.find(x => x.name === name);
+        if (!d) return;
+
+        document.getElementById("list").style.display = "none";
+        document.getElementById("search").style.display = "none";
+
+        const view = document.getElementById("cardView");
+        view.style.display = "block";
+
+        view.innerHTML = `
+            <button class="back-btn" onclick="goBack()">⬅️ Назад</button>
+
+            <div class="card-full">
+                <img src="${d.photo}">
+
+                <h3>${d.name}</h3>
+
+                <p><b>🧬 Состав:</b> ${d.sostav}</p>
+                <p><b>💊 Форма:</b> ${d.form}</p>
+                <p><b>📦 Дозировка:</b> ${d.dosage}</p>
+                <p><b>🏥 Группа:</b> ${d.group}</p>
+                <p><b>🤒 Показания:</b><br>${d.indications}</p>
 
                 <button onclick="selectDrug('${d.name}')">
                     Выбрать
@@ -124,12 +180,22 @@
                 <button class="btn-secondary" onclick="openLink('${d.url}')">
                     🌐 Сайт
                 </button>
-            `;
-
-            list.appendChild(div);
-        });
+            </div>
+        `;
     }
 
+    // ======================
+    // 🔙 НАЗАД
+    // ======================
+    function goBack() {
+        document.getElementById("cardView").style.display = "none";
+        document.getElementById("list").style.display = "grid";
+        document.getElementById("search").style.display = "block";
+    }
+
+    // ======================
+    // 📤 В БОТА
+    // ======================
     function selectDrug(name) {
         tg.sendData(JSON.stringify({
             action: "select",
@@ -137,10 +203,16 @@
         }));
     }
 
+    // ======================
+    // 🌐 САЙТ
+    // ======================
     function openLink(url) {
         window.open(url, "_blank");
     }
 
+    // ======================
+    // 🔍 ПОИСК
+    // ======================
     document.getElementById("search").addEventListener("input", (e) => {
         const q = e.target.value.toLowerCase();
 
@@ -153,6 +225,7 @@
         render(filtered);
     });
 
+    // старт
     render(drugs);
 </script>
 
