@@ -165,11 +165,29 @@ async function askAI(){
             return;
         }
 
-        let result = drugs.filter(d =>
-            data.drugs.some(name =>
-                name.toLowerCase() === d.name.toLowerCase()
-            )
-        );
+        // 1. AI результаты
+let aiResults = drugs.filter(d =>
+    data.drugs.some(name =>
+        name.toLowerCase() === d.name.toLowerCase()
+    )
+);
+
+// 2. обычный поиск (по тексту)
+let qLower = q.toLowerCase();
+
+let otherResults = drugs.filter(d => {
+    let text = (d.name + " " + (d.indications || "")).toLowerCase();
+    return text.includes(qLower);
+});
+
+// 3. объединяем без дублей
+let result = [...aiResults];
+
+otherResults.forEach(d => {
+    if (!result.some(r => r.name === d.name)) {
+        result.push(d);
+    }
+});
 
         if (result.length === 0) {
             document.getElementById("list").innerHTML =
