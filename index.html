@@ -98,6 +98,16 @@
         .back-btn {
             background: #ccc;
             color: black;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            padding-left: 20px;
+            text-align: left;
+        }
+
+        li {
+            margin-bottom: 6px;
         }
     </style>
 </head>
@@ -115,6 +125,18 @@
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
+
+    // ======================
+    // 🧠 формат показаний
+    // ======================
+    function formatIndications(text) {
+        if (!text) return "";
+
+        let parts = text.split(/;|\./);
+        parts = parts.map(p => p.trim()).filter(p => p.length > 0);
+
+        return "<ul>" + parts.map(p => `<li>${p}</li>`).join("") + "</ul>";
+    }
 
     // ======================
     // 📦 РЕНДЕР СПИСКА
@@ -147,7 +169,7 @@
     }
 
     // ======================
-    // 📖 ОТКРЫТЬ КАРТОЧКУ
+    // 📖 КАРТОЧКА
     // ======================
     function openCard(name) {
         const d = drugs.find(x => x.name === name);
@@ -171,7 +193,9 @@
                 <p><b>💊 Форма:</b> ${d.form}</p>
                 <p><b>📦 Дозировка:</b> ${d.dosage}</p>
                 <p><b>🏥 Группа:</b> ${d.group}</p>
-                <p><b>🤒 Показания:</b><br>${d.indications}</p>
+
+                <p><b>🤒 Показания:</b></p>
+                ${formatIndications(d.indications)}
 
                 <button onclick="selectDrug('${d.name}')">
                     Выбрать
@@ -185,7 +209,7 @@
     }
 
     // ======================
-    // 🔙 НАЗАД (ИСПРАВЛЕНО)
+    // 🔙 НАЗАД
     // ======================
     function goBack() {
         document.getElementById("cardView").style.display = "none";
@@ -200,7 +224,7 @@
             d.group.toLowerCase().includes(q)
         );
 
-        render(filtered); // 🔥 фикс
+        render(filtered);
     }
 
     // ======================
