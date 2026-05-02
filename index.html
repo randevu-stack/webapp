@@ -32,7 +32,6 @@ input {
     border-radius: 12px;
     border: none;
     background: #e9e9ee;
-    font-size: 14px;
 }
 
 /* LIST */
@@ -59,19 +58,17 @@ input {
     background: #f7f7f7;
 }
 
-/* BIG IMAGE */
 .big-img {
     height: 200px !important;
 }
 
-/* TITLE */
+/* TEXT */
 .title {
     font-size: 16px;
     font-weight: 600;
     margin-top: 8px;
 }
 
-/* DESC */
 .desc {
     font-size: 13px;
     color: #666;
@@ -87,7 +84,6 @@ input {
     text-align: center;
     padding: 11px;
     border-radius: 12px;
-    font-weight: 500;
     cursor: pointer;
 }
 
@@ -102,15 +98,21 @@ input {
 <div class="header">Jurabek Laboratories 🧬</div>
 
 <div class="top">
-    <input id="search" placeholder="Введите симптомы или название" oninput="search()">
+    <input id="search" placeholder="Поиск..." oninput="search()">
 </div>
 
 <div id="list"></div>
 
 <script>
 
-// ===== РЕНДЕР СПИСКА =====
+// состояние
+let isDetailOpen = false;
+let startX = 0;
+
+// ===== РЕНДЕР =====
 function render(data){
+    isDetailOpen = false;
+
     let html = "";
 
     data.forEach((d, index)=>{
@@ -124,11 +126,7 @@ function render(data){
             <div class="desc">
                 ${d.sostav || ''}
                 ${d.form ? '<br>' + d.form : ''}
-                ${d.dosage 
-                    ? (d.dosage.includes('(') 
-                        ? ' ' + d.dosage 
-                        : ' (' + d.dosage + ')') 
-                    : ''}
+                ${d.dosage ? ' (' + d.dosage + ')' : ''}
             </div>
 
             <div class="btn" onclick="openDrug(${index})">
@@ -161,6 +159,8 @@ function search(){
 
 // ===== ОТКРЫТИЕ КАРТОЧКИ =====
 function openDrug(index){
+    isDetailOpen = true;
+
     const d = drugs[index];
 
     document.getElementById("list").innerHTML = `
@@ -180,7 +180,7 @@ function openDrug(index){
                 ${d.indications || '-'}
             </div>
 
-            <div class="btn" onclick="render(drugs)">
+            <div class="btn" onclick="goBack()">
                 ← Назад
             </div>
 
@@ -193,6 +193,29 @@ function openDrug(index){
         </div>
     `;
 }
+
+// ===== НАЗАД =====
+function goBack(){
+    isDetailOpen = false;
+    render(drugs);
+}
+
+// ===== СВАЙП =====
+document.addEventListener("touchstart", function(e){
+    startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchend", function(e){
+    let endX = e.changedTouches[0].clientX;
+    let diff = endX - startX;
+
+    // свайп вправо
+    if(diff > 80){
+        if(isDetailOpen){
+            goBack();
+        }
+    }
+});
 
 // ===== СТАРТ =====
 render(drugs);
