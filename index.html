@@ -16,10 +16,14 @@ body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, Arial;
     background: #f2f2f2;
+
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
+/* КОНТЕЙНЕР */
 .container {
-    max-width: 480px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 12px;
 }
@@ -37,14 +41,27 @@ input {
     border-radius: 12px;
     border: none;
     margin-bottom: 12px;
-    font-size: 14px;
 }
 
 /* GRID */
 #list {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+}
+
+/* 📱 MOBILE */
+@media (max-width: 600px) {
+    #list { grid-template-columns: 1fr; }
+}
+
+/* 📲 TABLET */
+@media (min-width: 601px) and (max-width: 900px) {
+    #list { grid-template-columns: 1fr 1fr; }
+}
+
+/* 💻 PC */
+@media (min-width: 901px) {
+    #list { grid-template-columns: 1fr 1fr 1fr; }
 }
 
 /* CARD */
@@ -52,64 +69,75 @@ input {
     background: white;
     border-radius: 16px;
     padding: 10px;
+    text-align: center;
 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: center;
 
-    height: 230px; /* 🔥 одинаковая высота */
+    height: 240px;
 
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.25s ease;
 }
 
-/* ✨ АНИМАЦИЯ */
 .card:active {
     transform: scale(0.97);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 /* IMAGE */
 .photo {
     width: 100%;
-    height: 100px;
+    height: 110px;
     object-fit: contain;
-    margin-bottom: 6px;
 }
 
 /* TEXT */
 .name {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 15px;
 
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .info {
     font-size: 12px;
     color: #666;
 
-    text-align: center;
-
-    overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* 🔥 обрезка текста */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* BUTTON */
 button {
     width: 90%;
+    margin: 0 auto;
     padding: 8px;
     border-radius: 10px;
     border: none;
     background: linear-gradient(135deg, #3aa0ff, #2ea6ff);
     color: white;
-    font-size: 13px;
+}
+
+/* SCREEN ANIMATION */
+.screen {
+    transition: all 0.3s ease;
+}
+
+.hidden {
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 /* FULL CARD */
@@ -123,23 +151,26 @@ button {
     width: 100%;
     max-height: 220px;
     object-fit: contain;
-    margin-bottom: 10px;
 }
 
-.btn-group {
-    margin-top: 12px;
+/* BOTTOM BAR */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    background: white;
+    padding: 10px;
+
+    border-top: 1px solid #ddd;
+
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
-.btn-secondary {
-    background: #4caf50;
-}
-
-.back-btn {
-    background: #ddd;
-    color: black;
+.bottom-bar button {
+    flex: 1;
 }
 
 /* INDICATIONS */
@@ -161,10 +192,6 @@ ul {
     max-width: 90%;
     max-height: 90%;
 }
-
-html, body {
-    overflow-x: hidden;
-}
 </style>
 </head>
 
@@ -174,11 +201,17 @@ html, body {
 
 <h3>💊 Каталог</h3>
 
-<input id="search" placeholder="Поиск по названию или симптомам...">
+<input id="search" placeholder="Поиск...">
 
-<div id="list"></div>
-<div id="cardView" style="display:none;"></div>
+<div id="list" class="screen visible"></div>
 
+<div id="cardView" class="screen hidden"></div>
+
+</div>
+
+<div class="bottom-bar" id="bottomBar" style="display:none;">
+    <button onclick="goBack()">⬅️ Назад</button>
+    <button onclick="openSite()">🌐 Сайт</button>
 </div>
 
 <div id="zoomModal" onclick="closeZoom()">
@@ -189,23 +222,15 @@ html, body {
 const tg = window.Telegram.WebApp;
 tg.expand();
 
+let currentDrug = null;
+
 /* SEARCH */
 document.getElementById("search").addEventListener("input", e => {
-    const q = e.target.value.toLowerCase().trim();
-
-    if (!q) return render(drugs);
-
-    const words = q.split(/\s+/);
+    const q = e.target.value.toLowerCase();
 
     const filtered = drugs.filter(d => {
-        const text = `
-            ${d.name || ""}
-            ${d.indications || ""}
-            ${d.group || ""}
-            ${d.sostav || ""}
-        `.toLowerCase();
-
-        return words.every(w => text.includes(w));
+        const text = `${d.name} ${d.indications} ${d.sostav}`.toLowerCase();
+        return text.includes(q);
     });
 
     render(filtered);
@@ -219,36 +244,28 @@ function render(data) {
     data.forEach(d => {
         list.innerHTML += `
         <div class="card" onclick="openCard('${d.name}')">
-
             <img src="${d.photo}" class="photo">
-
             <div class="name">${d.name}</div>
-
-            <div class="info">
-                ${d.sostav}<br>
-                ${d.form}
-            </div>
-
+            <div class="info">${d.sostav}<br>${d.form}</div>
             <button>Открыть</button>
-
         </div>
         `;
     });
 }
 
-/* CARD */
+/* OPEN */
 function openCard(name) {
     const d = drugs.find(x => x.name === name);
+    currentDrug = d;
 
-    document.getElementById("list").style.display = "none";
+    document.getElementById("list").classList.replace("visible", "hidden");
     document.getElementById("search").style.display = "none";
 
     const view = document.getElementById("cardView");
-    view.style.display = "block";
+    view.classList.replace("hidden", "visible");
 
     view.innerHTML = `
         <div class="card-full">
-
             <img src="${d.photo}" onclick="zoomImage('${d.photo}')">
 
             <h3>${d.name}</h3>
@@ -260,30 +277,29 @@ function openCard(name) {
 
             <p><b>Показания:</b></p>
             ${formatIndications(d.indications)}
-
-            <div class="btn-group">
-                <button onclick="selectDrug('${d.name}')">Выбрать</button>
-                <button class="btn-secondary" onclick="window.open('${d.url}')">🌐 Сайт</button>
-                <button class="back-btn" onclick="goBack()">⬅️ Назад</button>
-            </div>
-
         </div>
     `;
+
+    document.getElementById("bottomBar").style.display = "flex";
 }
 
 /* BACK */
 function goBack() {
-    document.getElementById("cardView").style.display = "none";
-    document.getElementById("list").style.display = "grid";
+    document.getElementById("cardView").classList.replace("visible", "hidden");
+    document.getElementById("list").classList.replace("hidden", "visible");
+
     document.getElementById("search").style.display = "block";
+    document.getElementById("bottomBar").style.display = "none";
+}
+
+/* SITE */
+function openSite() {
+    if (currentDrug) window.open(currentDrug.url);
 }
 
 /* INDICATIONS */
 function formatIndications(text) {
     if (!text) return "<p>—</p>";
-
-    if (text.includes("<table")) return text;
-
     let items = text.split(";").filter(i => i.trim());
     return "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
 }
@@ -298,11 +314,7 @@ function closeZoom() {
     document.getElementById("zoomModal").style.display = "none";
 }
 
-/* SEND */
-function selectDrug(name) {
-    tg.sendData(JSON.stringify({name}));
-}
-
+/* INIT */
 render(drugs);
 </script>
 
