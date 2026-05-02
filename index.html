@@ -22,22 +22,8 @@ body {
     padding: 12px;
 }
 
-/* header */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+h3 { text-align: center; }
 
-.close-btn {
-    background: #ff4d4d;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 10px;
-    color: white;
-}
-
-/* поиск */
 input {
     width: 100%;
     padding: 12px;
@@ -62,7 +48,7 @@ input {
     #list { grid-template-columns: 1fr 1fr 1fr; }
 }
 
-/* карточки */
+/* карточка */
 .card {
     background: white;
     border-radius: 16px;
@@ -73,6 +59,7 @@ input {
     justify-content: space-between;
 
     height: 240px;
+
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
@@ -82,7 +69,7 @@ input {
     object-fit: contain;
 }
 
-.name { font-weight: bold; font-size: 14px; }
+.name { font-weight: bold; }
 
 .info {
     font-size: 12px;
@@ -91,9 +78,9 @@ input {
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
 }
 
+/* кнопка */
 button {
     width: 90%;
     margin: 0 auto;
@@ -135,20 +122,6 @@ button {
 
 .indications ul { padding-left: 18px; }
 
-.indications table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 12px 0;
-}
-
-.indications th,
-.indications td {
-    border: 1px solid #ccc;
-    padding: 8px;
-}
-
-.indications th { background: #f5f5f5; }
-
 /* zoom */
 #zoomModal {
     position: fixed;
@@ -170,10 +143,7 @@ button {
 
 <div class="container">
 
-<div class="header">
-    <h3>💊 Каталог</h3>
-    <button class="close-btn" onclick="tg.close()">✖</button>
-</div>
+<h3>💊 Каталог</h3>
 
 <input id="search" placeholder="Поиск по названию или симптомам...">
 
@@ -203,12 +173,8 @@ document.getElementById("search").addEventListener("input", e => {
     applySearch();
 });
 
-/* поиск */
 function applySearch() {
-    if (!lastSearch) {
-        render(drugs);
-        return;
-    }
+    if (!lastSearch) return render(drugs);
 
     const filtered = drugs.filter(d => {
         const text = `${d.name} ${d.indications} ${d.sostav}`.toLowerCase();
@@ -288,7 +254,7 @@ function goBack() {
     }, 50);
 }
 
-/* свайп = только назад */
+/* ✅ ВАЖНО: свайп ТОЛЬКО внутри карточки */
 let startX = 0;
 
 document.addEventListener("touchstart", e => {
@@ -298,11 +264,15 @@ document.addEventListener("touchstart", e => {
 document.addEventListener("touchend", e => {
     let endX = e.changedTouches[0].clientX;
 
-    if (startX < 40 && endX > startX + 80) {
-        if (document.getElementById("cardView").style.display === "block") {
-            goBack();
-        }
+    const isCardOpen = document.getElementById("cardView").style.display === "block";
+
+    // 👉 если карточка открыта — перехватываем
+    if (isCardOpen && startX < 50 && endX > startX + 80) {
+        goBack();
     }
+
+    // 👉 если НЕ открыта — ничего не делаем
+    // Telegram сам обработает свайп и закроет WebApp
 });
 
 /* формат */
