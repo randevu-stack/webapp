@@ -258,31 +258,14 @@ function openDrug(i){
             🌐 Открыть сайт
         </div>` : ''}
 
-        <div class="btn" onclick="shareCard('${d.name}')">
-            📤 Поделиться карточкой
-        </div>
-
         <div class="btn" onclick="shareLink('${d.name}')">
-            🔗 Поделиться ссылкой
+            🔗 Поделиться
         </div>
 
     </div>`;
 }
 
-/* ===== SHARE КАРТОЧКА (через бота) ===== */
-function shareCard(name){
-    let bot = "jurabek_helper_bot";
-
-    let encoded = encodeURIComponent(name);
-
-    let link = `https://t.me/${bot}?start=drug_${encoded}`;
-
-    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
-
-    tg.openLink(shareUrl);
-}
-
-/* ===== SHARE ССЫЛКА (WebApp) ===== */
+/* ===== SHARE ССЫЛКА ===== */
 function shareLink(name){
     let encoded = encodeURIComponent(name);
 
