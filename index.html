@@ -239,7 +239,8 @@ function openDrug(index){
 function goBack(){
     isDetailOpen = false;
     tg.BackButton.hide();
-    render(drugs);
+
+    search(); // 🔥 вместо render(drugs)
 }
 
 // ===== TELEGRAM BACK BUTTON =====
