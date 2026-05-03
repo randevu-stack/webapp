@@ -1,4 +1,4 @@
-const drugs = [
+[
   {
     "id": 1,
     "name": "Торасса",

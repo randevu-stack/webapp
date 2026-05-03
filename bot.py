@@ -1,114 +1,128 @@
 import logging
+import json
 from urllib.parse import unquote, quote
 
-from telegram import (
-    Update,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton
-)
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    ContextTypes
-)
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 TOKEN = "8708262770:AAEoDWw4SBmj3Za_1DYW9OAjwkluleoKYj4"
 WEB_APP_URL = "https://webapp-alpha-nine-95.vercel.app"
 
 logging.basicConfig(level=logging.INFO)
 
-DRUGS = {
-    1: {
-        "name": "Торасса",
-        "sostav": "Торасемид",
-        "form": "Раствор для инъекций",
-        "dosage": "5 мг/мл 4 мл",
-        "group": "Диуретик",
-        "indications": "Лечение при отеках и/или выпотах, вызванных сердечной недостаточностью...",
-        "photo": "https://jurabek.uz/d/torassa_4_ml_no10_8162uzp01.png",
-        "url": "https://jurabek.uz/magazin/product/torassa"
-    }
-}
+# ===== ЗАГРУЗКА БАЗЫ =====
+try:
+    with open("data.json", encoding="utf-8") as f:
+        DRUGS = json.load(f)
 
-def norm(t):
-    return (t or "").lower().strip()
+    if not isinstance(DRUGS, list) or len(DRUGS) == 0:
+        raise ValueError("data.json пустой или неправильный")
 
+    print(f"✅ Загружено препаратов: {len(DRUGS)}")
+
+except Exception as e:
+    logging.error(f"Ошибка загрузки data.json: {e}")
+    DRUGS = []
+
+# ===== УТИЛИТЫ =====
+def norm(text):
+    return (text or "").lower().strip()
+
+def find_drug(name):
+    name = norm(name)
+    for d in DRUGS:
+        if norm(d.get("name")) == name:
+            return d
+    return None
+
+# ===== START =====
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     payload = None
 
+    # 1. стандартный payload
     if context.args:
         payload = context.args[0]
 
-    # fallback (иногда Telegram кладёт payload в текст)
+    # 2. fallback (Telegram иногда кладёт в текст)
     if not payload and update.message and update.message.text:
         parts = update.message.text.split(" ")
         if len(parts) > 1:
             payload = parts[1]
 
+    print("PAYLOAD:", payload)
+
+    # ===== если есть payload =====
     if payload and "drug_" in payload:
         try:
             raw = payload.replace("drug_", "")
-            name = norm(unquote(raw))
+            name = unquote(raw)
 
-            drug = None
-            for d in DRUGS.values():
-                if norm(d["name"]) == name:
-                    drug = d
-                    break
+            drug = find_drug(name)
 
             if drug:
                 await send_preview(update, drug)
                 return
 
         except Exception as e:
-            logging.error(e)
+            logging.error(f"Ошибка обработки payload: {e}")
 
-    await fallback(update)
+    # ===== fallback =====
+    if DRUGS:
+        await send_preview(update, DRUGS[0])
+    else:
+        await update.message.reply_text("⚠️ База препаратов не загружена")
 
+# ===== ОТПРАВКА =====
 async def send_preview(update: Update, d):
-    short = d["indications"][:140] + "..."
+    try:
+        short = (d.get("indications") or "")[:140] + "..."
 
-    text = f"""💊 <b>{d['name']}</b>
+        text = f"""💊 <b>{d.get('name','-')}</b>
 
-🧬 {d['sostav']}
-📦 {d['form']} ({d['dosage']})
+🧬 {d.get('sostav','-')}
+📦 {d.get('form','-')} ({d.get('dosage','-')})
 🏷 {d.get('group','-')}
 
 🩺 {short}
 """
 
-    keyboard = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "📱 Открыть приложение",
-                url=f"{WEB_APP_URL}?drug={quote(d['name'])}"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "🌐 Открыть сайт",
-                url=d["url"]
-            )
-        ]
-    ])
-
-    await update.message.reply_photo(
-        photo=d["photo"],
-        caption=text,
-        parse_mode="HTML",
-        reply_markup=keyboard
-    )
-
-async def fallback(update: Update):
-    await update.message.reply_text(
-        "💊 Открой каталог препаратов:",
-        reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("📱 Открыть", url=WEB_APP_URL)]
+        keyboard = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(
+                    "📱 Открыть приложение",
+                    url=f"{WEB_APP_URL}?drug={quote(d.get('name',''))}"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    "🌐 Открыть сайт",
+                    url=d.get("url") or WEB_APP_URL
+                )
+            ]
         ])
-    )
 
+        # безопасная отправка
+        if d.get("photo"):
+            await update.message.reply_photo(
+                photo=d.get("photo"),
+                caption=text,
+                parse_mode="HTML",
+                reply_markup=keyboard
+            )
+        else:
+            await update.message.reply_text(
+                text,
+                parse_mode="HTML",
+                reply_markup=keyboard
+            )
+
+    except Exception as e:
+        logging.error(f"Ошибка отправки: {e}")
+        await update.message.reply_text("⚠️ Ошибка отображения препарата")
+
+# ===== ЗАПУСК =====
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 
-print("🚀 bot started")
+print("🚀 Бот запущен")
 app.run_polling()
