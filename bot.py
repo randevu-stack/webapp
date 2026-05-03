@@ -50,7 +50,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await send_preview(update, d, drug_id)
                 return
 
-    await update.message.reply_text("💊 Нажми ссылку из приложения")
+    await update.message.reply_text(
+    "💊 Нажми START и получишь препарат"
+)
 
 # =========================
 # 🔥 PREVIEW КАРТОЧКА

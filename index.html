@@ -14,7 +14,7 @@ body{
     background:#f2f2f7;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 .header{
     background:#fff;
     padding:14px;
@@ -43,10 +43,9 @@ body{
 .contacts{
     margin-top:8px;
     font-size:12px;
-    color:#444;
 }
 
-/* ===== SEARCH ===== */
+/* SEARCH */
 .top{ padding:10px; }
 
 input{
@@ -57,7 +56,7 @@ input{
     background:#e9e9ee;
 }
 
-/* ===== GRID ===== */
+/* GRID */
 #list{
     display:grid;
     gap:14px;
@@ -72,7 +71,7 @@ input{
     #list{ grid-template-columns:repeat(3,1fr); }
 }
 
-/* ===== CARD ===== */
+/* CARD */
 .card{
     background:white;
     border-radius:18px;
@@ -88,11 +87,8 @@ input{
     border-radius:12px;
 }
 
-.big-img{
-    height:220px;
-}
+.big-img{ height:220px; }
 
-/* ===== TEXT ===== */
 .title{
     font-weight:600;
     margin-top:8px;
@@ -110,7 +106,6 @@ input{
     margin-top:6px;
 }
 
-/* ===== BUTTON ===== */
 .btn{
     margin-top:10px;
     background:#0a84ff;
@@ -135,7 +130,7 @@ input{
 
 <body>
 
-<!-- ===== HEADER (НЕ ТРОГАТЬ) ===== -->
+<!-- HEADER -->
 <div class="header">
     <div class="header-top">
         <img src="logo.png" class="logo">
@@ -156,12 +151,12 @@ input{
     </div>
 </div>
 
-<!-- ===== SEARCH ===== -->
+<!-- SEARCH -->
 <div class="top">
     <input id="search" placeholder="Поиск..." oninput="search()">
 </div>
 
-<!-- ===== LIST ===== -->
+<!-- LIST -->
 <div id="list"></div>
 
 <script>
@@ -264,13 +259,15 @@ function openDrug(i){
     `;
 }
 
-/* ===== SHARE ===== */
+/* ===== SHARE (НОВАЯ ЛОГИКА) ===== */
 function share(id){
     let bot = "jurabek_helper_bot"; //
 
-    let link = "https://t.me/" + bot + "?start=drug_" + id + "_preview";
+    let link = `https://t.me/${bot}?startapp=drug_${id}`;
 
-    tg.openLink("https://t.me/share/url?url=" + encodeURIComponent(link));
+    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
+
+    tg.openLink(shareUrl);
 }
 
 /* ===== НАЗАД ===== */
