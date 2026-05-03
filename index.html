@@ -9,110 +9,88 @@
 <script src="data.js"></script>
 
 <style>
-body {
-    margin: 0;
-    font-family: -apple-system, Arial;
-    background: #f2f2f7;
-}
+body {margin:0;font-family:-apple-system,Arial;background:#f2f2f7;}
 
-.header {
-    padding: 14px;
-    font-size: 18px;
-    font-weight: 600;
-}
+.header {padding:14px;font-size:18px;font-weight:600;}
 
-.top {
-    padding: 10px;
-}
+.top {padding:10px; position: relative;}
 
 input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: none;
-    background: #e9e9ee;
-    font-size: 14px;
+    width:100%;padding:12px;border-radius:12px;
+    border:none;background:#e9e9ee;font-size:14px;
 }
 
-#list {
-    display: grid;
-    gap: 14px;
-    padding: 10px;
+/* подсказки */
+.suggestions {
+    position:absolute;
+    top:52px;
+    left:10px;
+    right:10px;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.1);
+    z-index:1000;
+    max-height:200px;
+    overflow:auto;
 }
+
+.suggestion {
+    padding:10px;
+    border-bottom:1px solid #eee;
+    cursor:pointer;
+}
+
+.suggestion:last-child {border-bottom:none;}
+
+#list {display:grid;gap:14px;padding:10px;}
 
 .card {
-    background: white;
-    border-radius: 18px;
-    padding: 12px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    background:white;border-radius:18px;
+    padding:12px;box-shadow:0 4px 18px rgba(0,0,0,0.08);
 }
 
 .card img {
-    width: 100%;
-    height: 150px;
-    object-fit: contain;
-    border-radius: 12px;
-    background: #f7f7f7;
+    width:100%;height:150px;
+    object-fit:contain;border-radius:12px;
+    background:#f7f7f7;
 }
 
-.big-img {
-    height: 220px !important;
-    cursor: pointer;
-}
+.big-img {height:220px !important; cursor:pointer;}
 
-.title {
-    font-size: 17px;
-    font-weight: 600;
-    margin-top: 8px;
-}
+.title {font-size:17px;font-weight:600;margin-top:8px;}
 
-.desc {
-    font-size: 13px;
-    color: #666;
-    margin-top: 6px;
-    line-height: 1.4;
-}
+.desc {font-size:13px;color:#666;margin-top:6px;}
 
 .btn {
-    margin-top: 12px;
-    background: #0a84ff;
-    color: white;
-    text-align: center;
-    padding: 11px;
-    border-radius: 12px;
-    cursor: pointer;
+    margin-top:10px;background:#0a84ff;color:white;
+    text-align:center;padding:10px;border-radius:12px;
+    cursor:pointer;
 }
 
-.btn.green {
-    background: #34c759;
+.btn.green {background:#34c759;}
+
+/* избранное */
+.fav {
+    position:absolute;
+    top:10px;
+    right:10px;
+    font-size:20px;
+    cursor:pointer;
 }
 
-/* ZOOM */
+/* zoom */
 .zoom-modal {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.9);
-    top: 0;
-    left: 0;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+    position:fixed;width:100%;height:100%;
+    background:rgba(0,0,0,0.9);
+    display:none;justify-content:center;align-items:center;
+    z-index:9999;
 }
 
-.zoom-modal img {
-    max-width: 90%;
-    max-height: 90%;
-}
+.zoom-modal img {max-width:90%;max-height:90%;}
 
 .zoom-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 30px;
-    color: white;
-    cursor: pointer;
+    position:absolute;top:20px;right:20px;
+    font-size:28px;color:white;cursor:pointer;
 }
 </style>
 </head>
@@ -122,7 +100,8 @@ input {
 <div class="header">Jurabek Laboratories 🧬</div>
 
 <div class="top">
-    <input id="search" placeholder="Поиск по названию и симптомам..." oninput="search()">
+    <input id="search" placeholder="Поиск..." oninput="debounceSearch()">
+    <div id="suggestions" class="suggestions"></div>
 </div>
 
 <div id="list"></div>
@@ -140,11 +119,23 @@ tg.enableClosingConfirmation();
 
 let isDetailOpen = false;
 let currentList = [...drugs];
+let debounceTimer = null;
+
+// ===== FAVORITES =====
+let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
+
+function toggleFav(name){
+    if(favorites.includes(name)){
+        favorites = favorites.filter(f=>f!==name);
+    } else {
+        favorites.push(name);
+    }
+    localStorage.setItem("fav", JSON.stringify(favorites));
+    search();
+}
 
 // ===== NORMALIZE =====
-function norm(t){
-    return (t || "").toLowerCase().trim();
-}
+function norm(t){ return (t||"").toLowerCase().trim(); }
 
 // ===== RENDER =====
 function render(data){
@@ -154,86 +145,94 @@ function render(data){
 
     let html = "";
 
-    data.forEach((d, i)=>{
+    data.forEach((d,i)=>{
+        let isFav = favorites.includes(d.name);
+
         html += `
-        <div class="card">
+        <div class="card" style="position:relative">
+
+            <div class="fav" onclick="toggleFav('${d.name}')">
+                ${isFav ? "❤️" : "🤍"}
+            </div>
+
             ${d.photo ? `<img src="${d.photo}">` : ''}
 
             <div class="title">${d.name}</div>
 
-            <div class="desc">
-                ${d.sostav || ''}
-                ${d.form ? '<br>' + d.form : ''}
-                ${d.dosage ? ' (' + d.dosage + ')' : ''}
-            </div>
+            <div class="desc">${d.sostav || ''}</div>
 
             <div class="btn" onclick="openDrug(${i})">Открыть</div>
-        </div>
-        `;
+        </div>`;
     });
 
     document.getElementById("list").innerHTML = html;
 }
 
-// ===== SEARCH (название + симптомы) =====
+// ===== SEARCH =====
 function search(){
     let q = norm(document.getElementById("search").value);
+
+    document.getElementById("suggestions").innerHTML = "";
 
     if(!q){
         render(drugs);
         return;
     }
 
-    let exact = [];
-    let starts = [];
-    let contains = [];
-    let symptoms = [];
+    let exact=[],starts=[],contains=[],symptoms=[];
 
     drugs.forEach(d=>{
-        let name = norm(d.name);
-        let ind = norm(d.indications);
+        let name=norm(d.name);
+        let ind=norm(d.indications);
 
-        if(name === q){
-            exact.push(d);
-            return;
-        }
-
-        if(name.startsWith(q)){
-            starts.push(d);
-            return;
-        }
-
-        if(name.includes(q)){
-            contains.push(d);
-            return;
-        }
-
-        if(ind.includes(q)){
-            symptoms.push(d);
-        }
+        if(name===q){ exact.push(d); return; }
+        if(name.startsWith(q)){ starts.push(d); return; }
+        if(name.includes(q)){ contains.push(d); return; }
+        if(ind.includes(q)){ symptoms.push(d); }
     });
 
-    let result = [...exact, ...starts, ...contains, ...symptoms];
-
-    if(result.length === 0){
-        document.getElementById("list").innerHTML =
-        `<div style="padding:20px;text-align:center;color:#888;">
-            Ничего не найдено
-        </div>`;
-        return;
-    }
-
+    let result=[...exact,...starts,...contains,...symptoms];
     render(result);
+
+    showSuggestions(q);
+}
+
+// ===== SUGGESTIONS =====
+function showSuggestions(q){
+    let box=document.getElementById("suggestions");
+    let html="";
+
+    let list = drugs
+        .filter(d=>norm(d.name).includes(q))
+        .slice(0,5);
+
+    list.forEach(d=>{
+        html+=`<div class="suggestion" onclick="selectSuggestion('${d.name}')">${d.name}</div>`;
+    });
+
+    box.innerHTML = html;
+}
+
+function selectSuggestion(text){
+    document.getElementById("search").value=text;
+    document.getElementById("suggestions").innerHTML="";
+    search();
+}
+
+// ===== DEBOUNCE =====
+function debounceSearch(){
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(search, 200);
 }
 
 // ===== OPEN =====
 function openDrug(i){
-    isDetailOpen = true;
+    isDetailOpen=true;
     tg.BackButton.show();
 
-    let d = currentList[i];
+    let d=currentList[i];
 
-    document.getElementById("list").innerHTML = `
+    document.getElementById("list").innerHTML=`
     <div class="card">
 
         ${d.photo ? `<img src="${d.photo}" class="big-img" onclick="event.stopPropagation(); openZoom('${d.photo}')">` : ''}
@@ -241,43 +240,32 @@ function openDrug(i){
         <div class="title">${d.name}</div>
 
         <div class="desc">
-            <b>Состав:</b><br>${d.sostav || '-'}<br><br>
-
-            <b>Форма:</b><br>
-            ${d.form || ''} ${d.dosage ? '('+d.dosage+')' : ''}<br><br>
-
-            <b>Показания:</b><br>
-            ${d.indications || '-'}
+        <b>Состав:</b><br>${d.sostav || '-'}<br><br>
+        <b>Показания:</b><br>${d.indications || '-'}
         </div>
 
         <div class="btn" onclick="goBack()">← Назад</div>
-
-        ${d.url ? `<div class="btn green" onclick="window.open('${d.url}','_blank')">Перейти на сайт</div>` : ''}
-
     </div>`;
 }
 
 // ===== BACK =====
 function goBack(){
-    isDetailOpen = false;
+    isDetailOpen=false;
     tg.BackButton.hide();
-    search(); // сохраняем поиск
+    search();
 }
 
 // ===== ZOOM =====
 function openZoom(src){
-    document.getElementById("zoomImg").src = src;
-    document.getElementById("zoomModal").style.display = "flex";
+    document.getElementById("zoomImg").src=src;
+    document.getElementById("zoomModal").style.display="flex";
 }
-
 function closeZoom(){
-    document.getElementById("zoomModal").style.display = "none";
+    document.getElementById("zoomModal").style.display="none";
 }
 
 // ===== TELEGRAM BACK =====
-tg.BackButton.onClick(()=>{
-    if(isDetailOpen) goBack();
-});
+tg.BackButton.onClick(()=>{ if(isDetailOpen) goBack(); });
 
 // ===== START =====
 render(drugs);
