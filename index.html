@@ -3,60 +3,172 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jurabek Laboratories</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="data.js"></script>
 
 <style>
-body {margin:0;font-family:Arial;background:#f2f2f7;}
+body {
+    margin:0;
+    font-family:-apple-system, Arial;
+    background:#f2f2f7;
+    max-width:1200px;
+    margin:auto;
+}
 
 /* HEADER */
-.header{display:flex;justify-content:space-between;padding:10px;background:#f4f4f4;}
-.header-left{display:flex;gap:10px;align-items:center;}
-.logo{width:40px;}
-.brand{font-weight:700;color:#1f4fa3;line-height:1.2;}
-.sub{font-size:11px;color:#666;}
-.header-right{font-size:12px;display:flex;flex-direction:column;gap:4px;}
-.contact{display:flex;gap:6px;align-items:center;}
-.icon{width:18px;text-align:center;}
+.header {
+    background:#f4f4f4;
+    padding:10px 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #ddd;
+}
+
+.header-left { display:flex; align-items:center; gap:10px; }
+.logo { width:42px;height:42px; }
+
+.brand {
+    font-weight:700;
+    font-size:15px;
+    color:#1f4fa3;
+    line-height:1.2;
+}
+
+.sub { font-size:11px;color:#666; }
+
+.header-right {
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    font-size:12px;
+}
+
+.contact { display:flex; align-items:center; gap:6px; }
+.icon { width:18px; text-align:center; }
+
+/* MOBILE */
+@media (max-width:600px){
+    .header { flex-direction:column;align-items:flex-start; }
+}
+
+/* TABS */
+.tabs { display:flex;gap:8px;padding:10px; }
+
+.tab {
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+    background:#e9e9ee;
+    text-align:center;
+    cursor:pointer;
+}
+
+.tab.active { background:#0a84ff;color:white; }
 
 /* SEARCH */
-.top{padding:10px;}
-input{width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee;}
+.top { padding:10px; }
+
+input {
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:none;
+    background:#e9e9ee;
+}
 
 /* GRID */
-#list{display:grid;gap:12px;padding:10px;}
-@media(min-width:600px){#list{grid-template-columns:repeat(2,1fr);}}
-@media(min-width:1024px){#list{grid-template-columns:repeat(3,1fr);}}
+#list {
+    display:grid;
+    gap:14px;
+    padding:10px;
+    grid-template-columns:1fr;
+}
+
+@media (min-width:600px){
+    #list { grid-template-columns:repeat(2,1fr); }
+}
+
+@media (min-width:1024px){
+    #list { grid-template-columns:repeat(3,1fr); }
+}
 
 /* CARD */
-.card{background:white;padding:12px;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,0.08);}
-.title{font-weight:600;margin-top:6px;}
-.btn{margin-top:10px;background:#0a84ff;color:white;padding:8px;text-align:center;border-radius:10px;}
-.rec{margin-top:10px;font-size:12px;color:#555;}
+.card {
+    background:white;
+    border-radius:18px;
+    padding:12px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.08);
+    position:relative;
+}
+
+.fav {
+    position:absolute;
+    right:12px;
+    top:10px;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.card img {
+    width:100%;
+    height:150px;
+    object-fit:contain;
+    background:#f7f7f7;
+    border-radius:12px;
+}
+
+.title { font-size:16px;font-weight:600;margin-top:8px; }
+.desc { font-size:13px;color:#666;margin-top:6px; }
+.form { margin-top:4px;color:#0a84ff;font-size:13px; }
+
+.btn {
+    margin-top:12px;
+    background:#0a84ff;
+    color:white;
+    padding:10px;
+    text-align:center;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.empty { padding:30px;text-align:center;color:#888; }
 </style>
 </head>
 
 <body>
 
 <div class="header">
-<div class="header-left">
-<img src="logo.png" class="logo">
-<div>
-<div class="brand">JURABEK<br>Laboratories LTD</div>
-<div class="sub">Производство лекарственных средств широкого спектра</div>
-</div>
+    <div class="header-left">
+        <img src="logo.png" class="logo">
+        <div>
+            <div class="brand">
+                JURABEK<br>
+                Laboratories LTD
+            </div>
+            <div class="sub">
+                Производство лекарственных средств широкого спектра
+            </div>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="contact"><span class="icon">📞</span> +998 (78) 150-03-03</div>
+        <div class="contact"><span class="icon">✉️</span> info@jurabek.uz</div>
+        <div class="contact"><span class="icon">📅</span> Пн–Пт 9:00–18:00</div>
+    </div>
 </div>
 
-<div class="header-right">
-<div class="contact"><span class="icon">📞</span>+998...</div>
-<div class="contact"><span class="icon">✉️</span>info@...</div>
-<div class="contact"><span class="icon">📅</span>Пн–Пт 9:00–18:00</div>
-</div>
+<div class="tabs">
+    <div class="tab active" id="tab-all" onclick="setTab('all')">Все</div>
+    <div class="tab" id="tab-fav" onclick="setTab('fav')">Избранное</div>
+    <div class="tab" id="tab-recent" onclick="setTab('recent')">Недавно</div>
 </div>
 
 <div class="top">
-<input id="search" placeholder="Поиск..." oninput="fastSearch()">
+    <input id="search" placeholder="Поиск..." oninput="debounceSearch()">
 </div>
 
 <div id="list"></div>
@@ -66,93 +178,141 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 tg.enableClosingConfirmation();
 
-let isDetailOpen=false;
-let scrollPos=0;
-let index=[];
+let isDetailOpen = false;
+let scrollPos = 0;
 
-// ===== СОЗДАЁМ ИНДЕКС (ОДИН РАЗ) =====
-drugs.forEach(d=>{
-    index.push({
-        ref:d,
-        text:(d.name+" "+d.indications).toLowerCase()
+let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
+let recent = JSON.parse(localStorage.getItem("recent") || "[]");
+
+let currentTab = "all";
+let currentList = [...drugs];
+let debounceTimer = null;
+
+function norm(t){ return (t||"").toLowerCase().trim(); }
+
+function setTab(tab){
+    currentTab = tab;
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    document.getElementById("tab-"+tab).classList.add("active");
+    search();
+}
+
+function toggleFav(name){
+    if(favorites.includes(name)){
+        favorites = favorites.filter(f=>f!==name);
+    } else favorites.push(name);
+
+    localStorage.setItem("fav", JSON.stringify(favorites));
+    search();
+}
+
+function search(){
+    isDetailOpen = false;
+    tg.BackButton.hide();
+
+    let q = norm(document.getElementById("search").value);
+
+    let base = currentTab==="fav"
+        ? drugs.filter(d=>favorites.includes(d.name))
+        : currentTab==="recent"
+        ? recent.map(n=>drugs.find(d=>d.name===n)).filter(Boolean)
+        : drugs;
+
+    if(!q){ render(base); return; }
+
+    let result = base.filter(d=>{
+        let text = norm(d.name + " " + d.indications);
+        return text.includes(q);
     });
-});
 
-// ===== БЫСТРЫЙ ПОИСК =====
-function fastSearch(){
-    let q=document.getElementById("search").value.toLowerCase();
+    render(result);
+}
 
-    if(!q){
-        render(drugs);
+function addRecent(name){
+    recent = recent.filter(r=>r!==name);
+    recent.unshift(name);
+    recent = recent.slice(0,5);
+    localStorage.setItem("recent", JSON.stringify(recent));
+}
+
+function render(data){
+    currentList = data;
+
+    if(data.length===0){
+        document.getElementById("list").innerHTML =
+        `<div class="empty">Ничего не найдено</div>`;
         return;
     }
 
-    let res=index.filter(i=>i.text.includes(q)).map(i=>i.ref);
-
-    render(res);
-}
-
-// ===== RENDER =====
-function render(data){
     let html="";
+
     data.forEach((d,i)=>{
         html+=`
         <div class="card">
-            ${d.photo?`<img src="${d.photo}" style="width:100%">`:''}
+            <div class="fav" onclick="toggleFav('${d.name}')">
+                ${favorites.includes(d.name)?"❤️":"🤍"}
+            </div>
+
+            ${d.photo?`<img src="${d.photo}" loading="lazy">`:''}
+
             <div class="title">${d.name}</div>
-            <div>${d.form||''} (${d.dosage||''})</div>
+            <div class="desc">${d.sostav||''}</div>
+
+            ${(d.form||d.dosage)?`
+            <div class="form">
+                ${d.form||''} (${d.dosage||''})
+            </div>`:''}
+
             <div class="btn" onclick="openDrug(${i})">Открыть</div>
         </div>`;
     });
-    document.getElementById("list").innerHTML=html;
+
+    document.getElementById("list").innerHTML = html;
 }
 
-// ===== РЕКОМЕНДАЦИИ =====
-function getRecommendations(drug){
-    return drugs
-    .filter(d=>d!==drug && d.indications && drug.indications &&
-        d.indications.split(" ")[0] === drug.indications.split(" ")[0])
-    .slice(0,3);
-}
-
-// ===== OPEN =====
 function openDrug(i){
-    let d=drugs[i];
+    let d = currentList[i];
 
-    scrollPos=window.scrollY;
-    isDetailOpen=true;
+    scrollPos = window.scrollY;
+    addRecent(d.name);
+
+    isDetailOpen = true;
     tg.BackButton.show();
 
-    let recs=getRecommendations(d);
-
-    document.getElementById("list").innerHTML=`
+    document.getElementById("list").innerHTML = `
     <div class="card">
-        ${d.photo?`<img src="${d.photo}" style="width:100%">`:''}
+        ${d.photo?`<img src="${d.photo}">`:''}
         <div class="title">${d.name}</div>
-        <div>${d.indications||''}</div>
-
-        <div class="rec">
-            <b>Рекомендуем:</b><br>
-            ${recs.map(r=>r.name).join(", ") || "Нет"}
+        <div class="desc">
+            <b>Состав:</b><br>${d.sostav||'-'}<br><br>
+            <b>Форма:</b><br>${d.form||''} (${d.dosage||''})<br><br>
+            <b>Показания:</b><br>${d.indications||'-'}
         </div>
-
         <div class="btn" onclick="goBack()">← Назад</div>
     </div>`;
 }
 
-// ===== BACK =====
 function goBack(){
-    isDetailOpen=false;
+    isDetailOpen = false;
     tg.BackButton.hide();
-    fastSearch();
 
-    setTimeout(()=>window.scrollTo(0,scrollPos),0);
+    search();
+
+    setTimeout(()=>{
+        window.scrollTo(0, scrollPos);
+    }, 0);
 }
 
-tg.BackButton.onClick(()=>{ if(isDetailOpen) goBack(); });
+tg.BackButton.onClick(()=>{
+    if(isDetailOpen) goBack();
+});
 
-// ===== START =====
-render(drugs);
+function debounceSearch(){
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(search,200);
+}
+
+search();
 </script>
 
 </body>
