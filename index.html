@@ -10,42 +10,32 @@
 
 <style>
 body {margin:0;font-family:-apple-system,Arial;background:#f2f2f7;max-width:1200px;margin:auto;}
-
 .header {padding:14px;font-size:18px;font-weight:600;}
 
 .tabs {display:flex;gap:10px;padding:10px;}
 .tab {flex:1;padding:10px;border-radius:10px;background:#e9e9ee;text-align:center;cursor:pointer;}
 .tab.active {background:#0a84ff;color:white;}
 
-.top {padding:10px;position:relative;}
+.top {padding:10px;}
 input {width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee;}
 
 #list {display:grid;gap:14px;padding:10px;grid-template-columns:1fr;}
 @media (min-width:600px){#list{grid-template-columns:repeat(2,1fr);}}
 @media (min-width:1024px){#list{grid-template-columns:repeat(3,1fr);}}
 
-/* CARD */
 .card {background:white;border-radius:18px;padding:12px;box-shadow:0 4px 18px rgba(0,0,0,0.08);position:relative;}
 .fav {position:absolute;right:12px;top:10px;font-size:20px;cursor:pointer;}
+
 .card img {width:100%;height:150px;object-fit:contain;background:#f7f7f7;border-radius:12px;}
+
 .title {font-size:17px;font-weight:600;margin-top:8px;}
 .desc {font-size:13px;color:#666;margin-top:6px;}
 .form {margin-top:4px;color:#0a84ff;font-size:13px;}
+
 .btn {margin-top:12px;background:#0a84ff;color:white;padding:10px;text-align:center;border-radius:12px;cursor:pointer;}
 
-/* EMPTY */
-.empty {
-    padding:30px;
-    text-align:center;
-    color:#888;
-}
-
-/* RECENT */
-.recent-title {
-    padding:10px;
-    font-weight:600;
-    color:#555;
-}
+.empty {padding:30px;text-align:center;color:#888;}
+.recent-title {padding:10px;font-weight:600;color:#555;}
 </style>
 </head>
 
@@ -59,7 +49,7 @@ input {width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee
 </div>
 
 <div class="top">
-    <input id="search" placeholder="Поиск..." oninput="debounceSearch()">
+    <input id="search" placeholder="Поиск по названию и симптомам..." oninput="debounceSearch()">
 </div>
 
 <div id="recent"></div>
@@ -91,7 +81,7 @@ function setTab(tab){
     search();
 }
 
-// ===== FAVORITE =====
+// ===== FAVORITES =====
 function toggleFav(name){
     if(favorites.includes(name)){
         favorites = favorites.filter(f=>f!==name);
@@ -103,11 +93,11 @@ function toggleFav(name){
 }
 
 // ===== NORMALIZE =====
-function norm(t){ return (t||"").toLowerCase(); }
+function norm(t){ return (t||"").toLowerCase().trim(); }
 
 // ===== УМНЫЙ ПОИСК =====
 function expandQuery(q){
-    let words = q.split(" ");
+    let words = q.split(" ").filter(Boolean);
     let expanded = [...words];
 
     words.forEach(w=>{
@@ -116,12 +106,13 @@ function expandQuery(q){
         }
     });
 
-    return expanded.join(" ");
+    return expanded;
 }
 
 // ===== SEARCH =====
 function search(){
     let q = norm(document.getElementById("search").value);
+
     let base = currentTab === "fav"
         ? drugs.filter(d=>favorites.includes(d.name))
         : drugs;
@@ -132,11 +123,12 @@ function search(){
         return;
     }
 
-    let expanded = expandQuery(q);
+    let expandedWords = expandQuery(q);
 
     let result = base.filter(d=>{
         let text = norm(d.name + " " + d.indications);
-        return text.includes(expanded);
+
+        return expandedWords.some(word => text.includes(word));
     });
 
     render(result);
@@ -236,8 +228,11 @@ function openDrug(i){
 }
 
 function openDrugByName(name){
-    let i = currentList.findIndex(d=>d.name===name);
-    if(i !== -1) openDrug(i);
+    let d = drugs.find(x=>x.name === name);
+    if(!d) return;
+
+    currentList = [d];
+    openDrug(0);
 }
 
 // ===== DEBOUNCE =====
