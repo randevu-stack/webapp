@@ -140,30 +140,29 @@ input {
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-function norm(t){return (t||"").toLowerCase();}
+let isDetailOpen = false;
+let scrollPos = 0;
+let currentList = [...drugs];
 
-/* ===== SHARE (НОВАЯ ВЕРСИЯ) ===== */
-function shareDeepLink(name){
-    let bot = "YOUR_BOT_USERNAME"; // без @
+function norm(t){ return (t || "").toLowerCase(); }
 
-    // 👉 передаём preview + имя
-    let payload = `drug_${encodeURIComponent(name)}_preview`;
-
-    let link = `https://t.me/${bot}?start=${payload}`;
-    let url = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
-
-    tg.openLink(url);
+/* ===== GET PARAM ===== */
+function getParam(){
+    const params = new URLSearchParams(window.location.search);
+    return params.get("drug");
 }
-</script>
 
 /* ===== ПОИСК ===== */
 function search(){
-    isDetailOpen=false;
+    isDetailOpen = false;
     tg.BackButton.hide();
 
     let q = norm(document.getElementById("search").value);
 
-    if(!q){ render(drugs); return; }
+    if(!q){
+        render(drugs);
+        return;
+    }
 
     let res = drugs.filter(d=>{
         return norm(d.name + d.indications + d.sostav).includes(q);
@@ -174,32 +173,33 @@ function search(){
 
 /* ===== РЕНДЕР ===== */
 function render(data){
-    currentList=data;
+    currentList = data;
 
-    if(data.length===0){
+    if(data.length === 0){
         document.getElementById("list").innerHTML =
-        `<div class="empty">Ничего не найдено</div>`;
+            '<div class="empty">Ничего не найдено</div>';
         return;
     }
 
-    let html="";
+    let html = "";
 
     data.forEach((d,i)=>{
-        html+=`
+        html += `
         <div class="card">
 
-            ${d.photo?`<img src="${d.photo}" loading="lazy">`:''}
+            ${d.photo ? `<img src="${d.photo}" loading="lazy">` : ''}
 
             <div class="title">${d.name}</div>
 
-            ${(d.form||d.dosage)?`
+            ${(d.form || d.dosage) ? `
             <div class="form">
-                ${d.form||''} ${d.dosage ? '('+d.dosage+')' : ''}
-            </div>`:''}
+                ${d.form || ''} ${d.dosage ? '(' + d.dosage + ')' : ''}
+            </div>` : ''}
 
             <div class="btn" onclick="openDrug(${i})">Открыть</div>
 
-        </div>`;
+        </div>
+        `;
     });
 
     document.getElementById("list").innerHTML = html;
@@ -216,51 +216,59 @@ function openDrug(i){
     document.getElementById("list").innerHTML = `
     <div class="card">
 
-        ${d.photo?`<img src="${d.photo}" class="big-img">`:''}
+        ${d.photo ? `<img src="${d.photo}" class="big-img">` : ''}
 
         <div class="title">${d.name}</div>
 
         <div class="desc">
-            <b>Состав:</b><br>${d.sostav||'-'}<br><br>
+            <b>Состав:</b><br>${d.sostav || '-'}<br><br>
 
             <b>Форма:</b><br>
             ${d.form || '-'} ${d.dosage ? '(' + d.dosage + ')' : ''}<br><br>
 
             <b>Показания:</b><br>
-            ${d.indications||'-'}
+            ${d.indications || '-'}
         </div>
 
         <div class="btn" onclick="goBack()">← Назад</div>
 
-        ${d.url?`
+        ${d.url ? `
         <div class="btn green" onclick="tg.openLink('${d.url}')">
             🌐 Открыть сайт
-        </div>`:''}
+        </div>` : ''}
 
         <div class="btn" onclick="shareDeepLink('${d.name}')">
             📤 Поделиться
         </div>
 
-    </div>`;
+    </div>
+    `;
 }
 
-/* ===== SHARE ===== */
+/* ===== SHARE (PREVIEW) ===== */
 function shareDeepLink(name){
-    let bot = "jurabek_helper_bot";
-    let link = `https://t.me/${bot}?start=drug_${encodeURIComponent(name)}`;
-    let url = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
+    let bot = "jurabek_helper_bot"; //
+
+    let payload = "drug_" + encodeURIComponent(name) + "_preview";
+
+    let link = "https://t.me/" + bot + "?start=" + payload;
+    let url = "https://t.me/share/url?url=" + encodeURIComponent(link);
+
     tg.openLink(url);
 }
 
 /* ===== НАЗАД ===== */
 function goBack(){
-    isDetailOpen=false;
+    isDetailOpen = false;
     tg.BackButton.hide();
     search();
-    setTimeout(()=>window.scrollTo(0,scrollPos),0);
+
+    setTimeout(()=>{
+        window.scrollTo(0, scrollPos);
+    }, 0);
 }
 
-/* ===== AUTO OPEN (НЕ ЛОМАЕТ UI) ===== */
+/* ===== AUTO OPEN ===== */
 function autoOpen(){
     let key = getParam();
     if(!key) return;
