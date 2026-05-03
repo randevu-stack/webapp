@@ -1,4 +1,6 @@
 import logging
+from urllib.parse import unquote
+
 from telegram import (
     Update,
     InlineKeyboardMarkup,
@@ -29,38 +31,51 @@ DRUGS = {
     }
 }
 
+# ===== НОРМАЛИЗАЦИЯ =====
+def norm(text):
+    return (text or "").lower().strip()
+
 # ===== START =====
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     payload = None
 
-    # 👉 пытаемся получить payload
     if context.args:
         payload = context.args[0]
 
     # ===== ЕСЛИ ЕСТЬ PAYLOAD =====
     if payload and "drug_" in payload:
         try:
-            drug_id = int(payload.replace("drug_", ""))
-        except:
-            await fallback(update)
-            return
+            # 👉 декодируем имя (очень важно)
+            raw_name = payload.replace("drug_", "")
+            name = unquote(raw_name)  # декодирует %D0%A2...
 
-        d = DRUGS.get(drug_id)
+            name = norm(name)
 
-        if d:
-            await send_preview(update, d, drug_id)
-            return
+            # 👉 ищем препарат
+            drug = None
+            for d in DRUGS.values():
+                if norm(d["name"]) == name:
+                    drug = d
+                    break
 
-    # ===== ЕСЛИ НЕТ PAYLOAD =====
+            if drug:
+                await send_preview(update, drug)
+                return
+
+        except Exception as e:
+            logging.error(e)
+
+    # ===== FALLBACK =====
     await fallback(update)
 
 # ===== PREVIEW =====
-async def send_preview(update: Update, d, drug_id):
+async def send_preview(update: Update, d):
 
     short_indications = d["indications"][:140] + "..."
 
     text = f"""💊 <b>{d['name']}</b>
 
+🧬 {d['sostav']}
 📦 {d['form']} ({d['dosage']})
 🏷 {d.get('group','-')}
 
@@ -70,20 +85,14 @@ async def send_preview(update: Update, d, drug_id):
     keyboard = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(
-                "🔍 Открыть в приложении",
-                url=f"{WEB_APP_URL}?drug={drug_id}"
+                "📱 Открыть приложение",
+                url=f"{WEB_APP_URL}?drug={d['name']}"
             )
         ],
         [
             InlineKeyboardButton(
                 "🌐 Открыть сайт",
                 url=d["url"]
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "📱 Открыть каталог",
-                url=WEB_APP_URL
             )
         ]
     ])
