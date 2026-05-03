@@ -9,166 +9,68 @@
 <script src="data.js"></script>
 
 <style>
-body {
-    margin:0;
-    font-family:-apple-system, Arial;
-    background:#f2f2f7;
-    max-width:1200px;
-    margin:auto;
-}
+body {margin:0;font-family:-apple-system,Arial;background:#f2f2f7;max-width:1200px;margin:auto;}
+.header{background:#f4f4f4;padding:10px 14px;display:flex;justify-content:space-between;border-bottom:1px solid #ddd;}
+.header-left{display:flex;gap:10px;align-items:center;}
+.logo{width:42px;}
+.brand{font-weight:700;color:#1f4fa3;line-height:1.2;}
+.sub{font-size:11px;color:#666;}
+.header-right{font-size:12px;display:flex;flex-direction:column;gap:4px;}
+.contact{display:flex;gap:6px;align-items:center;}
+.icon{width:18px;text-align:center;}
 
-/* HEADER */
-.header {
-    background:#f4f4f4;
-    padding:10px 14px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-bottom:1px solid #ddd;
-}
+.tabs{display:flex;gap:8px;padding:10px;}
+.tab{flex:1;padding:10px;border-radius:10px;background:#e9e9ee;text-align:center;cursor:pointer;}
+.tab.active{background:#0a84ff;color:white;}
 
-.header-left { display:flex; align-items:center; gap:10px; }
-.logo { width:42px;height:42px; }
+.top{padding:10px;}
+input{width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee;}
 
-.brand {
-    font-weight:700;
-    font-size:15px;
-    color:#1f4fa3;
-    line-height:1.2;
-}
+#list{display:grid;gap:14px;padding:10px;}
+@media(min-width:600px){#list{grid-template-columns:repeat(2,1fr);}}
+@media(min-width:1024px){#list{grid-template-columns:repeat(3,1fr);}}
 
-.sub { font-size:11px;color:#666; }
+.card{background:white;border-radius:18px;padding:12px;box-shadow:0 4px 18px rgba(0,0,0,0.08);position:relative;}
+.fav{position:absolute;right:12px;top:10px;font-size:20px;cursor:pointer;}
+.card img{width:100%;height:150px;object-fit:contain;background:#f7f7f7;border-radius:12px;}
 
-.header-right {
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-    font-size:12px;
-}
+.title{font-size:16px;font-weight:600;margin-top:8px;}
+.desc{font-size:13px;color:#666;margin-top:6px;}
+.form{margin-top:4px;color:#0a84ff;font-size:13px;}
 
-.contact { display:flex; align-items:center; gap:6px; }
-.icon { width:18px; text-align:center; }
+mark{background:#ffe066;padding:0 2px;border-radius:3px;}
 
-/* MOBILE */
-@media (max-width:600px){
-    .header { flex-direction:column;align-items:flex-start; }
-}
-
-/* TABS */
-.tabs { display:flex;gap:8px;padding:10px; }
-
-.tab {
-    flex:1;
-    padding:10px;
-    border-radius:10px;
-    background:#e9e9ee;
-    text-align:center;
-    cursor:pointer;
-}
-
-.tab.active { background:#0a84ff;color:white; }
-
-/* SEARCH */
-.top { padding:10px; }
-
-input {
-    width:100%;
-    padding:12px;
-    border-radius:12px;
-    border:none;
-    background:#e9e9ee;
-}
-
-/* GRID */
-#list {
-    display:grid;
-    gap:14px;
-    padding:10px;
-    grid-template-columns:1fr;
-}
-
-@media (min-width:600px){
-    #list { grid-template-columns:repeat(2,1fr); }
-}
-
-@media (min-width:1024px){
-    #list { grid-template-columns:repeat(3,1fr); }
-}
-
-/* CARD */
-.card {
-    background:white;
-    border-radius:18px;
-    padding:12px;
-    box-shadow:0 4px 18px rgba(0,0,0,0.08);
-    position:relative;
-}
-
-.fav {
-    position:absolute;
-    right:12px;
-    top:10px;
-    font-size:20px;
-    cursor:pointer;
-}
-
-.card img {
-    width:100%;
-    height:150px;
-    object-fit:contain;
-    background:#f7f7f7;
-    border-radius:12px;
-}
-
-.title { font-size:16px;font-weight:600;margin-top:8px; }
-.desc { font-size:13px;color:#666;margin-top:6px; }
-.form { margin-top:4px;color:#0a84ff;font-size:13px; }
-
-.btn {
-    margin-top:12px;
-    background:#0a84ff;
-    color:white;
-    padding:10px;
-    text-align:center;
-    border-radius:12px;
-    cursor:pointer;
-}
-
-.empty { padding:30px;text-align:center;color:#888; }
+.btn{margin-top:12px;background:#0a84ff;color:white;padding:10px;text-align:center;border-radius:12px;cursor:pointer;}
+.empty{padding:30px;text-align:center;color:#888;}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-    <div class="header-left">
-        <img src="logo.png" class="logo">
-        <div>
-            <div class="brand">
-                JURABEK<br>
-                Laboratories LTD
-            </div>
-            <div class="sub">
-                Производство лекарственных средств широкого спектра
-            </div>
-        </div>
-    </div>
+<div class="header-left">
+<img src="logo.png" class="logo">
+<div>
+<div class="brand">JURABEK<br>Laboratories LTD</div>
+<div class="sub">Производство лекарственных средств широкого спектра</div>
+</div>
+</div>
 
-    <div class="header-right">
-        <div class="contact"><span class="icon">📞</span> +998 (78) 150-03-03</div>
-        <div class="contact"><span class="icon">✉️</span> info@jurabek.uz</div>
-        <div class="contact"><span class="icon">📅</span> Пн–Пт 9:00–18:00</div>
-    </div>
+<div class="header-right">
+<div class="contact"><span class="icon">📞</span> +998 (78) 150-03-03</div>
+<div class="contact"><span class="icon">✉️</span> info@jurabek.uz</div>
+<div class="contact"><span class="icon">📅</span> Пн–Пт 9:00–18:00</div>
+</div>
 </div>
 
 <div class="tabs">
-    <div class="tab active" id="tab-all" onclick="setTab('all')">Все</div>
-    <div class="tab" id="tab-fav" onclick="setTab('fav')">Избранное</div>
-    <div class="tab" id="tab-recent" onclick="setTab('recent')">Недавно</div>
+<div class="tab active" id="tab-all" onclick="setTab('all')">Все</div>
+<div class="tab" id="tab-fav" onclick="setTab('fav')">Избранное</div>
+<div class="tab" id="tab-recent" onclick="setTab('recent')">Недавно</div>
 </div>
 
 <div class="top">
-    <input id="search" placeholder="Поиск..." oninput="debounceSearch()">
+<input id="search" placeholder="Поиск..." oninput="debounceSearch()">
 </div>
 
 <div id="list"></div>
@@ -178,138 +80,166 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 tg.enableClosingConfirmation();
 
-let isDetailOpen = false;
-let scrollPos = 0;
+let isDetailOpen=false;
+let scrollPos=0;
 
-let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
-let recent = JSON.parse(localStorage.getItem("recent") || "[]");
+let favorites=JSON.parse(localStorage.getItem("fav")||"[]");
+let recent=JSON.parse(localStorage.getItem("recent")||"[]");
 
-let currentTab = "all";
-let currentList = [...drugs];
-let debounceTimer = null;
+let currentTab="all";
+let currentList=[...drugs];
+let debounceTimer=null;
 
-function norm(t){ return (t||"").toLowerCase().trim(); }
+function norm(t){return (t||"").toLowerCase().trim();}
 
-function setTab(tab){
-    currentTab = tab;
-    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-    document.getElementById("tab-"+tab).classList.add("active");
-    search();
+/* ==== СИНОНИМЫ ==== */
+const synonyms={
+"сердце":["кардио","гипертон","давлен"],
+"кашель":["кашл","бронх"],
+};
+
+/* ==== ИНДЕКС ==== */
+let searchIndex=drugs.map(d=>({
+ref:d,
+name:norm(d.name),
+ind:norm(d.indications),
+sost:norm(d.sostav)
+}));
+
+/* ==== FUZZY ==== */
+function fuzzyMatch(text,q){
+return text.includes(q) || levenshtein(text,q)<=1;
 }
 
-function toggleFav(name){
-    if(favorites.includes(name)){
-        favorites = favorites.filter(f=>f!==name);
-    } else favorites.push(name);
-
-    localStorage.setItem("fav", JSON.stringify(favorites));
-    search();
+function levenshtein(a,b){
+if(Math.abs(a.length-b.length)>1)return 2;
+let dp=[];
+for(let i=0;i<=a.length;i++){dp[i]=[i];}
+for(let j=1;j<=b.length;j++){dp[0][j]=j;}
+for(let i=1;i<=a.length;i++){
+for(let j=1;j<=b.length;j++){
+dp[i][j]=Math.min(
+dp[i-1][j]+1,
+dp[i][j-1]+1,
+dp[i-1][j-1]+(a[i-1]==b[j-1]?0:1)
+);
+}}
+return dp[a.length][b.length];
 }
 
+/* ==== HIGHLIGHT ==== */
+function highlight(text,q){
+if(!q)return text;
+return text.replace(new RegExp(`(${q})`,"gi"),"<mark>$1</mark>");
+}
+
+/* ==== SEARCH ==== */
 function search(){
-    isDetailOpen = false;
-    tg.BackButton.hide();
+isDetailOpen=false;
+tg.BackButton.hide();
 
-    let q = norm(document.getElementById("search").value);
+let q=norm(document.getElementById("search").value);
 
-    let base = currentTab==="fav"
-        ? drugs.filter(d=>favorites.includes(d.name))
-        : currentTab==="recent"
-        ? recent.map(n=>drugs.find(d=>d.name===n)).filter(Boolean)
-        : drugs;
+let base=currentTab==="fav"
+?drugs.filter(d=>favorites.includes(d.name))
+:currentTab==="recent"
+?recent.map(n=>drugs.find(d=>d.name===n)).filter(Boolean)
+:drugs;
 
-    if(!q){ render(base); return; }
+if(!q){render(base,q);return;}
 
-    let result = base.filter(d=>{
-        let text = norm(d.name + " " + d.indications);
-        return text.includes(q);
-    });
-
-    render(result);
-}
-
-function addRecent(name){
-    recent = recent.filter(r=>r!==name);
-    recent.unshift(name);
-    recent = recent.slice(0,5);
-    localStorage.setItem("recent", JSON.stringify(recent));
-}
-
-function render(data){
-    currentList = data;
-
-    if(data.length===0){
-        document.getElementById("list").innerHTML =
-        `<div class="empty">Ничего не найдено</div>`;
-        return;
-    }
-
-    let html="";
-
-    data.forEach((d,i)=>{
-        html+=`
-        <div class="card">
-            <div class="fav" onclick="toggleFav('${d.name}')">
-                ${favorites.includes(d.name)?"❤️":"🤍"}
-            </div>
-
-            ${d.photo?`<img src="${d.photo}" loading="lazy">`:''}
-
-            <div class="title">${d.name}</div>
-            <div class="desc">${d.sostav||''}</div>
-
-            ${(d.form||d.dosage)?`
-            <div class="form">
-                ${d.form||''} (${d.dosage||''})
-            </div>`:''}
-
-            <div class="btn" onclick="openDrug(${i})">Открыть</div>
-        </div>`;
-    });
-
-    document.getElementById("list").innerHTML = html;
-}
-
-function openDrug(i){
-    let d = currentList[i];
-
-    scrollPos = window.scrollY;
-    addRecent(d.name);
-
-    isDetailOpen = true;
-    tg.BackButton.show();
-
-    document.getElementById("list").innerHTML = `
-    <div class="card">
-        ${d.photo?`<img src="${d.photo}">`:''}
-        <div class="title">${d.name}</div>
-        <div class="desc">
-            <b>Состав:</b><br>${d.sostav||'-'}<br><br>
-            <b>Форма:</b><br>${d.form||''} (${d.dosage||''})<br><br>
-            <b>Показания:</b><br>${d.indications||'-'}
-        </div>
-        <div class="btn" onclick="goBack()">← Назад</div>
-    </div>`;
-}
-
-function goBack(){
-    isDetailOpen = false;
-    tg.BackButton.hide();
-
-    search();
-
-    setTimeout(()=>{
-        window.scrollTo(0, scrollPos);
-    }, 0);
-}
-
-tg.BackButton.onClick(()=>{
-    if(isDetailOpen) goBack();
+let words=q.split(" ");
+words.forEach(w=>{
+if(synonyms[w])words.push(...synonyms[w]);
 });
 
+let result=searchIndex
+.map(item=>{
+let score=0;
+
+words.forEach(w=>{
+if(fuzzyMatch(item.name,w))score+=3;
+if(fuzzyMatch(item.ind,w))score+=2;
+if(fuzzyMatch(item.sost,w))score+=1;
+});
+
+return {ref:item.ref,score};
+})
+.filter(r=>r.score>0 && base.includes(r.ref))
+.sort((a,b)=>b.score-a.score)
+.map(r=>r.ref);
+
+render(result,q);
+}
+
+/* ==== RENDER ==== */
+function render(data,q=""){
+currentList=data;
+
+if(data.length===0){
+document.getElementById("list").innerHTML=`<div class="empty">Ничего не найдено</div>`;
+return;
+}
+
+let html="";
+
+data.forEach((d,i)=>{
+html+=`
+<div class="card">
+<div class="fav" onclick="toggleFav('${d.name}')">
+${favorites.includes(d.name)?"❤️":"🤍"}
+</div>
+
+${d.photo?`<img src="${d.photo}" loading="lazy">`:''}
+
+<div class="title">${highlight(d.name,q)}</div>
+<div class="desc">${highlight(d.sostav||'',q)}</div>
+
+<div class="form">
+${highlight(d.form||'',q)} (${highlight(d.dosage||'',q)})
+</div>
+
+<div class="btn" onclick="openDrug(${i})">Открыть</div>
+</div>`;
+});
+
+document.getElementById("list").innerHTML=html;
+}
+
+/* ==== OPEN ==== */
+function openDrug(i){
+let d=currentList[i];
+
+scrollPos=window.scrollY;
+isDetailOpen=true;
+tg.BackButton.show();
+
+document.getElementById("list").innerHTML=`
+<div class="card">
+${d.photo?`<img src="${d.photo}">`:''}
+<div class="title">${d.name}</div>
+<div class="desc">
+<b>Состав:</b><br>${d.sostav||'-'}<br><br>
+<b>Форма:</b><br>${d.form||''} (${d.dosage||''})<br><br>
+<b>Показания:</b><br>${d.indications||'-'}
+</div>
+<div class="btn" onclick="goBack()">← Назад</div>
+</div>`;
+}
+
+/* ==== BACK ==== */
+function goBack(){
+isDetailOpen=false;
+tg.BackButton.hide();
+search();
+setTimeout(()=>window.scrollTo(0,scrollPos),0);
+}
+
+tg.BackButton.onClick(()=>{if(isDetailOpen)goBack();});
+
 function debounceSearch(){
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(search,200);
+clearTimeout(debounceTimer);
+debounceTimer=setTimeout(search,200);
 }
 
 search();
