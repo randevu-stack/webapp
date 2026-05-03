@@ -8,72 +8,77 @@
 <script src="data.js"></script>
 
 <style>
-body {
+body{
     margin:0;
     font-family:-apple-system, Arial;
     background:#f2f2f7;
 }
 
 /* HEADER */
-.header {
+.header{
     background:#f4f4f4;
     padding:12px;
     border-bottom:1px solid #ddd;
 }
 
-.header-top {
+.header-top{
     display:flex;
-    align-items:center;
     gap:10px;
+    align-items:center;
 }
 
-.logo { width:42px;height:42px; }
+.logo{ width:42px; }
 
-.brand {
+.brand{
     font-weight:700;
     color:#1f4fa3;
-    line-height:1.2;
 }
 
-.sub { font-size:11px;color:#666; }
+.sub{
+    font-size:11px;
+    color:#666;
+}
 
-.contacts { margin-top:8px;font-size:12px; }
+.contacts{
+    margin-top:8px;
+    font-size:12px;
+}
 
 /* SEARCH */
-.top { padding:10px; }
+.top{ padding:10px; }
 
-input {
+input{
     width:100%;
     padding:12px;
-    border-radius:12px;
     border:none;
+    border-radius:12px;
     background:#e9e9ee;
 }
 
 /* GRID */
-#list {
+#list{
     display:grid;
     gap:14px;
     padding:10px;
 }
 
-@media (min-width:600px){
-    #list { grid-template-columns:repeat(2,1fr); }
+@media(min-width:600px){
+    #list{ grid-template-columns:repeat(2,1fr); }
 }
 
-@media (min-width:1024px){
-    #list { grid-template-columns:repeat(3,1fr); }
+@media(min-width:1024px){
+    #list{ grid-template-columns:repeat(3,1fr); }
 }
 
 /* CARD */
-.card {
+.card{
     background:white;
     border-radius:18px;
     padding:12px;
     box-shadow:0 4px 18px rgba(0,0,0,0.08);
 }
 
-.card img {
+.card img{
     width:100%;
     height:150px;
     object-fit:contain;
@@ -81,25 +86,28 @@ input {
     border-radius:12px;
 }
 
-.big-img {
+.big-img{
     height:220px;
 }
 
-.title { font-weight:600;margin-top:8px; }
+.title{
+    font-weight:600;
+    margin-top:8px;
+}
 
-.form {
+.form{
     font-size:13px;
     color:#0a84ff;
     margin-top:4px;
 }
 
-.desc {
+.desc{
     font-size:13px;
     color:#666;
     margin-top:6px;
 }
 
-.btn {
+.btn{
     margin-top:10px;
     background:#0a84ff;
     color:white;
@@ -109,9 +117,11 @@ input {
     cursor:pointer;
 }
 
-.btn.green { background:#34c759; }
+.btn.green{
+    background:#34c759;
+}
 
-.empty {
+.empty{
     padding:30px;
     text-align:center;
     color:#888;
@@ -126,7 +136,7 @@ input {
         <img src="logo.png" class="logo">
         <div>
             <div class="brand">JURABEK<br>Laboratories LTD</div>
-            <div class="sub">Производство лекарственных средств широкого спектра</div>
+            <div class="sub">Производство лекарственных средств</div>
         </div>
     </div>
 
@@ -151,18 +161,14 @@ let isDetailOpen = false;
 let scrollPos = 0;
 let currentList = [...drugs];
 
-/* ===== НОРМАЛИЗАЦИЯ (УЛУЧШЕННАЯ) ===== */
+/* ===== НОРМАЛИЗАЦИЯ ===== */
 function norm(t){
-    return (t||"")
-        .toLowerCase()
-        .replace(/\s+/g," ")
-        .trim();
+    return (t||"").toLowerCase().trim();
 }
 
-/* ===== ПОЛУЧИТЬ ПАРАМЕТР ===== */
+/* ===== ПАРАМЕТР ===== */
 function getParam(){
-    const params = new URLSearchParams(window.location.search);
-    return params.get("drug");
+    return new URLSearchParams(window.location.search).get("drug");
 }
 
 /* ===== ПОИСК ===== */
@@ -178,7 +184,7 @@ function search(){
     }
 
     let res = drugs.filter(d=>{
-        let text = norm(d.name + " " + d.indications + " " + d.sostav);
+        let text = norm(d.name + d.indications + d.sostav);
         return text.includes(q);
     });
 
@@ -189,9 +195,9 @@ function search(){
 function render(data){
     currentList = data;
 
-    if(data.length === 0){
+    if(!data.length){
         document.getElementById("list").innerHTML =
-            `<div class="empty">Ничего не найдено</div>`;
+            '<div class="empty">Ничего не найдено</div>';
         return;
     }
 
@@ -201,16 +207,18 @@ function render(data){
         html += `
         <div class="card">
 
-            ${d.photo ? `<img src="${d.photo}" loading="lazy">` : ''}
+            ${d.photo ? `<img src="${d.photo}">` : ''}
 
             <div class="title">${d.name}</div>
 
             ${(d.form || d.dosage) ? `
             <div class="form">
-                ${d.form || ''} ${d.dosage ? '(' + d.dosage + ')' : ''}
+                ${d.form || ''} ${d.dosage ? '('+d.dosage+')' : ''}
             </div>` : ''}
 
-            <div class="btn" onclick="openDrug(${i})">Открыть</div>
+            <div class="btn" onclick="openDrug(${i})">
+                Открыть
+            </div>
 
         </div>`;
     });
@@ -218,7 +226,7 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
-/* ===== ОТКРЫТИЕ ===== */
+/* ===== ОТКРЫТЬ ===== */
 function openDrug(i){
     let d = currentList[i];
 
@@ -237,7 +245,7 @@ function openDrug(i){
             <b>Состав:</b><br>${d.sostav || '-'}<br><br>
 
             <b>Форма:</b><br>
-            ${d.form || '-'} ${d.dosage ? '(' + d.dosage + ')' : ''}<br><br>
+            ${d.form || '-'} ${d.dosage ? '('+d.dosage+')' : ''}<br><br>
 
             <b>Показания:</b><br>
             ${d.indications || '-'}
@@ -250,23 +258,37 @@ function openDrug(i){
             🌐 Открыть сайт
         </div>` : ''}
 
-        <div class="btn" onclick="shareDrug('${d.name}')">
-            📤 Поделиться
+        <div class="btn" onclick="shareCard('${d.name}')">
+            📤 Поделиться карточкой
+        </div>
+
+        <div class="btn" onclick="shareLink('${d.name}')">
+            🔗 Поделиться ссылкой
         </div>
 
     </div>`;
 }
 
-/* ===== SHARE (ИСПРАВЛЕНО) ===== */
-function shareDrug(name){
+/* ===== SHARE КАРТОЧКА (через бота) ===== */
+function shareCard(name){
     let bot = "jurabek_helper_bot";
 
-    // 🔥 кодируем имя правильно
     let encoded = encodeURIComponent(name);
 
-    let deepLink = `https://t.me/${bot}?startapp=drug_${encoded}`;
+    let link = `https://t.me/${bot}?start=drug_${encoded}`;
 
-    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(deepLink)}`;
+    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
+
+    tg.openLink(shareUrl);
+}
+
+/* ===== SHARE ССЫЛКА (WebApp) ===== */
+function shareLink(name){
+    let encoded = encodeURIComponent(name);
+
+    let link = `https://webapp-alpha-nine-95.vercel.app?drug=${encoded}`;
+
+    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
 
     tg.openLink(shareUrl);
 }
@@ -277,32 +299,28 @@ function goBack(){
     tg.BackButton.hide();
     render(drugs);
 
-    setTimeout(()=>{
-        window.scrollTo(0, scrollPos);
-    }, 0);
+    setTimeout(()=>window.scrollTo(0, scrollPos), 0);
 }
 
-/* ===== АВТООТКРЫТИЕ (КРИТИЧНО) ===== */
+/* ===== AUTO OPEN ===== */
 function autoOpen(){
     let key = getParam();
     if(!key) return;
 
     key = decodeURIComponent(key);
-    key = norm(key);
 
-    let index = drugs.findIndex(d => norm(d.name) === key);
+    let index = drugs.findIndex(d => norm(d.name) === norm(key));
 
     if(index !== -1){
         openDrug(index);
     }
 }
 
-/* BACK BUTTON */
 tg.BackButton.onClick(()=>{
     if(isDetailOpen) goBack();
 });
 
-/* START */
+/* СТАРТ */
 render(drugs);
 autoOpen();
 </script>
