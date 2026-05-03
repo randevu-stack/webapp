@@ -15,14 +15,12 @@ body {
     background: #f2f2f7;
 }
 
-/* HEADER */
 .header {
     padding: 14px;
     font-size: 18px;
     font-weight: 600;
 }
 
-/* SEARCH */
 .top {
     padding: 10px;
 }
@@ -36,14 +34,12 @@ input {
     font-size: 14px;
 }
 
-/* LIST */
 #list {
     display: grid;
     gap: 14px;
     padding: 10px;
 }
 
-/* CARD */
 .card {
     background: white;
     border-radius: 18px;
@@ -51,7 +47,6 @@ input {
     box-shadow: 0 4px 18px rgba(0,0,0,0.08);
 }
 
-/* IMAGE */
 .card img {
     width: 100%;
     height: 150px;
@@ -65,7 +60,6 @@ input {
     cursor: pointer;
 }
 
-/* TEXT */
 .title {
     font-size: 17px;
     font-weight: 600;
@@ -79,7 +73,6 @@ input {
     line-height: 1.4;
 }
 
-/* BUTTON */
 .btn {
     margin-top: 12px;
     background: #0a84ff;
@@ -87,7 +80,6 @@ input {
     text-align: center;
     padding: 11px;
     border-radius: 12px;
-    font-weight: 500;
     cursor: pointer;
 }
 
@@ -95,14 +87,14 @@ input {
     background: #34c759;
 }
 
-/* ===== ZOOM ===== */
+/* ZOOM */
 .zoom-modal {
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.9);
+    top: 0;
+    left: 0;
     display: none;
     justify-content: center;
     align-items: center;
@@ -112,14 +104,13 @@ input {
 .zoom-modal img {
     max-width: 90%;
     max-height: 90%;
-    border-radius: 12px;
 }
 
 .zoom-close {
     position: absolute;
     top: 20px;
     right: 20px;
-    font-size: 28px;
+    font-size: 30px;
     color: white;
     cursor: pointer;
 }
@@ -131,12 +122,11 @@ input {
 <div class="header">Jurabek Laboratories 🧬</div>
 
 <div class="top">
-    <input id="search" placeholder="Поиск препаратов..." oninput="search()">
+    <input id="search" placeholder="Поиск по названию и симптомам..." oninput="search()">
 </div>
 
 <div id="list"></div>
 
-<!-- ZOOM -->
 <div id="zoomModal" class="zoom-modal" onclick="closeZoom()">
     <span class="zoom-close">✕</span>
     <img id="zoomImg">
@@ -151,24 +141,22 @@ tg.enableClosingConfirmation();
 let isDetailOpen = false;
 let currentList = [...drugs];
 
-// ===== НОРМАЛИЗАЦИЯ =====
+// ===== NORMALIZE =====
 function norm(t){
     return (t || "").toLowerCase().trim();
 }
 
-// ===== РЕНДЕР =====
+// ===== RENDER =====
 function render(data){
     isDetailOpen = false;
     tg.BackButton.hide();
-
     currentList = data;
 
     let html = "";
 
-    data.forEach((d, index)=>{
+    data.forEach((d, i)=>{
         html += `
         <div class="card">
-
             ${d.photo ? `<img src="${d.photo}">` : ''}
 
             <div class="title">${d.name}</div>
@@ -179,10 +167,7 @@ function render(data){
                 ${d.dosage ? ' (' + d.dosage + ')' : ''}
             </div>
 
-            <div class="btn" onclick="openDrug(${index})">
-                Открыть
-            </div>
-
+            <div class="btn" onclick="openDrug(${i})">Открыть</div>
         </div>
         `;
     });
@@ -190,7 +175,7 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
-// ===== ПОИСК =====
+// ===== SEARCH (название + симптомы) =====
 function search(){
     let q = norm(document.getElementById("search").value);
 
@@ -202,11 +187,11 @@ function search(){
     let exact = [];
     let starts = [];
     let contains = [];
+    let symptoms = [];
 
     drugs.forEach(d=>{
         let name = norm(d.name);
-        let indications = norm(d.indications);
-        let sostav = norm(d.sostav);
+        let ind = norm(d.indications);
 
         if(name === q){
             exact.push(d);
@@ -218,80 +203,71 @@ function search(){
             return;
         }
 
-        if(indications.includes(q) || sostav.includes(q)){
+        if(name.includes(q)){
             contains.push(d);
             return;
         }
 
-        if(name.includes(q)){
-            contains.push(d);
+        if(ind.includes(q)){
+            symptoms.push(d);
         }
     });
 
-    const result = [...exact, ...starts, ...contains];
+    let result = [...exact, ...starts, ...contains, ...symptoms];
 
     if(result.length === 0){
-        document.getElementById("list").innerHTML = `
-            <div style="padding:20px; text-align:center; color:#888;">
-                Ничего не найдено
-            </div>
-        `;
+        document.getElementById("list").innerHTML =
+        `<div style="padding:20px;text-align:center;color:#888;">
+            Ничего не найдено
+        </div>`;
         return;
     }
 
     render(result);
 }
 
-// ===== ОТКРЫТИЕ =====
-function openDrug(index){
+// ===== OPEN =====
+function openDrug(i){
     isDetailOpen = true;
     tg.BackButton.show();
 
-    const d = currentList[index];
+    let d = currentList[i];
 
     document.getElementById("list").innerHTML = `
-        <div class="card">
+    <div class="card">
 
-            ${d.photo ? `<img src="${d.photo}" class="big-img" onclick="event.stopPropagation(); openZoom('${d.photo}')">` : ''}
+        ${d.photo ? `<img src="${d.photo}" class="big-img" onclick="event.stopPropagation(); openZoom('${d.photo}')">` : ''}
 
-            <div class="title">${d.name}</div>
+        <div class="title">${d.name}</div>
 
-            <div class="desc">
-                <b>Состав:</b><br>${d.sostav || '-'}<br><br>
+        <div class="desc">
+            <b>Состав:</b><br>${d.sostav || '-'}<br><br>
 
-                <b>Форма:</b><br>
-                ${d.form || ''} ${d.dosage ? '(' + d.dosage + ')' : ''}<br><br>
+            <b>Форма:</b><br>
+            ${d.form || ''} ${d.dosage ? '('+d.dosage+')' : ''}<br><br>
 
-                <b>Показания:</b><br>
-                ${d.indications || '-'}
-            </div>
-
-            <div class="btn" onclick="goBack()">← Назад</div>
-
-            ${d.url ? `
-            <div class="btn green" onclick="window.open('${d.url}', '_blank')">
-                Перейти на сайт
-            </div>
-            ` : ''}
-
+            <b>Показания:</b><br>
+            ${d.indications || '-'}
         </div>
-    `;
+
+        <div class="btn" onclick="goBack()">← Назад</div>
+
+        ${d.url ? `<div class="btn green" onclick="window.open('${d.url}','_blank')">Перейти на сайт</div>` : ''}
+
+    </div>`;
 }
 
-// ===== НАЗАД =====
+// ===== BACK =====
 function goBack(){
     isDetailOpen = false;
     tg.BackButton.hide();
-    search(); // 🔥 сохраняем поиск
+    search(); // сохраняем поиск
 }
 
 // ===== ZOOM =====
 function openZoom(src){
-    const modal = document.getElementById("zoomModal");
-    const img = document.getElementById("zoomImg");
-
-    img.src = src;
-    modal.style.display = "flex";
+    document.getElementById("zoomImg").src = src;
+    document.getElementById("zoomModal").style.display = "flex";
 }
 
 function closeZoom(){
@@ -299,13 +275,11 @@ function closeZoom(){
 }
 
 // ===== TELEGRAM BACK =====
-tg.BackButton.onClick(function () {
-    if (isDetailOpen) {
-        goBack();
-    }
+tg.BackButton.onClick(()=>{
+    if(isDetailOpen) goBack();
 });
 
-// ===== СТАРТ =====
+// ===== START =====
 render(drugs);
 
 </script>
