@@ -146,8 +146,8 @@ let currentList = [...drugs];
 
 function norm(t){ return (t || "").toLowerCase(); }
 
-/* ===== GET PARAM ===== */
-function getParam(){
+/* ===== ПАРАМЕТР ===== */
+function getDrugParam(){
     const params = new URLSearchParams(window.location.search);
     return params.get("drug");
 }
@@ -245,16 +245,14 @@ function openDrug(i){
     `;
 }
 
-/* ===== SHARE (PREVIEW) ===== */
+/* ===== SHARE ===== */
 function shareDeepLink(name){
-    let bot = "jurabek_helper_bot"; //
+    let bot = "jurabek_helper_bot";
 
     let payload = "drug_" + encodeURIComponent(name) + "_preview";
-
     let link = "https://t.me/" + bot + "?start=" + payload;
-    let url = "https://t.me/share/url?url=" + encodeURIComponent(link);
 
-    tg.openLink(url);
+    tg.openLink("https://t.me/share/url?url=" + encodeURIComponent(link));
 }
 
 /* ===== НАЗАД ===== */
@@ -270,7 +268,7 @@ function goBack(){
 
 /* ===== AUTO OPEN ===== */
 function autoOpen(){
-    let key = getParam();
+    let key = getDrugParam();
     if(!key) return;
 
     let index = drugs.findIndex(d => norm(d.name) === norm(key));
