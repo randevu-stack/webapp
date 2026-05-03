@@ -9,18 +9,34 @@
 <script src="data.js"></script>
 
 <style>
-body {margin:0;font-family:-apple-system,Arial;background:#f2f2f7;}
-
-.header {padding:14px;font-size:18px;font-weight:600;}
-
-.top {padding:10px; position: relative;}
-
-input {
-    width:100%;padding:12px;border-radius:12px;
-    border:none;background:#e9e9ee;font-size:14px;
+body {
+    margin:0;
+    font-family:-apple-system, Arial;
+    background:#f2f2f7;
 }
 
-/* подсказки */
+/* HEADER */
+.header {
+    padding:14px;
+    font-size:18px;
+    font-weight:600;
+}
+
+/* SEARCH */
+.top {
+    padding:10px;
+    position:relative;
+}
+
+input {
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:none;
+    background:#e9e9ee;
+}
+
+/* SUGGESTIONS */
 .suggestions {
     position:absolute;
     top:52px;
@@ -28,10 +44,8 @@ input {
     right:10px;
     background:white;
     border-radius:12px;
-    box-shadow:0 4px 18px rgba(0,0,0,0.1);
+    box-shadow:0 6px 20px rgba(0,0,0,0.1);
     z-index:1000;
-    max-height:200px;
-    overflow:auto;
 }
 
 .suggestion {
@@ -40,57 +54,102 @@ input {
     cursor:pointer;
 }
 
-.suggestion:last-child {border-bottom:none;}
+/* LIST */
+#list {
+    display:grid;
+    gap:14px;
+    padding:10px;
+}
 
-#list {display:grid;gap:14px;padding:10px;}
-
+/* CARD */
 .card {
-    background:white;border-radius:18px;
-    padding:12px;box-shadow:0 4px 18px rgba(0,0,0,0.08);
+    background:white;
+    border-radius:18px;
+    padding:12px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.08);
+    position:relative;
 }
 
-.card img {
-    width:100%;height:150px;
-    object-fit:contain;border-radius:12px;
-    background:#f7f7f7;
-}
-
-.big-img {height:220px !important; cursor:pointer;}
-
-.title {font-size:17px;font-weight:600;margin-top:8px;}
-
-.desc {font-size:13px;color:#666;margin-top:6px;}
-
-.btn {
-    margin-top:10px;background:#0a84ff;color:white;
-    text-align:center;padding:10px;border-radius:12px;
-    cursor:pointer;
-}
-
-.btn.green {background:#34c759;}
-
-/* избранное */
+/* FAVORITE */
 .fav {
     position:absolute;
+    right:12px;
     top:10px;
-    right:10px;
     font-size:20px;
     cursor:pointer;
 }
 
-/* zoom */
+/* IMAGE */
+.card img {
+    width:100%;
+    height:150px;
+    object-fit:contain;
+    background:#f7f7f7;
+    border-radius:12px;
+}
+
+.big-img {
+    height:220px !important;
+    cursor:pointer;
+}
+
+/* TEXT */
+.title {
+    font-size:17px;
+    font-weight:600;
+    margin-top:8px;
+}
+
+.desc {
+    font-size:13px;
+    color:#666;
+    margin-top:6px;
+}
+
+.form {
+    margin-top:4px;
+    font-size:13px;
+    color:#0a84ff;
+    font-weight:500;
+}
+
+/* BUTTON */
+.btn {
+    margin-top:12px;
+    background:#0a84ff;
+    color:white;
+    padding:10px;
+    text-align:center;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.btn.green { background:#34c759; }
+
+/* ZOOM */
 .zoom-modal {
-    position:fixed;width:100%;height:100%;
+    position:fixed;
+    width:100%;
+    height:100%;
     background:rgba(0,0,0,0.9);
-    display:none;justify-content:center;align-items:center;
+    display:none;
+    justify-content:center;
+    align-items:center;
     z-index:9999;
 }
 
-.zoom-modal img {max-width:90%;max-height:90%;}
+.zoom-modal img {
+    max-width:90%;
+    max-height:90%;
+}
 
 .zoom-close {
-    position:absolute;top:20px;right:20px;
-    font-size:28px;color:white;cursor:pointer;
+    position:absolute;
+    top:20px;
+    right:20px;
+    font-size:28px;
+    color:white;
+    cursor:pointer;
 }
 </style>
 </head>
@@ -100,12 +159,13 @@ input {
 <div class="header">Jurabek Laboratories 🧬</div>
 
 <div class="top">
-    <input id="search" placeholder="Поиск..." oninput="debounceSearch()">
+    <input id="search" placeholder="Поиск по названию и симптомам..." oninput="debounceSearch()">
     <div id="suggestions" class="suggestions"></div>
 </div>
 
 <div id="list"></div>
 
+<!-- ZOOM -->
 <div id="zoomModal" class="zoom-modal" onclick="closeZoom()">
     <span class="zoom-close">✕</span>
     <img id="zoomImg">
@@ -146,13 +206,13 @@ function render(data){
     let html = "";
 
     data.forEach((d,i)=>{
-        let isFav = favorites.includes(d.name);
+        let fav = favorites.includes(d.name);
 
         html += `
-        <div class="card" style="position:relative">
+        <div class="card">
 
             <div class="fav" onclick="toggleFav('${d.name}')">
-                ${isFav ? "❤️" : "🤍"}
+                ${fav ? "❤️" : "🤍"}
             </div>
 
             ${d.photo ? `<img src="${d.photo}">` : ''}
@@ -160,6 +220,12 @@ function render(data){
             <div class="title">${d.name}</div>
 
             <div class="desc">${d.sostav || ''}</div>
+
+            ${(d.form || d.dosage) ? `
+                <div class="form">
+                    ${d.form || ''} ${d.dosage ? '('+d.dosage+')' : ''}
+                </div>
+            ` : ''}
 
             <div class="btn" onclick="openDrug(${i})">Открыть</div>
         </div>`;
@@ -171,7 +237,6 @@ function render(data){
 // ===== SEARCH =====
 function search(){
     let q = norm(document.getElementById("search").value);
-
     document.getElementById("suggestions").innerHTML = "";
 
     if(!q){
@@ -179,43 +244,38 @@ function search(){
         return;
     }
 
-    let exact=[],starts=[],contains=[],symptoms=[];
+    let exact=[], starts=[], contains=[], symptoms=[];
 
     drugs.forEach(d=>{
-        let name=norm(d.name);
-        let ind=norm(d.indications);
+        let name = norm(d.name);
+        let ind = norm(d.indications);
 
-        if(name===q){ exact.push(d); return; }
+        if(name === q){ exact.push(d); return; }
         if(name.startsWith(q)){ starts.push(d); return; }
         if(name.includes(q)){ contains.push(d); return; }
         if(ind.includes(q)){ symptoms.push(d); }
     });
 
-    let result=[...exact,...starts,...contains,...symptoms];
-    render(result);
-
+    render([...exact,...starts,...contains,...symptoms]);
     showSuggestions(q);
 }
 
 // ===== SUGGESTIONS =====
 function showSuggestions(q){
-    let box=document.getElementById("suggestions");
-    let html="";
-
     let list = drugs
         .filter(d=>norm(d.name).includes(q))
         .slice(0,5);
 
-    list.forEach(d=>{
-        html+=`<div class="suggestion" onclick="selectSuggestion('${d.name}')">${d.name}</div>`;
-    });
+    let html = list.map(d =>
+        `<div class="suggestion" onclick="selectSuggestion('${d.name}')">${d.name}</div>`
+    ).join("");
 
-    box.innerHTML = html;
+    document.getElementById("suggestions").innerHTML = html;
 }
 
 function selectSuggestion(text){
-    document.getElementById("search").value=text;
-    document.getElementById("suggestions").innerHTML="";
+    document.getElementById("search").value = text;
+    document.getElementById("suggestions").innerHTML = "";
     search();
 }
 
@@ -227,12 +287,12 @@ function debounceSearch(){
 
 // ===== OPEN =====
 function openDrug(i){
-    isDetailOpen=true;
+    isDetailOpen = true;
     tg.BackButton.show();
 
-    let d=currentList[i];
+    let d = currentList[i];
 
-    document.getElementById("list").innerHTML=`
+    document.getElementById("list").innerHTML = `
     <div class="card">
 
         ${d.photo ? `<img src="${d.photo}" class="big-img" onclick="event.stopPropagation(); openZoom('${d.photo}')">` : ''}
@@ -240,32 +300,42 @@ function openDrug(i){
         <div class="title">${d.name}</div>
 
         <div class="desc">
-        <b>Состав:</b><br>${d.sostav || '-'}<br><br>
-        <b>Показания:</b><br>${d.indications || '-'}
+            <b>Состав:</b><br>${d.sostav || '-'}<br><br>
+
+            <b>Форма:</b><br>
+            ${d.form || ''} ${d.dosage ? '('+d.dosage+')' : ''}<br><br>
+
+            <b>Показания:</b><br>
+            ${d.indications || '-'}
         </div>
 
         <div class="btn" onclick="goBack()">← Назад</div>
+
+        ${d.url ? `<div class="btn green" onclick="window.open('${d.url}','_blank')">Перейти на сайт</div>` : ''}
     </div>`;
 }
 
 // ===== BACK =====
 function goBack(){
-    isDetailOpen=false;
+    isDetailOpen = false;
     tg.BackButton.hide();
     search();
 }
 
 // ===== ZOOM =====
 function openZoom(src){
-    document.getElementById("zoomImg").src=src;
-    document.getElementById("zoomModal").style.display="flex";
+    document.getElementById("zoomImg").src = src;
+    document.getElementById("zoomModal").style.display = "flex";
 }
+
 function closeZoom(){
-    document.getElementById("zoomModal").style.display="none";
+    document.getElementById("zoomModal").style.display = "none";
 }
 
 // ===== TELEGRAM BACK =====
-tg.BackButton.onClick(()=>{ if(isDetailOpen) goBack(); });
+tg.BackButton.onClick(()=>{
+    if(isDetailOpen) goBack();
+});
 
 // ===== START =====
 render(drugs);
