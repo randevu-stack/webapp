@@ -16,33 +16,17 @@ body {
     margin:auto;
 }
 
-/* HEADER */
 .header {
     background:#f4f4f4;
     padding:12px;
     border-bottom:1px solid #ddd;
 }
 
-.header-top {
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.logo { width:42px;height:42px; }
-
 .brand {
     font-weight:700;
     color:#1f4fa3;
-    line-height:1.2;
 }
 
-.sub { font-size:11px;color:#666; }
-
-.contacts { margin-top:8px;font-size:12px; }
-.contact { display:flex; gap:6px; }
-
-/* SEARCH */
 .top { padding:10px; }
 
 input {
@@ -53,7 +37,6 @@ input {
     background:#e9e9ee;
 }
 
-/* GRID */
 #list {
     display:grid;
     gap:14px;
@@ -63,38 +46,25 @@ input {
 @media (min-width:600px){
     #list { grid-template-columns:repeat(2,1fr); }
 }
-
 @media (min-width:1024px){
     #list { grid-template-columns:repeat(3,1fr); }
 }
 
-/* CARD */
 .card {
     background:white;
     border-radius:18px;
     padding:12px;
-    box-shadow:0 4px 18px rgba(0,0,0,0.08);
 }
 
 .card img {
     width:100%;
     height:150px;
     object-fit:contain;
-    background:#f7f7f7;
-    border-radius:12px;
-}
-
-.big-img {
-    width:100%;
-    height:220px;
-    object-fit:contain;
-    background:#f7f7f7;
-    border-radius:12px;
 }
 
 .title { font-weight:600;margin-top:8px; }
-.desc { font-size:13px;color:#666;margin-top:6px; }
-.form { margin-top:4px;color:#0a84ff;font-size:13px; }
+
+.form { color:#0a84ff;font-size:13px;margin-top:4px; }
 
 .btn {
     margin-top:10px;
@@ -105,29 +75,13 @@ input {
     border-radius:12px;
     cursor:pointer;
 }
-
-.btn.green { background:#34c759; }
-
-.empty { padding:30px;text-align:center;color:#888; }
 </style>
 </head>
 
 <body>
 
 <div class="header">
-    <div class="header-top">
-        <img src="logo.png" class="logo">
-        <div>
-            <div class="brand">JURABEK<br>Laboratories LTD</div>
-            <div class="sub">Производство лекарственных средств широкого спектра</div>
-        </div>
-    </div>
-
-    <div class="contacts">
-        <div class="contact">📞 +998 (78) 150-03-03</div>
-        <div class="contact">✉️ info@jurabek.uz</div>
-        <div class="contact">📅 Пн–Пт 9:00–18:00</div>
-    </div>
+    <div class="brand">JURABEK Laboratories LTD</div>
 </div>
 
 <div class="top">
@@ -140,33 +94,21 @@ input {
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-let isDetailOpen = false;
-let scrollPos = 0;
 let currentList = [...drugs];
-
-function norm(t){ return (t || "").toLowerCase(); }
-
-/* ===== ПАРАМЕТР ===== */
-function getDrugParam(){
-    const params = new URLSearchParams(window.location.search);
-    return params.get("drug");
-}
+let isDetailOpen = false;
 
 /* ===== ПОИСК ===== */
 function search(){
-    isDetailOpen = false;
-    tg.BackButton.hide();
-
-    let q = norm(document.getElementById("search").value);
+    let q = (document.getElementById("search").value || "").toLowerCase();
 
     if(!q){
         render(drugs);
         return;
     }
 
-    let res = drugs.filter(d=>{
-        return norm(d.name + d.indications + d.sostav).includes(q);
-    });
+    let res = drugs.filter(d =>
+        (d.name + d.indications + d.sostav).toLowerCase().includes(q)
+    );
 
     render(res);
 }
@@ -175,19 +117,12 @@ function search(){
 function render(data){
     currentList = data;
 
-    if(data.length === 0){
-        document.getElementById("list").innerHTML =
-            '<div class="empty">Ничего не найдено</div>';
-        return;
-    }
-
     let html = "";
 
     data.forEach((d,i)=>{
         html += `
         <div class="card">
-
-            ${d.photo ? `<img src="${d.photo}" loading="lazy">` : ''}
+            ${d.photo ? `<img src="${d.photo}">` : ''}
 
             <div class="title">${d.name}</div>
 
@@ -197,7 +132,6 @@ function render(data){
             </div>` : ''}
 
             <div class="btn" onclick="openDrug(${i})">Открыть</div>
-
         </div>
         `;
     });
@@ -208,36 +142,29 @@ function render(data){
 /* ===== ОТКРЫТИЕ ===== */
 function openDrug(i){
     let d = currentList[i];
-
-    scrollPos = window.scrollY;
     isDetailOpen = true;
     tg.BackButton.show();
 
     document.getElementById("list").innerHTML = `
     <div class="card">
 
-        ${d.photo ? `<img src="${d.photo}" class="big-img">` : ''}
+        ${d.photo ? `<img src="${d.photo}">` : ''}
 
         <div class="title">${d.name}</div>
 
-        <div class="desc">
-            <b>Состав:</b><br>${d.sostav || '-'}<br><br>
-
-            <b>Форма:</b><br>
-            ${d.form || '-'} ${d.dosage ? '(' + d.dosage + ')' : ''}<br><br>
-
-            <b>Показания:</b><br>
-            ${d.indications || '-'}
+        <div>
+            <b>Состав:</b><br>${d.sostav}<br><br>
+            <b>Показания:</b><br>${d.indications}
         </div>
 
         <div class="btn" onclick="goBack()">← Назад</div>
 
         ${d.url ? `
-        <div class="btn green" onclick="tg.openLink('${d.url}')">
-            🌐 Открыть сайт
+        <div class="btn" onclick="tg.openLink('${d.url}')">
+            🌐 Сайт
         </div>` : ''}
 
-        <div class="btn" onclick="shareDeepLink('${d.name}')">
+        <div class="btn" onclick="share(${d.id})">
             📤 Поделиться
         </div>
 
@@ -245,11 +172,11 @@ function openDrug(i){
     `;
 }
 
-/* ===== SHARE ===== */
-function shareDeepLink(name){
+/* ===== SHARE (ID) ===== */
+function share(id){
     let bot = "jurabek_helper_bot";
 
-    let payload = "drug_" + encodeURIComponent(name) + "_preview";
+    let payload = "drug_" + id + "_preview";
     let link = "https://t.me/" + bot + "?start=" + payload;
 
     tg.openLink("https://t.me/share/url?url=" + encodeURIComponent(link));
@@ -259,19 +186,20 @@ function shareDeepLink(name){
 function goBack(){
     isDetailOpen = false;
     tg.BackButton.hide();
-    search();
-
-    setTimeout(()=>{
-        window.scrollTo(0, scrollPos);
-    }, 0);
+    render(drugs);
 }
 
 /* ===== AUTO OPEN ===== */
 function autoOpen(){
-    let key = getDrugParam();
-    if(!key) return;
+    const params = new URLSearchParams(window.location.search);
+    let id = params.get("drug");
 
-    let index = drugs.findIndex(d => norm(d.name) === norm(key));
+    if(!id) return;
+
+    id = Number(id);
+
+    let index = drugs.findIndex(d => d.id === id);
+
     if(index !== -1){
         openDrug(index);
     }
@@ -281,7 +209,6 @@ tg.BackButton.onClick(()=>{
     if(isDetailOpen) goBack();
 });
 
-/* СТАРТ */
 render(drugs);
 autoOpen();
 </script>

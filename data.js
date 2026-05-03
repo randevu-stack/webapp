@@ -1,5 +1,6 @@
 const drugs = [
-  {
+{
+  id: 1,
     "name": "Торасса",
     "sostav": "Торасемид",
     "form": "Раствор для инъекций",
@@ -8,7 +9,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/torassa_4_ml_no10_8162uzp01.png",
     "url": "https://jurabek.uz/magazin/product/torassa"
   },
-  {
+{
+  id: 2,
     "name": "Ларгин",
     "sostav": "Л-аргинин гидрохлорид",
     "form": "Раствор для инъекций",
@@ -17,7 +19,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/largin.png",
     "url": "https://jurabek.uz/magazin/product/largin"
   },
-  {
+{
+  id: 3,
     "name": "Карблок",
     "sostav": "Эсмолол",
     "form": "раствор для инъекций",
@@ -26,7 +29,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/karblok_10ml_no5.png",
     "url": "https://jurabek.uz/magazin/product/karblok"
   },
-  {
+{
+  id: 4,
     "name": "Добутамин",
     "sostav": "Добутамин",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -35,7 +39,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/dobutamin_no1.png",
     "url": "https://jurabek.uz/magazin/product/dobutamin"
   },
-  {
+{
+  id: 5,
     "name": "Амиодарон",
     "sostav": "Амиодарон",
     "form": "раствор для инъекций",
@@ -44,7 +49,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/amiodaron_no5.jpg",
     "url": "https://jurabek.uz/magazin/product/amiodaron"
   },
-  {
+{
+  id: 6,
     "name": "Энерфос",
     "sostav": "ФДП (фруктоза 1,6 -дифосфат)",
     "form": "Порошок для приготовления инфузионного раствора",
@@ -53,7 +59,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/enerfos.png",
     "url": "https://jurabek.uz/magazin/product/enerfos"
   },
-  {
+{
+  id: 7,
     "name": "Оксиум",
     "sostav": "Мельдоний",
     "form": "раствор для внутримышечного, внутривенного и парабульбарного введения",
@@ -62,7 +69,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/oksium.png",
     "url": "https://jurabek.uz/magazin/product/oksium"
   },
-  {
+{
+  id: 8,
     "name": "Каспаргин (инфузионный раствор)",
     "sostav": "Калия, магния аспартат",
     "form": "раствор для инфузий",
@@ -71,7 +79,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/kaspargin_100_ml.png",
     "url": "https://jurabek.uz/magazin/product/kaspargin-infuzionnyj-rastvor"
   },
-  {
+{
+  id: 9,
     "name": "Каспаргин (концентрат)",
     "sostav": "Калия, магния аспартат",
     "form": "концентрат для приготовления раствора для инфузий",
@@ -80,7 +89,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/kaspargin_5_ml_no5.png",
     "url": "https://jurabek.uz/magazin/product/kaspargin-koncentrat"
   },
-  {
+{
+  id: 10,
     "name": "Кромостаб",
     "sostav": "Натрия кромогликат",
     "form": "капли глазные и назальные 2% и 4 %",
@@ -89,7 +99,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/kromostab_4_kapli.png",
     "url": "https://jurabek.uz/magazin/product/kromostab2"
   },
-  {
+{
+  id: 11,
     "name": "Нубетал",
     "sostav": "Сальбутамол",
     "form": "раствор для ингаляций",
@@ -98,7 +109,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/nubetal.png",
     "url": "https://jurabek.uz/magazin/product/nubetal"
   },
-  {
+{
+  id: 12,
     "name": "Изивент Дуо",
     "sostav": "Сальбутамол+ипратропия бромид",
     "form": "раствор для ингаляций",
@@ -107,7 +119,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/izivent_duo_25_ml_no10_890uzp01_ot_27072020_g.png",
     "url": "https://jurabek.uz/magazin/product/izivent-duo"
   },
-  {
+{
+  id: 13,
     "name": "Изивент",
     "sostav": "Ипратропия бромид",
     "form": "раствор для ингаляций в ампулах (небулах)",
@@ -116,7 +129,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/izivent_025mgml_2_ml_no10_432uzp01_ot_20082020_g.png",
     "url": "https://jurabek.uz/magazin/product/izivent"
   },
-  {
+{
+  id: 14,
     "name": "Ликвин",
     "sostav": "Ацетилцистеин",
     "form": "раствор для инъекций и ингаляций",
@@ -125,7 +139,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/likvin_sirop_5_ml_no10_819uzp01_ot_30092020_g.png",
     "url": "https://jurabek.uz/magazin/product/likvin"
   },
-  {
+{
+  id: 15,
     "name": "Буфесал 3 Гиал, Буфесал 7 Гиал",
     "sostav": "Натрия хлорид, натрия гидрокарбонат, гиалуроновая кислота",
     "form": "раствор для ингаляций и назальных ирригаций",
@@ -134,7 +149,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/bufesal_gial_3.png",
     "url": "https://jurabek.uz/magazin/product/bufesal-3-gial-bufesal-7-gial"
   },
-  {
+{
+  id: 16,
     "name": "Буфесал",
     "sostav": "Натрия хлорид, натрия гидрокарбонат",
     "form": "раствор для ингаляций",
@@ -143,7 +159,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/bufesal.png",
     "url": "https://jurabek.uz/magazin/product/bufesal"
   },
-  {
+{
+  id: 17,
     "name": "Брокс/Брокс Кидс",
     "sostav": "Амброксол",
     "form": "сироп для приема внутрь",
@@ -152,7 +169,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/broks_kids_30_mg_10_ml_1.png",
     "url": "https://jurabek.uz/broks-broks-kids"
   },
-  {
+{
+  id: 18,
     "name": "Февалган",
     "sostav": "Парацетомол",
     "form": "сироп для приема внутрь",
@@ -161,7 +179,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/fevalgan_sirop.png",
     "url": "https://jurabek.uz/magazin/product/fevalgan1"
   },
-  {
+{
+  id: 19,
     "name": "Ифента",
     "sostav": "Ибупрофен",
     "form": "суспензия для приема внутрь",
@@ -170,7 +189,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ifenta.png",
     "url": "https://jurabek.uz/magazin/product/ifenta"
   },
-  {
+{
+  id: 20,
     "name": "Энтеробакт",
     "sostav": "Бациллус Клаузи",
     "form": "суспензия для приема внутрь",
@@ -179,7 +199,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/enterobakt.png",
     "url": "https://jurabek.uz/magazin/product/enterobakt"
   },
-  {
+{
+  id: 21,
     "name": "Хеликаф",
     "sostav": "Плюща листьев экстракт",
     "form": "сироп для приема внутрь",
@@ -188,7 +209,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/helikaf_5_ml_uzr01_ot_24072020_g.png",
     "url": "https://jurabek.uz/magazin/product/helikaf"
   },
-  {
+{
+  id: 22,
     "name": "Брокс Кидс",
     "sostav": "Амброксол",
     "form": "сироп для приема внутрь",
@@ -197,7 +219,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/broks_kids_15_mg_5_ml.png",
     "url": "https://jurabek.uz/magazin/product/broks-kids"
   },
-  {
+{
+  id: 23,
     "name": "Косептол Юни",
     "sostav": "Сульфаметоксазол+триметоприм",
     "form": "суспензия для приема внутрь",
@@ -206,7 +229,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/koseptol_yuni_5_ml.png",
     "url": "https://jurabek.uz/magazin/product/koseptol-yuni"
   },
-  {
+{
+  id: 24,
     "name": "Ирригол",
     "sostav": "Сорбитол + Маннитол",
     "form": "раствор для ирригации в пакетах",
@@ -215,7 +239,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/irrigol_1000_ml.png",
     "url": "https://jurabek.uz/magazin/product/irrigol"
   },
-  {
+{
+  id: 25,
     "name": "Эноксапарин-JL",
     "sostav": "Эноксапарин натрия",
     "form": "раствор для инъекций",
@@ -224,7 +249,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/enoksoparin_2000_me_ml_no1.png",
     "url": "https://jurabek.uz/magazin/product/enoksaparin-jl"
   },
-  {
+{
+  id: 26,
     "name": "Фруктол",
     "sostav": "Фруктоза",
     "form": "раствор для инфузий",
@@ -233,7 +259,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/fruktol_5_100_ml.png",
     "url": "https://jurabek.uz/magazin/product/fruktol"
   },
-  {
+{
+  id: 27,
     "name": "Февалган П",
     "sostav": "Парацетомол",
     "form": "раствор для инфузий",
@@ -242,7 +269,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/fevalgan_p.png",
     "url": "https://jurabek.uz/magazin/product/fevalgan-p"
   },
-  {
+{
+  id: 28,
     "name": "Фаморадин",
     "sostav": "Фамотидин",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -251,7 +279,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/famoradin.png",
     "url": "https://jurabek.uz/magazin/product/famoradin"
   },
-  {
+{
+  id: 29,
     "name": "Урсула",
     "sostav": "Урсодезоксихолевая кислота",
     "form": "суспензия для приема внутрь",
@@ -260,7 +289,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ursula.png",
     "url": "https://jurabek.uz/magazin/product/ursula"
   },
-  {
+{
+  id: 30,
     "name": "Натрия гидрокарбонат",
     "sostav": "Натрия гидрокарбонат",
     "form": "раствор для инфузий",
@@ -269,7 +299,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/natriya_gidrokarbonat_penal.png",
     "url": "https://jurabek.uz/magazin/product/natriya-gidrokarbonat"
   },
-  {
+{
+  id: 31,
     "name": "Маннитол",
     "sostav": "Маннитол",
     "form": "раствор для инфузий",
@@ -278,7 +309,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/mannitol_15_100ml.jpg",
     "url": "https://jurabek.uz/magazin/product/mannitol"
   },
-  {
+{
+  id: 32,
     "name": "Локсанор",
     "sostav": "Лорноксикам",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -287,7 +319,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/no1.png",
     "url": "https://jurabek.uz/magazin/product/loksanor"
   },
-  {
+{
+  id: 33,
     "name": "Дитилин",
     "sostav": "Суксаметония хлорид",
     "form": "раствор для инъекций",
@@ -296,7 +329,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ditilin-5ml-no10.png",
     "url": "https://jurabek.uz/magazin/product/ditilin"
   },
-  {
+{
+  id: 34,
     "name": "Гастрогист",
     "sostav": "Ранитидин",
     "form": "раствор для инъекций",
@@ -305,7 +339,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/gastrogist.png",
     "url": "https://jurabek.uz/magazin/product/gastrogist"
   },
-  {
+{
+  id: 35,
     "name": "Алкалин",
     "sostav": "Трометамол, натрия хлорид, калия хлорид",
     "form": "раствор для инфузий",
@@ -314,7 +349,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/0_2.png",
     "url": "https://jurabek.uz/magazin/product/alkalin"
   },
-  {
+{
+  id: 36,
     "name": "Парамента Кидс",
     "sostav": "Аминокислотный комплекс",
     "form": "раствор для инфузий",
@@ -323,7 +359,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/parementa_kids_7_100_ml.png",
     "url": "https://jurabek.uz/magazin/product/paramenta-kids"
   },
-  {
+{
+  id: 37,
     "name": "Парамента",
     "sostav": "Аминокислотный комплекс",
     "form": "раствор для инфузий",
@@ -332,7 +369,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/parementa_5_100_ml.png",
     "url": "https://jurabek.uz/magazin/product/paramenta"
   },
-  {
+{
+  id: 38,
     "name": "Плазмафор",
     "sostav": "Гидроксиэтилкрахмал (ГЭК 200)",
     "form": "раствор для инфузий",
@@ -341,7 +379,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/0_1.png",
     "url": "https://jurabek.uz/magazin/product/plazmafor"
   },
-  {
+{
+  id: 39,
     "name": "Волюстим плюс",
     "sostav": "Гидроксиэтилкрахмал (ГЭК 130)",
     "form": "раствор для инфузий",
@@ -350,7 +389,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/0564d4ec.png",
     "url": "https://jurabek.uz/magazin/product/volyustim-plyus"
   },
-  {
+{
+  id: 40,
     "name": "Этамзилат",
     "sostav": "Этамзилат",
     "form": "раствор для инъекций",
@@ -359,7 +399,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/etimzilat-no5.jpg",
     "url": "https://jurabek.uz/magazin/product/etamzilat"
   },
-  {
+{
+  id: 41,
     "name": "Гемостакс",
     "sostav": "Транексамовая кислота",
     "form": "раствор для инъекций",
@@ -368,7 +409,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/gemostaks_10-5_ml_5_appula.png",
     "url": "https://jurabek.uz/magazin/product/gemostaks"
   },
-  {
+{
+  id: 42,
     "name": "Эзофаст",
     "sostav": "Эзомепразол",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -377,7 +419,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ezofast.png",
     "url": "https://jurabek.uz/magazin/product/ezofast"
   },
-  {
+{
+  id: 43,
     "name": "Ульсегаст",
     "sostav": "Омепрозол",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -386,7 +429,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ulsegast.png",
     "url": "https://jurabek.uz/magazin/product/ulsegast"
   },
-  {
+{
+  id: 44,
     "name": "Пантипро",
     "sostav": "Пантопрозол",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -395,7 +439,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/pantipro.png",
     "url": "https://jurabek.uz/magazin/product/pantipro"
   },
-  {
+{
+  id: 45,
     "name": "Ринфант",
     "sostav": "Декстроза, Натрия хлор, Калия хлор, Кальция хлорид, Натрия ацетат",
     "form": "раствор для инфузий",
@@ -404,7 +449,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/rinfant_100.png",
     "url": "https://jurabek.uz/magazin/product/rinfant"
   },
-  {
+{
+  id: 46,
     "name": "Рингацет плюс",
     "sostav": "Декстроза, Натрия хлор, Калия хлор, Кальция хлорид, Натрия ацетат",
     "form": "раствор для инфузий",
@@ -413,7 +459,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ringacet_100ml_1.png",
     "url": "https://jurabek.uz/magazin/product/ringacet-plyus"
   },
-  {
+{
+  id: 47,
     "name": "Рингацет",
     "sostav": "Натрия хлорид, калия хлорид, кальция хлорид, магния хлорид, натрия ацетат",
     "form": "раствор для инфузий",
@@ -422,7 +469,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ringacet_100ml.png",
     "url": "https://jurabek.uz/magazin/product/ringacet"
   },
-  {
+{
+  id: 48,
     "name": "Ресорбилон",
     "sostav": "Сорбитол, Натрия Лактат, натрия хлорид, калия хлорид, магния хлорид",
     "form": "",
@@ -431,7 +479,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/resorbilon_100ml.jpg",
     "url": "https://jurabek.uz/magazin/product/resorbilon"
   },
-  {
+{
+  id: 49,
     "name": "Софанест 0,75%",
     "sostav": "Левобупивакаин",
     "form": "раствор для инфузий",
@@ -440,7 +489,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/sofanest_05_10_ml_no10_4118uzp01.png",
     "url": "https://jurabek.uz/magazin/product/sofanest1"
   },
-  {
+{
+  id: 50,
     "name": "Софанест 0,5%",
     "sostav": "Левобупивакаин",
     "form": "раствор для инъекций",
@@ -449,7 +499,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/sofanest_05_10_ml_no10_4117uzp01.png",
     "url": "https://jurabek.uz/magazin/product/sofanest"
   },
-  {
+{
+  id: 51,
     "name": "Лидокаина гидрохлорид",
     "sostav": "Лидокаин",
     "form": "раствор для инъекций",
@@ -458,7 +509,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/lidokain.png",
     "url": "https://jurabek.uz/magazin/product/lidokaina-gidrohlorid"
   },
-  {
+{
+  id: 52,
     "name": "Бупилонг гипер",
     "sostav": "Бупивакаин+Декстроза",
     "form": "раствор для инъекций",
@@ -467,7 +519,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/3d.gif",
     "url": "https://jurabek.uz/magazin/product/bupilong-giper"
   },
-  {
+{
+  id: 53,
     "name": "Блокаст 1%",
     "sostav": "Ропивакаин",
     "form": "раствор для инъекций",
@@ -476,7 +529,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/blokast_02_10_ml_no5_4108uzp01_1.png",
     "url": "https://jurabek.uz/magazin/product/blokast3"
   },
-  {
+{
+  id: 54,
     "name": "Блокаст 0,75%",
     "sostav": "Ропивакаин",
     "form": "раствор для инъекций",
@@ -485,7 +539,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/blokast_02_10_ml_no5_4112uzp01.png",
     "url": "https://jurabek.uz/magazin/product/blokast2"
   },
-  {
+{
+  id: 55,
     "name": "Блокаст 0,5%",
     "sostav": "Ропивакаин",
     "form": "раствор для инъекций",
@@ -494,7 +549,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/blokast_02_5_ml_no5_4105uzp01.png",
     "url": "https://jurabek.uz/magazin/product/blokast1"
   },
-  {
+{
+  id: 56,
     "name": "Артисофт",
     "sostav": "Артикаин",
     "form": "раствор для инъекций",
@@ -503,7 +559,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/artisoft.png",
     "url": "https://jurabek.uz/magazin/product/artisoft"
   },
-  {
+{
+  id: 57,
     "name": "Каденс Форте",
     "sostav": "Глюкоза моногидрат, калия хлорид, натрия хлорид",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -512,7 +569,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/kadens_forte_100_ml.png",
     "url": "https://jurabek.uz/magazin/product/kadens-forte"
   },
-  {
+{
+  id: 58,
     "name": "Ювира",
     "sostav": "Ацикловир",
     "form": "суспензия для приема внутрь",
@@ -521,7 +579,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/yuvira_200_mg_5_ml_8116uzuzp01.png",
     "url": "https://jurabek.uz/magazin/product/yuvira-200"
   },
-  {
+{
+  id: 59,
     "name": "Фрегато",
     "sostav": "Софосбувир",
     "form": "таблетки",
@@ -530,7 +589,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/fregato_penal_213uze01.png",
     "url": "https://jurabek.uz/magazin/product/fregato"
   },
-  {
+{
+  id: 60,
     "name": "Тенефа",
     "sostav": "Тенофовир",
     "form": "таблетки",
@@ -539,7 +599,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/tenefa_penal_212uzp01.png",
     "url": "https://jurabek.uz/magazin/product/tenefa"
   },
-  {
+{
+  id: 61,
     "name": "Салувир",
     "sostav": "Умифеновир",
     "form": "капсулы",
@@ -548,7 +609,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/saluvir.png",
     "url": "https://jurabek.uz/magazin/product/saluvir"
   },
-  {
+{
+  id: 62,
     "name": "Ремдесса",
     "sostav": "Ремдесивир",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -557,7 +619,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/remdessa.png",
     "url": "https://jurabek.uz/magazin/product/remdessa"
   },
-  {
+{
+  id: 63,
     "name": "Ковидафавир",
     "sostav": "Фавипиравир",
     "form": "таблетки",
@@ -566,7 +629,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/kovidafavir.png",
     "url": "https://jurabek.uz/magazin/product/kovidafavir"
   },
-  {
+{
+  id: 64,
     "name": "Моксафор",
     "sostav": "Моксифлоксацин",
     "form": "раствор для инфузий",
@@ -575,7 +639,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/moksafor.png",
     "url": "https://jurabek.uz/magazin/product/moksafor"
   },
-  {
+{
+  id: 65,
     "name": "Спирофлокс",
     "sostav": "Левофлоксацин",
     "form": "раствор для инфузий",
@@ -584,7 +649,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/spirofloks_100ml.png",
     "url": "https://jurabek.uz/magazin/product/spirofloks"
   },
-  {
+{
+  id: 66,
     "name": "Флоксурол",
     "sostav": "Офлоксацин",
     "form": "раствор для инфузий",
@@ -593,7 +659,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/floksurol.jpg",
     "url": "https://jurabek.uz/magazin/product/floksurol"
   },
-  {
+{
+  id: 67,
     "name": "Ципраксол 100 мл",
     "sostav": "Ципрофлоксацин",
     "form": "раствор для инъекций",
@@ -602,7 +669,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/cipraksol_100ml.jpg",
     "url": "https://jurabek.uz/magazin/product/cipraksol1"
   },
-  {
+{
+  id: 68,
     "name": "Ципраксол 10 мл",
     "sostav": "Ципрофлоксацин",
     "form": "раствор для инъекций",
@@ -611,7 +679,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/cipraksol.png",
     "url": "https://jurabek.uz/magazin/product/cipraksol"
   },
-  {
+{
+  id: 69,
     "name": "Савелид",
     "sostav": "Линезолид",
     "form": "раствор для инфузий",
@@ -620,7 +689,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/savelid_100.png",
     "url": "https://jurabek.uz/magazin/product/savelid"
   },
-  {
+{
+  id: 70,
     "name": "Ванкомицин Jurabek",
     "sostav": "Ванкомицин",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -629,7 +699,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vankomicin_500_mg.png",
     "url": "https://jurabek.uz/magazin/product/vankomicin-jurabek"
   },
-  {
+{
+  id: 71,
     "name": "Метралин",
     "sostav": "Метронидазол",
     "form": "раствор для инфузий",
@@ -638,7 +709,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/metralin_05_100ml.png",
     "url": "https://jurabek.uz/magazin/product/metralin"
   },
-  {
+{
+  id: 72,
     "name": "Экстреф",
     "sostav": "Цефоперазон\\сульбактам",
     "form": "Порошок для приготовления инъекционного раствора",
@@ -647,7 +719,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ekstref.jpg",
     "url": "https://jurabek.uz/magazin/product/ekstref"
   },
-  {
+{
+  id: 73,
     "name": "Пиперацид",
     "sostav": "Пиперациллин тазобактам",
     "form": "Порошок для приготовления инфузионного раствора",
@@ -656,7 +729,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/3d.png",
     "url": "https://jurabek.uz/magazin/product/piperacid"
   },
-  {
+{
+  id: 74,
     "name": "Амирокс",
     "sostav": "Амоксициллин+Клавулановая кислота",
     "form": "Порошок для приготовления инъекционного раствора",
@@ -665,7 +739,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/gruppa_1.png",
     "url": "https://jurabek.uz/magazin/product/amiroks"
   },
-  {
+{
+  id: 75,
     "name": "Тетрапим",
     "sostav": "Цефепим",
     "form": "Порошок для приготовления инъекционного раствора",
@@ -674,7 +749,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/tetrapim_3_d_05_g.jpg",
     "url": "https://jurabek.uz/magazin/product/tetrapim"
   },
-  {
+{
+  id: 76,
     "name": "Журазидим",
     "sostav": "Цефтазидим",
     "form": "Порошок для приготовления инъекционного раствора",
@@ -683,7 +759,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/zhurazidim_05_g_no1.png",
     "url": "https://jurabek.uz/magazin/product/zhurazidim"
   },
-  {
+{
+  id: 77,
     "name": "Цеффаст",
     "sostav": "Цефотаксим",
     "form": "Порошок для приготовления инъекционного раствора",
@@ -692,7 +769,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/no1_05_ml.jpg",
     "url": "https://jurabek.uz/magazin/product/ceffast"
   },
-  {
+{
+  id: 78,
     "name": "Витаксон",
     "sostav": "Цефтриаксон",
     "form": "Порошок для приготовления инъекционного раствора",
@@ -701,7 +779,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vitakson_05_g_no1.png",
     "url": "https://jurabek.uz/magazin/product/vitakson"
   },
-  {
+{
+  id: 79,
     "name": "Интралин",
     "sostav": "Цефазолин",
     "form": "Порошок для приготовления инъекционного раствора",
@@ -710,7 +789,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/intralin_05_g_no1.png",
     "url": "https://jurabek.uz/magazin/product/intralin"
   },
-  {
+{
+  id: 80,
     "name": "ГАМ-Ковид-ВАК Комп II",
     "sostav": "ГАМ-Ковид-ВАК Комп",
     "form": "раствор для внутримышечного введения",
@@ -719,7 +799,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/gam-kovid-vak_2komponenta.png",
     "url": "https://jurabek.uz/magazin/product/gam-kovid-vak-komp1"
   },
-  {
+{
+  id: 81,
     "name": "ZF-UZ-VAC 2001",
     "sostav": "ZF-UZ-VAC 2001 (CHO CELL)",
     "form": "раствор для внутримышечного введения",
@@ -728,7 +809,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/zf-uz-vac_2001.png",
     "url": "https://jurabek.uz/magazin/product/zf-uz-vac-2001"
   },
-  {
+{
+  id: 82,
     "name": "ГАМ-Ковид-ВАК Комп I",
     "sostav": "ГАМ-Ковид-ВАК Комп",
     "form": "раствор для внутримышечного введения",
@@ -737,7 +819,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/gam-kovid-vak.png",
     "url": "https://jurabek.uz/magazin/product/gam-kovid-vak-komp"
   },
-  {
+{
+  id: 83,
     "name": "Вермув",
     "sostav": "Албендазол",
     "form": "суспензия для приема внутрь",
@@ -746,7 +829,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vermuv_3d.png",
     "url": "https://jurabek.uz/magazin/product/vermuv"
   },
-  {
+{
+  id: 84,
     "name": "Орса Цинк",
     "sostav": "Цинк сульфат, декстроза, натрия хлорид, калия хлорид, натрия цитрат",
     "form": "раствор для приема внутрь",
@@ -755,7 +839,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/orsa_cink_100_ml.png",
     "url": "https://jurabek.uz/magazin/product/orsa-cink"
   },
-  {
+{
+  id: 85,
     "name": "Орса",
     "sostav": "Декстроза, натрия хлорид, калия хлорид, натрия цитрат",
     "form": "раствор для приема внутрь",
@@ -764,7 +849,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/orsa_100_ml.png",
     "url": "https://jurabek.uz/magazin/product/orsa"
   },
-  {
+{
+  id: 86,
     "name": "Регидротоник Форте",
     "sostav": "Декстроза, натрия хлорид",
     "form": "раствор для инфузий",
@@ -773,7 +859,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/regidratonik_forte_etik_100ml_uz.png",
     "url": "https://jurabek.uz/magazin/product/regidrotonik-forte"
   },
-  {
+{
+  id: 87,
     "name": "Регидротоник",
     "sostav": "Декстроза, натрия хлорид",
     "form": "раствор для инфузий",
@@ -782,7 +869,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/regidratonik.png",
     "url": "https://jurabek.uz/magazin/product/regidrotonik"
   },
-  {
+{
+  id: 88,
     "name": "Каденс",
     "sostav": "Декстроза, натрия хлорид, калия хлорид",
     "form": "раствор для инфузий",
@@ -791,7 +879,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/kadens_100_ml.png",
     "url": "https://jurabek.uz/magazin/product/kadens"
   },
-  {
+{
+  id: 89,
     "name": "Диалит",
     "sostav": "Ксилитол, натрия хлорид, калия хлорид, кальция хлорид, магния хлорид, натрия ацетат",
     "form": "раствор для инфузий",
@@ -800,7 +889,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/dialit_100_ml.png",
     "url": "https://jurabek.uz/magazin/product/dialit"
   },
-  {
+{
+  id: 90,
     "name": "Лолат",
     "sostav": "Л-орнитин-л-аспартат",
     "form": "концентрат для приготовления раствора для инфузий",
@@ -809,7 +899,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/lolatno5.png",
     "url": "https://jurabek.uz/magazin/product/lolat"
   },
-  {
+{
+  id: 91,
     "name": "Гепта",
     "sostav": "Адеметионин",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -818,7 +909,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/gepta_no5.png",
     "url": "https://jurabek.uz/magazin/product/gepta"
   },
-  {
+{
+  id: 92,
     "name": "Армария",
     "sostav": "Глутатион восстановленный",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -827,7 +919,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/armariya_1.png",
     "url": "https://jurabek.uz/magazin/product/armariya"
   },
-  {
+{
+  id: 93,
     "name": "Прессикарб",
     "sostav": "Ацетазоламид",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -836,7 +929,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/pressikarb_no1.png",
     "url": "https://jurabek.uz/magazin/product/pressikarb"
   },
-  {
+{
+  id: 94,
     "name": "Невробен",
     "sostav": "Витамин В комплекс (В1, В6, В 12, РР)",
     "form": "раствор для инъекций",
@@ -845,7 +939,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/nevroben_5_ampul_web.png",
     "url": "https://jurabek.uz/magazin/product/nevroben"
   },
-  {
+{
+  id: 95,
     "name": "Миора",
     "sostav": "Толперизон+лидокаин",
     "form": "раствор для инъекций",
@@ -854,7 +949,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/miora_5.png",
     "url": "https://jurabek.uz/magazin/product/miora"
   },
-  {
+{
+  id: 96,
     "name": "Витамин В",
     "sostav": "Витамин В комплекс (В1, В6, РР)",
     "form": "раствор для инъекций",
@@ -863,7 +959,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vitamin_v_kompleks_no5.jpg",
     "url": "https://jurabek.uz/magazin/product/vitamin-v"
   },
-  {
+{
+  id: 97,
     "name": "Сермиголин",
     "sostav": "Ницерголин",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -872,7 +969,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/sermigolin.png",
     "url": "https://jurabek.uz/magazin/product/sermigolin"
   },
-  {
+{
+  id: 98,
     "name": "Винпоцетин",
     "sostav": "Винпоцетин",
     "form": "концентрат для приготовления раствора для инфузий",
@@ -881,7 +979,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vinpotsetsin_05_2ml_486uzp01_1.png",
     "url": "https://jurabek.uz/magazin/product/vinpocetin"
   },
-  {
+{
+  id: 99,
     "name": "Титризол",
     "sostav": "Морфолиниевая соль тиазотовой кислоты",
     "form": "раствор для инъекций",
@@ -890,7 +989,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/titrizol_2ml_no10_487uzpn01.png",
     "url": "https://jurabek.uz/magazin/product/titrizol"
   },
-  {
+{
+  id: 100,
     "name": "Лекорн",
     "sostav": "Левокарнитин",
     "form": "раствор для инъекций",
@@ -899,7 +999,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/lekorn_10_5_ml.png",
     "url": "https://jurabek.uz/magazin/product/lekorn"
   },
-  {
+{
+  id: 101,
     "name": "Тиоцерат",
     "sostav": "Тиотриозалин+пирацетам\nраствор для инъекций",
     "form": "раствор для инъекций",
@@ -908,7 +1009,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/tiocerat.png",
     "url": "https://jurabek.uz/magazin/product/tiocerat"
   },
-  {
+{
+  id: 102,
     "name": "Коралин 25%",
     "sostav": "Цитиколин",
     "form": "питьевой раствор",
@@ -917,7 +1019,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/koralin_25.gif",
     "url": "https://jurabek.uz/magazin/product/koralin1"
   },
-  {
+{
+  id: 103,
     "name": "Пирацетам",
     "sostav": "Пирацетам",
     "form": "раствор для инъекций",
@@ -926,7 +1029,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/3d.jpg",
     "url": "https://jurabek.uz/magazin/product/piracetam"
   },
-  {
+{
+  id: 104,
     "name": "Коралин 12,5%",
     "sostav": "Цитиколин",
     "form": "раствор для инъекций",
@@ -935,7 +1039,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/koralin_125.gif",
     "url": "https://jurabek.uz/magazin/product/koralin"
   },
-  {
+{
+  id: 105,
     "name": "Мелоксикам",
     "sostav": "Мелоксикам",
     "form": "раствор для инъекций",
@@ -944,7 +1049,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/meloksikam.png",
     "url": "https://jurabek.uz/magazin/product/meloksikam"
   },
-  {
+{
+  id: 106,
     "name": "Кобафен",
     "sostav": "Мекобаламин",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -953,7 +1059,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/kobafen.png",
     "url": "https://jurabek.uz/magazin/product/kobafen"
   },
-  {
+{
+  id: 107,
     "name": "Кеторайт",
     "sostav": "Дексетопрофен",
     "form": "раствор для инъекций",
@@ -962,7 +1069,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ketorajt_5_ampul_web.png",
     "url": "https://jurabek.uz/magazin/product/ketorajt"
   },
-  {
+{
+  id: 108,
     "name": "Мексунат",
     "sostav": "Этилметилгидроксипиридина сукцинат",
     "form": "раствор для инъекций",
@@ -971,7 +1079,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/meksunat_5_ml.png",
     "url": "https://jurabek.uz/magazin/product/meksunat"
   },
-  {
+{
+  id: 109,
     "name": "Лесцинат",
     "sostav": "Л-лизин, Эсцинат",
     "form": "концентрат для приготовления раствора для инфузий",
@@ -980,7 +1089,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/lescinat_no5.png",
     "url": "https://jurabek.uz/magazin/product/lescinat"
   },
-  {
+{
+  id: 110,
     "name": "Феругар",
     "sostav": "Железо-сахарозный комплеск",
     "form": "раствор для инъекций",
@@ -989,7 +1099,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ferrugar_5ml-5_ampul_web.png",
     "url": "https://jurabek.uz/magazin/product/ferugar"
   },
-  {
+{
+  id: 111,
     "name": "Зокласт",
     "sostav": "Золедроновая кислота",
     "form": "раствор для инфузий",
@@ -998,7 +1109,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/zoklast_no1.png",
     "url": "https://jurabek.uz/magazin/product/zoklast"
   },
-  {
+{
+  id: 112,
     "name": "Ворифунг",
     "sostav": "Вориконазол",
     "form": "лиофилизат для приготовления инъекционного раствора",
@@ -1007,7 +1119,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vorifung.png",
     "url": "https://jurabek.uz/magazin/product/vorifung"
   },
-  {
+{
+  id: 113,
     "name": "Вомитон 4 мл",
     "sostav": "Ондансетрон",
     "form": "раствор для инъекций",
@@ -1016,7 +1129,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vomiton_4ml.png",
     "url": "https://jurabek.uz/magazin/product/vomiton-4-ml"
   },
-  {
+{
+  id: 114,
     "name": "Вомитон 2 мл",
     "sostav": "Ондансетрон",
     "form": "раствор для инъекций",
@@ -1025,7 +1139,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vomiton_2ml.png",
     "url": "https://jurabek.uz/magazin/product/vomiton-2-ml"
   },
-  {
+{
+  id: 115,
     "name": "Полиноса 1,25мг/5мл",
     "sostav": "Левоцетиризин",
     "form": "сироп для приема внутрь",
@@ -1034,7 +1149,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/polinosa_125_mg_5ml_sirop_8121uzp01.png",
     "url": "https://jurabek.uz/magazin/product/polinosa1"
   },
-  {
+{
+  id: 116,
     "name": "Рефэзо",
     "sostav": "Домперидон",
     "form": "суспензия для приема внутрь",
@@ -1043,7 +1159,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/refezo.png",
     "url": "https://jurabek.uz/magazin/product/refezo"
   },
-  {
+{
+  id: 117,
     "name": "Литомарен",
     "sostav": "Лимонная кислота калия цитрата, натрия цитрат",
     "form": "раствор для приема внутрь",
@@ -1052,7 +1169,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/litomaren.jpg",
     "url": "https://jurabek.uz/magazin/product/litomaren"
   },
-  {
+{
+  id: 118,
     "name": "Лактакс",
     "sostav": "Лактулоза",
     "form": "сироп для приема внутрь",
@@ -1061,7 +1179,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/laktaks_90_ml_129uzr01.png",
     "url": "https://jurabek.uz/magazin/product/laktaks"
   },
-  {
+{
+  id: 119,
     "name": "Слаботакс",
     "sostav": "Натрия Пикосульфат",
     "form": "раствор для приема внутрь",
@@ -1070,7 +1189,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/slabotaks.png",
     "url": "https://jurabek.uz/magazin/product/slabotaks"
   },
-  {
+{
+  id: 120,
     "name": "Лекорн Энерджи",
     "sostav": "Левокарнитин",
     "form": "питьевой раствор",
@@ -1079,7 +1199,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/lekorn_enerdzhi_5_ml_no10psd.png",
     "url": "https://jurabek.uz/magazin/product/lekorn-enerdzhi"
   },
-  {
+{
+  id: 121,
     "name": "Дезалерт",
     "sostav": "Дезлоратадин",
     "form": "сироп для приема внутрь",
@@ -1088,7 +1209,8 @@ const drugs = [
     "photo": "",
     "url": "https://jurabek.uz/magazin/product/dezalert"
   },
-  {
+{
+  id: 122,
     "name": "Полиноса 5мг/мл",
     "sostav": "Левоцетиризин",
     "form": "капли для приема внутрь",
@@ -1097,7 +1219,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/polinosa.png",
     "url": "https://jurabek.uz/magazin/product/polinosa"
   },
-  {
+{
+  id: 123,
     "name": "Бакдиар",
     "sostav": "Нифуроксазид",
     "form": "суспензия для приема внутрь",
@@ -1106,7 +1229,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/bakdiar.png",
     "url": "https://jurabek.uz/magazin/product/bakdiar"
   },
-  {
+{
+  id: 124,
     "name": "Алмидоз",
     "sostav": "Алюминий+магний",
     "form": "суспензия для приема внутрь",
@@ -1115,7 +1239,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/almidoz-10ml-no10.png",
     "url": "https://jurabek.uz/magazin/product/almidoz"
   },
-  {
+{
+  id: 125,
     "name": "Фунгазид офтальмо",
     "sostav": "Флуконазол",
     "form": "капли глазные 0,3%",
@@ -1124,7 +1249,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/fungazid_oftalmo.png",
     "url": "https://jurabek.uz/magazin/product/fungazid-oftalmo"
   },
-  {
+{
+  id: 126,
     "name": "Мина Офтальмо",
     "sostav": "Кеторолак",
     "form": "капли глазные 0,5%",
@@ -1133,7 +1259,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/mina_oftalmo.png",
     "url": "https://jurabek.uz/magazin/product/mina-oftalmo"
   },
-  {
+{
+  id: 127,
     "name": "Тауфон",
     "sostav": "Таурин",
     "form": "капли глазные 4%",
@@ -1142,7 +1269,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/taufon_5_ml.png",
     "url": "https://jurabek.uz/magazin/product/taufon"
   },
-  {
+{
+  id: 128,
     "name": "Прессимол",
     "sostav": "Тимолол",
     "form": "капли глазные 0,25 % или 0,5 %",
@@ -1151,7 +1279,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/pressimol.png",
     "url": "https://jurabek.uz/magazin/product/pressimol"
   },
-  {
+{
+  id: 129,
     "name": "Флоксурол Офтальмо",
     "sostav": "Офлоксацин",
     "form": "капли глазные 0,3%",
@@ -1160,7 +1289,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/floksurol_kapli_glaznye.png",
     "url": "https://jurabek.uz/magazin/product/floksurol-oftalmo"
   },
-  {
+{
+  id: 130,
     "name": "Ципраксол Офтальмо",
     "sostav": "Ципрофлоксацин",
     "form": "капли глазные 0,3%",
@@ -1169,7 +1299,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/cipraksol_kapli_glaznye.png",
     "url": "https://jurabek.uz/magazin/product/cipraksol-oftalmo"
   },
-  {
+{
+  id: 131,
     "name": "Спирофлокс Офтальмо",
     "sostav": "Левофлоксацин",
     "form": "капли глазные 0,5%",
@@ -1178,7 +1309,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/spirofloks_oftalmo.png",
     "url": "https://jurabek.uz/magazin/product/spirofloks-oftalmo"
   },
-  {
+{
+  id: 132,
     "name": "Моксафор Офтальмо",
     "sostav": "Моксифлоксацин",
     "form": "капли глазные 0,5%",
@@ -1187,7 +1319,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/moksafor_oftalmo.jpg",
     "url": "https://jurabek.uz/magazin/product/moksafor-oftalmo"
   },
-  {
+{
+  id: 133,
     "name": "Левомицитин",
     "sostav": "Хлорамфеникол",
     "form": "капли глазные 0,25%",
@@ -1196,7 +1329,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/levomicetin.png",
     "url": "https://jurabek.uz/magazin/product/levomicitin"
   },
-  {
+{
+  id: 134,
     "name": "ОФТ-Аллерг",
     "sostav": "Олопатадин",
     "form": "капли глазные 0,1%",
@@ -1205,7 +1339,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/kromostab.png",
     "url": "https://jurabek.uz/magazin/product/kromostab"
   },
-  {
+{
+  id: 135,
     "name": "Анальгин",
     "sostav": "Метамизол натрия",
     "form": "раствор для инъекций",
@@ -1214,7 +1349,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/analgin_1ml_5_ampul_web.png",
     "url": "https://jurabek.uz/magazin/product/analgin"
   },
-  {
+{
+  id: 136,
     "name": "Септум Лор",
     "sostav": "Бензидамин+хлоргексидин",
     "form": "раствор для полосканий",
@@ -1223,7 +1359,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/septum_lor.png",
     "url": "https://jurabek.uz/magazin/product/septum-lor"
   },
-  {
+{
+  id: 137,
     "name": "Нафасол",
     "sostav": "Ксилометазолин",
     "form": "назальные капли",
@@ -1232,7 +1369,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/nafasol_01.png",
     "url": "https://jurabek.uz/magazin/product/nafasol"
   },
-  {
+{
+  id: 138,
     "name": "Назимет",
     "sostav": "Оксиметазолин",
     "form": "назальные капли",
@@ -1241,7 +1379,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/nazimet_001_5_ml.png",
     "url": "https://jurabek.uz/magazin/product/nazimet"
   },
-  {
+{
+  id: 139,
     "name": "Септум Этил",
     "sostav": "Хлоргексидин",
     "form": "раствор для наружного применения",
@@ -1250,7 +1389,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/septum_etil.png",
     "url": "https://jurabek.uz/magazin/product/septum-etil"
   },
-  {
+{
+  id: 140,
     "name": "Септум Форте",
     "sostav": "Хлоргексидин",
     "form": "раствор для наружного применения",
@@ -1259,7 +1399,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/septum_forte_05_ampula.png",
     "url": "https://jurabek.uz/magazin/product/septum-forte"
   },
-  {
+{
+  id: 141,
     "name": "Септум",
     "sostav": "Хлоргексидин",
     "form": "раствор для наружного применения",
@@ -1268,7 +1409,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/septum_5_ml_no10.png",
     "url": "https://jurabek.uz/magazin/product/septum"
   },
-  {
+{
+  id: 142,
     "name": "Миристосепт",
     "sostav": "Мирамистин",
     "form": "раствор для наружного применения и ингаляций",
@@ -1277,7 +1419,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/miristosept_001_5_ml_8130uzp0178.png",
     "url": "https://jurabek.uz/magazin/product/miristosept"
   },
-  {
+{
+  id: 143,
     "name": "Декатос",
     "sostav": "Декаметоксин",
     "form": "раствор для наружного и внутриполостного применения",
@@ -1286,7 +1429,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/dekatos_02_2_ml_no10864uzp01_2.png",
     "url": "https://jurabek.uz/magazin/product/dekatos"
   },
-  {
+{
+  id: 144,
     "name": "Видон",
     "sostav": "Повидон-Йод",
     "form": "раствор для наружного применения",
@@ -1295,7 +1439,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vidon.png",
     "url": "https://jurabek.uz/magazin/product/vidon"
   },
-  {
+{
+  id: 145,
     "name": "Cтронгиум цинк",
     "sostav": "Цинка сульфат моногидрат",
     "form": "раствор для приема внутрь",
@@ -1304,7 +1449,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/strongium_cink_5ml_no10.png",
     "url": "https://jurabek.uz/magazin/product/ctrongium-cink"
   },
-  {
+{
+  id: 146,
     "name": "Пентоксифиллин",
     "sostav": "Пентоксифиллин",
     "form": "раствор для инъекций",
@@ -1313,7 +1459,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/pentoksifillin.jpg",
     "url": "https://jurabek.uz/magazin/product/pentoksifillin"
   },
-  {
+{
+  id: 147,
     "name": "Натрия тиосульфат",
     "sostav": "Натрия тиосульфат",
     "form": "раствор для инъекций",
@@ -1322,7 +1469,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/natriya_tiosulfat.png",
     "url": "https://jurabek.uz/magazin/product/natriya-tiosulfat"
   },
-  {
+{
+  id: 148,
     "name": "Метоклопрамид",
     "sostav": "Метоклопрамид",
     "form": "раствор для инъекций",
@@ -1331,7 +1479,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/metoklopramid.png",
     "url": "https://jurabek.uz/magazin/product/metoklopramid"
   },
-  {
+{
+  id: 149,
     "name": "Натрия хлорид",
     "sostav": "Натрия хлорид",
     "form": "раствор для инъекций",
@@ -1340,7 +1489,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/natriya_hlorid.png",
     "url": "https://jurabek.uz/magazin/product/natriya-hlorid"
   },
-  {
+{
+  id: 150,
     "name": "Атропина сульфат",
     "sostav": "Атропина сульфат",
     "form": "раствор для внутримышечного и внутривенного введения",
@@ -1349,7 +1499,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/atropina_sulfat_01.png",
     "url": "https://jurabek.uz/magazin/product/atropina-sulfat"
   },
-  {
+{
+  id: 151,
     "name": "Рибоксин",
     "sostav": "Инозин",
     "form": "раствор для инъекций",
@@ -1358,7 +1509,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/riboksin.png",
     "url": "https://jurabek.uz/magazin/product/riboksin"
   },
-  {
+{
+  id: 152,
     "name": "Магния сульфат",
     "sostav": "Магния сульфат",
     "form": "раствор для инъекций",
@@ -1367,7 +1519,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/magniya_sulfat_5ml_no10.png",
     "url": "https://jurabek.uz/magazin/product/magniya-sulfat"
   },
-  {
+{
+  id: 153,
     "name": "Кальция хлорид",
     "sostav": "Кальция хлорид",
     "form": "раствор для инъекций",
@@ -1376,7 +1529,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/kalcij-hlorid.png",
     "url": "https://jurabek.uz/magazin/product/kalciya-hlorid"
   },
-  {
+{
+  id: 154,
     "name": "Калия хлорид",
     "sostav": "Калия хлорид",
     "form": "раствор для инъекций",
@@ -1385,7 +1539,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/kaliya_hlorid.jpg",
     "url": "https://jurabek.uz/magazin/product/kaliya-hlorid"
   },
-  {
+{
+  id: 155,
     "name": "Папаверин гидрохлорид",
     "sostav": "Папаверин гидрохлорид",
     "form": "раствор для инъекций",
@@ -1394,7 +1549,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/papaverina_g_no10.png",
     "url": "https://jurabek.uz/magazin/product/papaverin-gidrohlorid"
   },
-  {
+{
+  id: 156,
     "name": "Супра",
     "sostav": "Хлоропирамин",
     "form": "раствор для инъекций",
@@ -1403,7 +1559,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/supra.png",
     "url": "https://jurabek.uz/magazin/product/supra"
   },
-  {
+{
+  id: 157,
     "name": "Димедрол",
     "sostav": "Дифенгидрамин",
     "form": "раствор для инъекций",
@@ -1412,7 +1569,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/dimedrol.png",
     "url": "https://jurabek.uz/magazin/product/dimedrol"
   },
-  {
+{
+  id: 158,
     "name": "Диклофенак",
     "sostav": "Диклофенак",
     "form": "раствор для инъекций",
@@ -1421,7 +1579,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/diklofenak.png",
     "url": "https://jurabek.uz/magazin/product/diklofenak"
   },
-  {
+{
+  id: 159,
     "name": "Дибазол",
     "sostav": "Дибазол (Бендазол)",
     "form": "раствор для инъекций",
@@ -1430,7 +1589,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/dibazol-1ml-no10.png",
     "url": "https://jurabek.uz/magazin/product/dibazol"
   },
-  {
+{
+  id: 160,
     "name": "Дексаметазон",
     "sostav": "Дексаметозон",
     "form": "раствор для инъекций",
@@ -1439,7 +1599,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/deksametazon.png",
     "url": "https://jurabek.uz/magazin/product/deksametazon"
   },
-  {
+{
+  id: 161,
     "name": "Глюкоза Jurabek",
     "sostav": "Декстроза",
     "form": "раствор для инъекций",
@@ -1448,7 +1609,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/glyukoza.png",
     "url": "https://jurabek.uz/magazin/product/glyukoza-jurabek"
   },
-  {
+{
+  id: 162,
     "name": "Гепарин",
     "sostav": "Гепарин",
     "form": "раствор для инъекций",
@@ -1457,7 +1619,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ac-1-geparin.png",
     "url": "https://jurabek.uz/magazin/product/geparin"
   },
-  {
+{
+  id: 163,
     "name": "Вода для инъекции",
     "sostav": "Вода для инъекции",
     "form": "раствор для инъекций",
@@ -1466,7 +1629,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/voda.png",
     "url": "https://jurabek.uz/magazin/product/voda-dlya-in-ekcii"
   },
-  {
+{
+  id: 164,
     "name": "Пиридоксин",
     "sostav": "Пиридоксин (витамин в6)",
     "form": "раствор для инъекций",
@@ -1475,7 +1639,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/v6.png",
     "url": "https://jurabek.uz/magazin/product/piridoksin"
   },
-  {
+{
+  id: 165,
     "name": "Цианокоболамин",
     "sostav": "Цианокобаламин (витамин В12)",
     "form": "раствор для инъекций",
@@ -1484,7 +1649,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vitamin-v12.png",
     "url": "https://jurabek.uz/magazin/product/cianokobolamin"
   },
-  {
+{
+  id: 166,
     "name": "Тиамин",
     "sostav": "Тиамин (витамин В1)",
     "form": "раствор для инъекций",
@@ -1493,7 +1659,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/vitamin-v1.png",
     "url": "https://jurabek.uz/magazin/product/tiamin"
   },
-  {
+{
+  id: 167,
     "name": "Аскорбиновая кислота",
     "sostav": "Аскорбиновая кислота",
     "form": "раствор для инъекций",
@@ -1502,7 +1669,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/askorbinovaya_kislota_no5.png",
     "url": "https://jurabek.uz/magazin/product/askorbinovaya-kislota"
   },
-  {
+{
+  id: 168,
     "name": "Эуфиллин",
     "sostav": "Аминофиллин",
     "form": "раствор для инъекций",
@@ -1511,7 +1679,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/eufillin_5_ml_no10.png",
     "url": "https://jurabek.uz/magazin/product/eufillin"
   },
-  {
+{
+  id: 169,
     "name": "Фуросемид",
     "sostav": "Фуросемид",
     "form": "раствор для инъекций",
@@ -1520,7 +1689,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/furosemid_penal_1_2_ml_no10_468uzpn01.png",
     "url": "https://jurabek.uz/magazin/product/furosemid"
   },
-  {
+{
+  id: 170,
     "name": "Сульфокамфокаин",
     "sostav": "Сульфокамфокаин",
     "form": "раствор для инъекций",
@@ -1529,7 +1699,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/sulfokamfokain.png",
     "url": "https://jurabek.uz/magazin/product/sulfokamfokain"
   },
-  {
+{
+  id: 171,
     "name": "Ринлактин",
     "sostav": "Натрия лактат, натрия хлорид, калия хлорид, кальция хлорид",
     "form": "раствор для инфузий",
@@ -1538,7 +1709,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/rinlactin_etiketka_100_ml_629uze02.png",
     "url": "https://jurabek.uz/magazin/product/rinlaktin"
   },
-  {
+{
+  id: 172,
     "name": "Рингер",
     "sostav": "Натрия хлорид, калия хлорид, кальция хлорид",
     "form": "раствор для инфузий",
@@ -1547,7 +1719,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/ringer_100.png",
     "url": "https://jurabek.uz/magazin/product/ringer"
   },
-  {
+{
+  id: 173,
     "name": "Ацесоль Jurabek",
     "sostav": "Натрия ацетат, натрия хлорид, калия хлорид",
     "form": "раствор для инфузий",
@@ -1556,7 +1729,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/acesol_250.png",
     "url": "https://jurabek.uz/magazin/product/acesol-jurabek"
   },
-  {
+{
+  id: 174,
     "name": "Реополиглюкин",
     "sostav": "Реополиглюкин",
     "form": "раствор для инфузий",
@@ -1565,7 +1739,8 @@ const drugs = [
     "photo": "https://jurabek.uz/d/01.png",
     "url": "https://jurabek.uz/magazin/product/reopoliglyukin"
   },
-  {
+{
+  id: 175,
     "name": "Спирт этиловый",
     "sostav": "Спирт этиловый",
     "form": "раствор для наружного применения",
@@ -1574,4 +1749,4 @@ const drugs = [
     "photo": "https://jurabek.uz/d/spirt_etil.png",
     "url": "https://jurabek.uz/magazin/product/spirt-etilovyj"
   }
-]
+];
