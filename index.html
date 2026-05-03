@@ -113,11 +113,19 @@ tg.expand();
 tg.enableClosingConfirmation();
 
 let isDetailOpen = false;
+let currentList = [...drugs]; // 🔥 текущее состояние списка
+
+// ===== НОРМАЛИЗАЦИЯ =====
+function norm(t){
+    return (t || "").toLowerCase().trim();
+}
 
 // ===== РЕНДЕР =====
 function render(data){
     isDetailOpen = false;
     tg.BackButton.hide();
+
+    currentList = data; // 🔥 сохраняем текущий список
 
     let html = "";
 
@@ -146,21 +154,49 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
-// ===== ПОИСК =====
+// ===== УМНЫЙ ПОИСК =====
 function search(){
-    let q = document.getElementById("search").value.toLowerCase();
+    let q = norm(document.getElementById("search").value);
 
-    let result = drugs.filter(d=>{
-        let text = (
-            (d.name || '') + " " +
-            (d.indications || '') + " " +
-            (d.sostav || '')
-        ).toLowerCase();
+    if(!q){
+        render(drugs);
+        return;
+    }
 
-        return text.includes(q);
+    let exact = [];
+    let starts = [];
+    let contains = [];
+
+    drugs.forEach(d=>{
+        let name = norm(d.name);
+        let indications = norm(d.indications);
+        let sostav = norm(d.sostav);
+
+        // 🔥 точное совпадение
+        if(name === q){
+            exact.push(d);
+            return;
+        }
+
+        // 🔥 начинается с
+        if(name.startsWith(q)){
+            starts.push(d);
+            return;
+        }
+
+        // 🔥 по показаниям
+        if(indications.includes(q) || sostav.includes(q)){
+            contains.push(d);
+            return;
+        }
+
+        // 🔥 слабое совпадение
+        if(name.includes(q)){
+            contains.push(d);
+        }
     });
 
-    render(result);
+    render([...exact, ...starts, ...contains]);
 }
 
 // ===== ОТКРЫТИЕ =====
@@ -168,7 +204,7 @@ function openDrug(index){
     isDetailOpen = true;
     tg.BackButton.show();
 
-    const d = drugs[index];
+    const d = currentList[index]; // 🔥 ВОТ ГЛАВНЫЙ ФИКС
 
     document.getElementById("list").innerHTML = `
         <div class="card">
@@ -217,6 +253,5 @@ tg.BackButton.onClick(function () {
 render(drugs);
 
 </script>
-
 </body>
 </html>
