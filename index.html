@@ -8,7 +8,7 @@
 <script src="data.js"></script>
 
 <style>
-body{
+body {
     margin:0;
     font-family:-apple-system, Arial;
     background:#f2f2f7;
@@ -17,35 +17,35 @@ body{
 }
 
 /* HEADER */
-.header{
+.header {
     background:#f4f4f4;
     padding:12px;
     border-bottom:1px solid #ddd;
 }
 
-.header-top{
+.header-top {
     display:flex;
     align-items:center;
     gap:10px;
 }
 
-.logo{ width:42px;height:42px; }
+.logo { width:42px;height:42px; }
 
-.brand{
+.brand {
     font-weight:700;
     color:#1f4fa3;
     line-height:1.2;
 }
 
-.sub{ font-size:11px;color:#666; }
+.sub { font-size:11px;color:#666; }
 
-.contacts{ margin-top:8px;font-size:12px; }
-.contact{ display:flex; gap:6px; }
+.contacts { margin-top:8px;font-size:12px; }
+.contact { display:flex; gap:6px; }
 
 /* SEARCH */
-.top{ padding:10px; }
+.top { padding:10px; }
 
-input{
+input {
     width:100%;
     padding:12px;
     border-radius:12px;
@@ -54,29 +54,29 @@ input{
 }
 
 /* GRID */
-#list{
+#list {
     display:grid;
     gap:14px;
     padding:10px;
 }
 
 @media (min-width:600px){
-    #list{ grid-template-columns:repeat(2,1fr); }
+    #list { grid-template-columns:repeat(2,1fr); }
 }
 
 @media (min-width:1024px){
-    #list{ grid-template-columns:repeat(3,1fr); }
+    #list { grid-template-columns:repeat(3,1fr); }
 }
 
 /* CARD */
-.card{
+.card {
     background:white;
     border-radius:18px;
     padding:12px;
     box-shadow:0 4px 18px rgba(0,0,0,0.08);
 }
 
-.card img{
+.card img {
     width:100%;
     height:150px;
     object-fit:contain;
@@ -84,7 +84,7 @@ input{
     border-radius:12px;
 }
 
-.big-img{
+.big-img {
     width:100%;
     height:220px;
     object-fit:contain;
@@ -92,11 +92,11 @@ input{
     border-radius:12px;
 }
 
-.title{ font-weight:600;margin-top:8px; }
-.desc{ font-size:13px;color:#666;margin-top:6px; }
-.form{ margin-top:4px;color:#0a84ff;font-size:13px; }
+.title { font-weight:600;margin-top:8px; }
+.desc { font-size:13px;color:#666;margin-top:6px; }
+.form { margin-top:4px;color:#0a84ff;font-size:13px; }
 
-.btn{
+.btn {
     margin-top:10px;
     background:#0a84ff;
     color:white;
@@ -106,15 +106,14 @@ input{
     cursor:pointer;
 }
 
-.btn.green{ background:#34c759; }
+.btn.green { background:#34c759; }
 
-.empty{ padding:30px;text-align:center;color:#888; }
+.empty { padding:30px;text-align:center;color:#888; }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
     <div class="header-top">
         <img src="logo.png" class="logo">
@@ -131,12 +130,10 @@ input{
     </div>
 </div>
 
-<!-- SEARCH -->
 <div class="top">
     <input id="search" placeholder="Поиск..." oninput="search()">
 </div>
 
-<!-- LIST -->
 <div id="list"></div>
 
 <script>
@@ -236,21 +233,18 @@ function openDrug(i){
             🌐 Открыть сайт
         </div>`:''}
 
-        <div class="btn" onclick="shareDeepLink(${d.id})">
+        <div class="btn" onclick="shareDeepLink('${d.name}')">
             📤 Поделиться
         </div>
 
     </div>`;
 }
 
-/* ===== SHARE (FIXED) ===== */
-function shareDeepLink(id){
-    let bot = "jurabek_helper_bot"; // 
-
-    let link = `https://t.me/${bot}?start=drug_${id}`;
-
+/* ===== SHARE ===== */
+function shareDeepLink(name){
+    let bot = "YOUR_BOT_USERNAME";
+    let link = `https://t.me/${bot}?start=drug_${encodeURIComponent(name)}`;
     let url = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
-
     tg.openLink(url);
 }
 
@@ -262,15 +256,12 @@ function goBack(){
     setTimeout(()=>window.scrollTo(0,scrollPos),0);
 }
 
-/* ===== AUTO OPEN ===== */
+/* ===== AUTO OPEN (НЕ ЛОМАЕТ UI) ===== */
 function autoOpen(){
-    let id = getParam();
-    if(!id) return;
+    let key = getParam();
+    if(!key) return;
 
-    id = Number(id);
-
-    let index = drugs.findIndex(d => d.id === id);
-
+    let index = drugs.findIndex(d => norm(d.name) === norm(key));
     if(index !== -1){
         openDrug(index);
     }
