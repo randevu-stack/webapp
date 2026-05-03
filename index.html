@@ -8,7 +8,7 @@
 <script src="data.js"></script>
 
 <style>
-body {
+body{
     margin:0;
     font-family:-apple-system, Arial;
     background:#f2f2f7;
@@ -16,36 +16,34 @@ body {
     margin:auto;
 }
 
-/* HEADER */
-.header {
+.header{
     background:#f4f4f4;
     padding:12px;
     border-bottom:1px solid #ddd;
 }
 
-.header-top {
+.header-top{
     display:flex;
     align-items:center;
     gap:10px;
 }
 
-.logo { width:42px;height:42px; }
+.logo{ width:42px;height:42px; }
 
-.brand {
+.brand{
     font-weight:700;
     color:#1f4fa3;
     line-height:1.2;
 }
 
-.sub { font-size:11px;color:#666; }
+.sub{ font-size:11px;color:#666; }
 
-.contacts { margin-top:8px;font-size:12px; }
-.contact { display:flex; gap:6px; }
+.contacts{ margin-top:8px;font-size:12px; }
+.contact{ display:flex; gap:6px; }
 
-/* SEARCH */
-.top { padding:10px; }
+.top{ padding:10px; }
 
-input {
+input{
     width:100%;
     padding:12px;
     border-radius:12px;
@@ -53,30 +51,28 @@ input {
     background:#e9e9ee;
 }
 
-/* GRID */
-#list {
+#list{
     display:grid;
     gap:14px;
     padding:10px;
 }
 
 @media (min-width:600px){
-    #list { grid-template-columns:repeat(2,1fr); }
+    #list{ grid-template-columns:repeat(2,1fr); }
 }
 
 @media (min-width:1024px){
-    #list { grid-template-columns:repeat(3,1fr); }
+    #list{ grid-template-columns:repeat(3,1fr); }
 }
 
-/* CARD */
-.card {
+.card{
     background:white;
     border-radius:18px;
     padding:12px;
     box-shadow:0 4px 18px rgba(0,0,0,0.08);
 }
 
-.card img {
+.card img{
     width:100%;
     height:150px;
     object-fit:contain;
@@ -84,19 +80,15 @@ input {
     border-radius:12px;
 }
 
-.big-img {
-    width:100%;
+.big-img{
     height:220px;
-    object-fit:contain;
-    background:#f7f7f7;
-    border-radius:12px;
 }
 
-.title { font-weight:600;margin-top:8px; }
-.desc { font-size:13px;color:#666;margin-top:6px; }
-.form { margin-top:4px;color:#0a84ff;font-size:13px; }
+.title{ font-weight:600;margin-top:8px; }
+.desc{ font-size:13px;color:#666;margin-top:6px; }
+.form{ margin-top:4px;color:#0a84ff;font-size:13px; }
 
-.btn {
+.btn{
     margin-top:10px;
     background:#0a84ff;
     color:white;
@@ -106,9 +98,9 @@ input {
     cursor:pointer;
 }
 
-.btn.green { background:#34c759; }
+.btn.green{ background:#34c759; }
 
-.empty { padding:30px;text-align:center;color:#888; }
+.empty{ padding:30px;text-align:center;color:#888; }
 </style>
 </head>
 
@@ -144,15 +136,11 @@ let isDetailOpen=false;
 let scrollPos=0;
 let currentList=[...drugs];
 
-function norm(t){return (t||"").toLowerCase();}
-
-/* ===== GET PARAM ===== */
-function getParam(){
-    const params = new URLSearchParams(window.location.search);
-    return params.get("drug");
+function norm(t){
+    return (t||"").toLowerCase().trim();
 }
 
-/* ===== ПОИСК ===== */
+/* ===== SEARCH ===== */
 function search(){
     isDetailOpen=false;
     tg.BackButton.hide();
@@ -161,20 +149,19 @@ function search(){
 
     if(!q){ render(drugs); return; }
 
-    let res = drugs.filter(d=>{
-        return norm(d.name + d.indications + d.sostav).includes(q);
-    });
+    let res = drugs.filter(d =>
+        norm(d.name + d.indications + d.sostav).includes(q)
+    );
 
     render(res);
 }
 
-/* ===== РЕНДЕР ===== */
+/* ===== RENDER ===== */
 function render(data){
     currentList=data;
 
     if(data.length===0){
-        document.getElementById("list").innerHTML =
-        `<div class="empty">Ничего не найдено</div>`;
+        list.innerHTML = `<div class="empty">Ничего не найдено</div>`;
         return;
     }
 
@@ -198,10 +185,10 @@ function render(data){
         </div>`;
     });
 
-    document.getElementById("list").innerHTML = html;
+    list.innerHTML = html;
 }
 
-/* ===== ОТКРЫТИЕ ===== */
+/* ===== OPEN ===== */
 function openDrug(i){
     let d = currentList[i];
 
@@ -209,7 +196,7 @@ function openDrug(i){
     isDetailOpen = true;
     tg.BackButton.show();
 
-    document.getElementById("list").innerHTML = `
+    list.innerHTML = `
     <div class="card">
 
         ${d.photo?`<img src="${d.photo}" class="big-img">`:''}
@@ -220,7 +207,7 @@ function openDrug(i){
             <b>Состав:</b><br>${d.sostav||'-'}<br><br>
 
             <b>Форма:</b><br>
-            ${d.form || '-'} ${d.dosage ? '(' + d.dosage + ')' : ''}<br><br>
+            ${d.form||'-'} ${d.dosage?'('+d.dosage+')':''}<br><br>
 
             <b>Показания:</b><br>
             ${d.indications||'-'}
@@ -240,15 +227,20 @@ function openDrug(i){
     </div>`;
 }
 
-/* ===== SHARE ===== */
+/* ===== SHARE (FIX) ===== */
 function shareDeepLink(name){
     let bot = "jurabek_helper_bot";
-    let link = `https://t.me/${bot}?start=drug_${encodeURIComponent(name)}`;
-    let url = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
-    tg.openLink(url);
+
+    let payload = "drug_" + encodeURIComponent(name);
+
+    let link = `https://t.me/${bot}?startapp=${payload}`;
+
+    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
+
+    tg.openLink(shareUrl);
 }
 
-/* ===== НАЗАД ===== */
+/* ===== BACK ===== */
 function goBack(){
     isDetailOpen=false;
     tg.BackButton.hide();
@@ -256,12 +248,17 @@ function goBack(){
     setTimeout(()=>window.scrollTo(0,scrollPos),0);
 }
 
-/* ===== AUTO OPEN (НЕ ЛОМАЕТ UI) ===== */
+/* ===== AUTO OPEN ===== */
 function autoOpen(){
-    let key = getParam();
-    if(!key) return;
+    let params = new URLSearchParams(window.location.search);
+    let name = params.get("drug");
 
-    let index = drugs.findIndex(d => norm(d.name) === norm(key));
+    if(!name) return;
+
+    name = decodeURIComponent(name);
+
+    let index = drugs.findIndex(d => norm(d.name) === norm(name));
+
     if(index !== -1){
         openDrug(index);
     }
@@ -271,7 +268,7 @@ tg.BackButton.onClick(()=>{
     if(isDetailOpen) goBack();
 });
 
-/* СТАРТ */
+/* START */
 render(drugs);
 autoOpen();
 </script>
