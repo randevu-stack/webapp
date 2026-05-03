@@ -9,6 +9,10 @@
 <script src="data.js"></script>
 
 <style>
+html {
+    scroll-behavior: smooth; /* плавный скролл */
+}
+
 body {
     margin:0;
     font-family:-apple-system, Arial;
@@ -17,7 +21,7 @@ body {
     margin:auto;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 .header {
     background:#f4f4f4;
     padding:10px 14px;
@@ -27,11 +31,7 @@ body {
     border-bottom:1px solid #ddd;
 }
 
-.header-left {
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+.header-left { display:flex; align-items:center; gap:10px; }
 
 .logo { width:42px;height:42px; }
 
@@ -51,23 +51,15 @@ body {
     font-size:12px;
 }
 
-.contact {
-    display:flex;
-    align-items:center;
-    gap:6px;
-}
-
-.icon {
-    width:18px;
-    text-align:center;
-}
+.contact { display:flex; align-items:center; gap:6px; }
+.icon { width:18px; text-align:center; }
 
 /* MOBILE */
 @media (max-width:600px){
     .header { flex-direction:column;align-items:flex-start; }
 }
 
-/* ===== TABS ===== */
+/* TABS */
 .tabs { display:flex;gap:8px;padding:10px; }
 
 .tab {
@@ -195,6 +187,8 @@ tg.expand();
 tg.enableClosingConfirmation();
 
 let isDetailOpen = false;
+let scrollPos = 0;
+
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 let recent = JSON.parse(localStorage.getItem("recent") || "[]");
 
@@ -202,10 +196,8 @@ let currentTab = "all";
 let currentList = [...drugs];
 let debounceTimer = null;
 
-const synonyms = {
-    "сердце": ["кардио","ишемия","стенокардия"],
-    "боль": ["болит","болевой"]
-};
+/* SEARCH LOGIC */
+function norm(t){ return (t||"").toLowerCase().trim(); }
 
 function setTab(tab){
     currentTab = tab;
@@ -217,22 +209,10 @@ function setTab(tab){
 function toggleFav(name){
     if(favorites.includes(name)){
         favorites = favorites.filter(f=>f!==name);
-    } else {
-        favorites.push(name);
-    }
+    } else favorites.push(name);
+
     localStorage.setItem("fav", JSON.stringify(favorites));
     search();
-}
-
-function norm(t){ return (t||"").toLowerCase().trim(); }
-
-function expandQuery(q){
-    let words = q.split(" ").filter(Boolean);
-    let expanded = [...words];
-    words.forEach(w=>{
-        if(synonyms[w]) expanded.push(...synonyms[w]);
-    });
-    return expanded;
 }
 
 function search(){
@@ -241,22 +221,17 @@ function search(){
 
     let q = norm(document.getElementById("search").value);
 
-    let base = currentTab === "fav"
+    let base = currentTab==="fav"
         ? drugs.filter(d=>favorites.includes(d.name))
-        : currentTab === "recent"
+        : currentTab==="recent"
         ? recent.map(n=>drugs.find(d=>d.name===n)).filter(Boolean)
         : drugs;
 
-    if(!q){
-        render(base);
-        return;
-    }
-
-    let words = expandQuery(q);
+    if(!q){ render(base); return; }
 
     let result = base.filter(d=>{
         let text = norm(d.name + " " + d.indications);
-        return words.some(w=>text.includes(w));
+        return text.includes(q);
     });
 
     render(result);
@@ -269,21 +244,13 @@ function addRecent(name){
     localStorage.setItem("recent", JSON.stringify(recent));
 }
 
+/* RENDER */
 function render(data){
     currentList = data;
 
-    if(currentTab==="fav" && favorites.length===0){
-        document.getElementById("list").innerHTML = `<div class="empty">Нет избранных ❤️</div>`;
-        return;
-    }
-
-    if(currentTab==="recent" && recent.length===0){
-        document.getElementById("list").innerHTML = `<div class="empty">Вы ещё ничего не смотрели 👀</div>`;
-        return;
-    }
-
     if(data.length===0){
-        document.getElementById("list").innerHTML = `<div class="empty">Ничего не найдено</div>`;
+        document.getElementById("list").innerHTML =
+        `<div class="empty">Ничего не найдено</div>`;
         return;
     }
 
@@ -313,8 +280,11 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
+/* OPEN */
 function openDrug(i){
     let d = currentList[i];
+
+    scrollPos = window.scrollY; // сохраняем позицию
     addRecent(d.name);
 
     isDetailOpen = true;
@@ -333,10 +303,19 @@ function openDrug(i){
     </div>`;
 }
 
+/* BACK */
 function goBack(){
     isDetailOpen = false;
     tg.BackButton.hide();
+
     search();
+
+    setTimeout(()=>{
+        window.scrollTo({
+            top: scrollPos,
+            behavior: "smooth"
+        });
+    }, 50);
 }
 
 tg.BackButton.onClick(()=>{
