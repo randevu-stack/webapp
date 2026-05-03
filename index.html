@@ -17,13 +17,60 @@ body {
     margin:auto;
 }
 
+/* ===== HEADER ===== */
 .header {
-    padding:14px;
-    font-size:18px;
-    font-weight:600;
+    background:#f4f4f4;
+    padding:10px 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #ddd;
 }
 
-/* TABS */
+.header-left {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo {
+    width:40px;
+    height:40px;
+    object-fit:contain;
+}
+
+.brand {
+    font-weight:700;
+    font-size:16px;
+    color:#1f4fa3;
+}
+
+.sub {
+    font-size:12px;
+    color:#666;
+}
+
+.header-right {
+    text-align:right;
+    font-size:12px;
+    color:#444;
+}
+
+/* MOBILE */
+@media (max-width:600px){
+    .header {
+        flex-direction:column;
+        align-items:flex-start;
+        gap:6px;
+    }
+
+    .header-right {
+        text-align:left;
+        font-size:11px;
+    }
+}
+
+/* ===== TABS ===== */
 .tabs {
     display:flex;
     gap:8px;
@@ -47,6 +94,7 @@ body {
 
 /* SEARCH */
 .top { padding:10px; }
+
 input {
     width:100%;
     padding:12px;
@@ -62,8 +110,14 @@ input {
     padding:10px;
     grid-template-columns:1fr;
 }
-@media (min-width:600px){ #list{grid-template-columns:repeat(2,1fr);} }
-@media (min-width:1024px){ #list{grid-template-columns:repeat(3,1fr);} }
+
+@media (min-width:600px){
+    #list { grid-template-columns:repeat(2,1fr); }
+}
+
+@media (min-width:1024px){
+    #list { grid-template-columns:repeat(3,1fr); }
+}
 
 /* CARD */
 .card {
@@ -118,7 +172,6 @@ input {
     cursor:pointer;
 }
 
-/* EMPTY */
 .empty {
     padding:30px;
     text-align:center;
@@ -129,14 +182,31 @@ input {
 
 <body>
 
-<div class="header">Jurabek Laboratories 🧬</div>
+<!-- HEADER -->
+<div class="header">
+    <div class="header-left">
+        <img src="logo.png" class="logo">
+        <div>
+            <div class="brand">JURABEK</div>
+            <div class="sub">Производство лекарственных средств</div>
+        </div>
+    </div>
 
+    <div class="header-right">
+        <div>📞 +998 (78) 150-03-03</div>
+        <div>✉️ info@jurabek.uz</div>
+        <div>Пн–Пт 9:00–18:00</div>
+    </div>
+</div>
+
+<!-- TABS -->
 <div class="tabs">
     <div class="tab active" id="tab-all" onclick="setTab('all')">Все</div>
     <div class="tab" id="tab-fav" onclick="setTab('fav')">Избранное</div>
     <div class="tab" id="tab-recent" onclick="setTab('recent')">Недавно</div>
 </div>
 
+<!-- SEARCH -->
 <div class="top">
     <input id="search" placeholder="Поиск по названию и симптомам..." oninput="debounceSearch()">
 </div>
@@ -155,23 +225,21 @@ let currentTab = "all";
 let currentList = [...drugs];
 let debounceTimer = null;
 
-// ===== СИНОНИМЫ =====
+/* СИНОНИМЫ */
 const synonyms = {
     "сердце": ["кардио", "ишемия", "стенокардия"],
     "боль": ["болит", "болевой"]
 };
 
-// ===== TAB =====
+/* TAB */
 function setTab(tab){
     currentTab = tab;
-
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
     document.getElementById("tab-"+tab).classList.add("active");
-
     search();
 }
 
-// ===== FAVORITES =====
+/* FAVORITES */
 function toggleFav(name){
     if(favorites.includes(name)){
         favorites = favorites.filter(f=>f!==name);
@@ -182,10 +250,10 @@ function toggleFav(name){
     search();
 }
 
-// ===== NORMALIZE =====
+/* NORMALIZE */
 function norm(t){ return (t||"").toLowerCase().trim(); }
 
-// ===== УМНЫЙ ПОИСК =====
+/* УМНЫЙ ПОИСК */
 function expandQuery(q){
     let words = q.split(" ").filter(Boolean);
     let expanded = [...words];
@@ -199,7 +267,7 @@ function expandQuery(q){
     return expanded;
 }
 
-// ===== SEARCH =====
+/* SEARCH */
 function search(){
     let q = norm(document.getElementById("search").value);
 
@@ -209,9 +277,7 @@ function search(){
         base = drugs.filter(d=>favorites.includes(d.name));
     } 
     else if(currentTab === "recent"){
-        base = recent
-            .map(name => drugs.find(d=>d.name === name))
-            .filter(Boolean);
+        base = recent.map(name => drugs.find(d=>d.name===name)).filter(Boolean);
     } 
     else {
         base = drugs;
@@ -232,7 +298,7 @@ function search(){
     render(result);
 }
 
-// ===== RECENT =====
+/* RECENT */
 function addRecent(name){
     recent = recent.filter(r=>r!==name);
     recent.unshift(name);
@@ -240,7 +306,7 @@ function addRecent(name){
     localStorage.setItem("recent", JSON.stringify(recent));
 }
 
-// ===== RENDER =====
+/* RENDER */
 function render(data){
     currentList = data;
 
@@ -291,7 +357,7 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
-// ===== OPEN =====
+/* OPEN */
 function openDrug(i){
     let d = currentList[i];
     addRecent(d.name);
@@ -309,13 +375,13 @@ function openDrug(i){
     </div>`;
 }
 
-// ===== DEBOUNCE =====
+/* DEBOUNCE */
 function debounceSearch(){
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(search, 200);
 }
 
-// ===== START =====
+/* START */
 search();
 
 </script>
