@@ -24,6 +24,27 @@ body {
     font-weight:600;
 }
 
+/* TABS */
+.tabs {
+    display:flex;
+    gap:10px;
+    padding:0 10px 10px;
+}
+
+.tab {
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+    background:#e9e9ee;
+    text-align:center;
+    cursor:pointer;
+}
+
+.tab.active {
+    background:#0a84ff;
+    color:white;
+}
+
 /* SEARCH */
 .top {
     padding:10px;
@@ -64,18 +85,12 @@ input {
     grid-template-columns: 1fr;
 }
 
-/* планшет */
 @media (min-width:600px){
-    #list {
-        grid-template-columns: repeat(2, 1fr);
-    }
+    #list { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ПК */
 @media (min-width:1024px){
-    #list {
-        grid-template-columns: repeat(3, 1fr);
-    }
+    #list { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* CARD */
@@ -105,16 +120,17 @@ input {
     border-radius:12px;
 }
 
-.big-img {
-    height:220px !important;
-    cursor:pointer;
-}
+.big-img { height:220px !important; cursor:pointer; }
 
 /* TEXT */
 .title {
     font-size:17px;
     font-weight:600;
     margin-top:8px;
+}
+
+.highlight {
+    background:yellow;
 }
 
 .desc {
@@ -127,7 +143,6 @@ input {
     margin-top:4px;
     font-size:13px;
     color:#0a84ff;
-    font-weight:500;
 }
 
 /* BUTTON */
@@ -141,8 +156,6 @@ input {
     cursor:pointer;
 }
 
-.btn.green { background:#34c759; }
-
 /* ZOOM */
 .zoom-modal {
     position:fixed;
@@ -155,10 +168,7 @@ input {
     z-index:9999;
 }
 
-.zoom-modal img {
-    max-width:90%;
-    max-height:90%;
-}
+.zoom-modal img { max-width:90%; max-height:90%; }
 
 .zoom-close {
     position:absolute;
@@ -175,8 +185,14 @@ input {
 
 <div class="header">Jurabek Laboratories 🧬</div>
 
+<!-- TABS -->
+<div class="tabs">
+    <div class="tab active" onclick="setTab('all')" id="tab-all">Все</div>
+    <div class="tab" onclick="setTab('fav')" id="tab-fav">Избранное</div>
+</div>
+
 <div class="top">
-    <input id="search" placeholder="Поиск по названию и симптомам..." oninput="debounceSearch()">
+    <input id="search" placeholder="Поиск..." oninput="debounceSearch()">
     <div id="suggestions" class="suggestions"></div>
 </div>
 
@@ -192,15 +208,25 @@ input {
 
 const tg = window.Telegram.WebApp;
 tg.expand();
-tg.enableClosingConfirmation();
 
-let isDetailOpen = false;
 let currentList = [...drugs];
-let debounceTimer = null;
-
-// ===== FAVORITES =====
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
+let debounceTimer = null;
+let currentTab = "all";
 
+// ===== TAB =====
+function setTab(tab){
+    currentTab = tab;
+
+    document.getElementById("tab-all").classList.remove("active");
+    document.getElementById("tab-fav").classList.remove("active");
+
+    document.getElementById("tab-"+tab).classList.add("active");
+
+    search();
+}
+
+// ===== FAVORITE =====
 function toggleFav(name){
     if(favorites.includes(name)){
         favorites = favorites.filter(f=>f!==name);
@@ -214,11 +240,18 @@ function toggleFav(name){
 // ===== NORMALIZE =====
 function norm(t){ return (t||"").toLowerCase().trim(); }
 
+// ===== HIGHLIGHT =====
+function highlight(text, q){
+    if(!q) return text;
+    let reg = new RegExp(`(${q})`, "gi");
+    return text.replace(reg, `<span class="highlight">$1</span>`);
+}
+
 // ===== RENDER =====
 function render(data){
-    isDetailOpen = false;
-    tg.BackButton.hide();
     currentList = data;
+
+    let q = norm(document.getElementById("search").value);
 
     let html = "";
 
@@ -234,7 +267,7 @@ function render(data){
 
             ${d.photo ? `<img src="${d.photo}">` : ''}
 
-            <div class="title">${d.name}</div>
+            <div class="title">${highlight(d.name, q)}</div>
 
             <div class="desc">${d.sostav || ''}</div>
 
@@ -256,24 +289,21 @@ function search(){
     let q = norm(document.getElementById("search").value);
     document.getElementById("suggestions").innerHTML = "";
 
+    let base = currentTab === "fav"
+        ? drugs.filter(d=>favorites.includes(d.name))
+        : drugs;
+
     if(!q){
-        render(drugs);
+        render(base);
         return;
     }
 
-    let exact=[], starts=[], contains=[], symptoms=[];
-
-    drugs.forEach(d=>{
-        let name = norm(d.name);
-        let ind = norm(d.indications);
-
-        if(name === q){ exact.push(d); return; }
-        if(name.startsWith(q)){ starts.push(d); return; }
-        if(name.includes(q)){ contains.push(d); return; }
-        if(ind.includes(q)){ symptoms.push(d); }
+    let result = base.filter(d=>{
+        return norm(d.name).includes(q) ||
+               norm(d.indications).includes(q);
     });
 
-    render([...exact,...starts,...contains,...symptoms]);
+    render(result);
     showSuggestions(q);
 }
 
@@ -304,39 +334,19 @@ function debounceSearch(){
 
 // ===== OPEN =====
 function openDrug(i){
-    isDetailOpen = true;
-    tg.BackButton.show();
-
     let d = currentList[i];
 
     document.getElementById("list").innerHTML = `
     <div class="card">
-
-        ${d.photo ? `<img src="${d.photo}" class="big-img" onclick="event.stopPropagation(); openZoom('${d.photo}')">` : ''}
-
+        ${d.photo ? `<img src="${d.photo}" class="big-img" onclick="openZoom('${d.photo}')">` : ''}
         <div class="title">${d.name}</div>
-
         <div class="desc">
             <b>Состав:</b><br>${d.sostav || '-'}<br><br>
-
-            <b>Форма:</b><br>
-            ${d.form || ''} ${d.dosage ? '('+d.dosage+')' : ''}<br><br>
-
-            <b>Показания:</b><br>
-            ${d.indications || '-'}
+            <b>Форма:</b><br>${d.form || ''} (${d.dosage || ''})<br><br>
+            <b>Показания:</b><br>${d.indications || '-'}
         </div>
-
-        <div class="btn" onclick="goBack()">← Назад</div>
-
-        ${d.url ? `<div class="btn green" onclick="window.open('${d.url}','_blank')">Перейти на сайт</div>` : ''}
+        <div class="btn" onclick="search()">← Назад</div>
     </div>`;
-}
-
-// ===== BACK =====
-function goBack(){
-    isDetailOpen = false;
-    tg.BackButton.hide();
-    search();
 }
 
 // ===== ZOOM =====
@@ -344,15 +354,9 @@ function openZoom(src){
     document.getElementById("zoomImg").src = src;
     document.getElementById("zoomModal").style.display = "flex";
 }
-
 function closeZoom(){
     document.getElementById("zoomModal").style.display = "none";
 }
-
-// ===== TELEGRAM BACK =====
-tg.BackButton.onClick(()=>{
-    if(isDetailOpen) goBack();
-});
 
 // ===== START =====
 render(drugs);
