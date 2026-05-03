@@ -261,9 +261,9 @@ function openDrug(i){
 
 /* ===== SHARE (НОВАЯ ЛОГИКА) ===== */
 function share(id){
-    let bot = "jurabek_helper_bot";
+    let bot = "jurabek_helper_bot"; // без @
 
-    let link = `https://t.me/${bot}?start=drug_${id}_preview`;
+    let link = `https://t.me/${bot}?start=drug_${id}`;
 
     let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
 

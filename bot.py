@@ -15,9 +15,7 @@ WEB_APP_URL = "https://webapp-alpha-nine-95.vercel.app"
 
 logging.basicConfig(level=logging.INFO)
 
-# =========================
-# 📦 БАЗА
-# =========================
+# ===== БАЗА =====
 DRUGS = {
     1: {
         "name": "Торасса",
@@ -31,30 +29,18 @@ DRUGS = {
     }
 }
 
-# =========================
-# 🚀 START
-# =========================
+# ===== START =====
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     payload = None
 
-    # ✅ 1. стандартный start (args)
+    # 👉 ЛОВИМ payload
     if context.args:
         payload = context.args[0]
 
-    # ✅ 2. fallback (для startapp)
-    elif update.message and update.message.text:
-        text = update.message.text
-
-        if "startapp=" in text:
-            payload = text.split("startapp=")[1]
-
-    # =========================
-    # 🔍 ОБРАБОТКА
-    # =========================
+    # ===== ЕСЛИ ЕСТЬ ПАРАМЕТР =====
     if payload and "drug_" in payload:
         try:
-            drug_id = int(payload.replace("drug_", "").replace("_preview", ""))
+            drug_id = int(payload.replace("drug_", ""))
         except:
             await update.message.reply_text("⚠️ Ошибка ID")
             return
@@ -65,16 +51,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await send_preview(update, d, drug_id)
             return
 
-    # =========================
-    # ❗ FALLBACK
-    # =========================
+    # ===== ОБЫЧНЫЙ СТАРТ =====
     await update.message.reply_text(
-        "💊 Нажми START ещё раз или открой каталог"
+        "💊 Нажми ссылку с препаратом"
     )
 
-# =========================
-# 🔥 PREVIEW
-# =========================
+# ===== PREVIEW =====
 async def send_preview(update: Update, d, drug_id):
 
     short_indications = d["indications"][:140] + "..."
@@ -109,9 +91,7 @@ async def send_preview(update: Update, d, drug_id):
         reply_markup=keyboard
     )
 
-# =========================
-# 🚀 ЗАПУСК
-# =========================
+# ===== ЗАПУСК =====
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 
