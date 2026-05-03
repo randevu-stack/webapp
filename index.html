@@ -242,7 +242,7 @@ function openDrug(i){
 
 /* ===== SHARE ===== */
 function shareDeepLink(name){
-    let bot = "YOUR_BOT_USERNAME";
+    let bot = "jurabek_helper_bot";
     let link = `https://t.me/${bot}?start=drug_${encodeURIComponent(name)}`;
     let url = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
     tg.openLink(url);
