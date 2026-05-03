@@ -9,33 +9,121 @@
 <script src="data.js"></script>
 
 <style>
-body {margin:0;font-family:-apple-system,Arial;background:#f2f2f7;max-width:1200px;margin:auto;}
-.header {padding:14px;font-size:18px;font-weight:600;}
+body {
+    margin:0;
+    font-family:-apple-system, Arial;
+    background:#f2f2f7;
+    max-width:1200px;
+    margin:auto;
+}
 
-.tabs {display:flex;gap:10px;padding:10px;}
-.tab {flex:1;padding:10px;border-radius:10px;background:#e9e9ee;text-align:center;cursor:pointer;}
-.tab.active {background:#0a84ff;color:white;}
+.header {
+    padding:14px;
+    font-size:18px;
+    font-weight:600;
+}
 
-.top {padding:10px;}
-input {width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee;}
+/* TABS */
+.tabs {
+    display:flex;
+    gap:8px;
+    padding:10px;
+}
 
-#list {display:grid;gap:14px;padding:10px;grid-template-columns:1fr;}
-@media (min-width:600px){#list{grid-template-columns:repeat(2,1fr);}}
-@media (min-width:1024px){#list{grid-template-columns:repeat(3,1fr);}}
+.tab {
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+    background:#e9e9ee;
+    text-align:center;
+    cursor:pointer;
+    font-size:14px;
+}
 
-.card {background:white;border-radius:18px;padding:12px;box-shadow:0 4px 18px rgba(0,0,0,0.08);position:relative;}
-.fav {position:absolute;right:12px;top:10px;font-size:20px;cursor:pointer;}
+.tab.active {
+    background:#0a84ff;
+    color:white;
+}
 
-.card img {width:100%;height:150px;object-fit:contain;background:#f7f7f7;border-radius:12px;}
+/* SEARCH */
+.top { padding:10px; }
+input {
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:none;
+    background:#e9e9ee;
+}
 
-.title {font-size:17px;font-weight:600;margin-top:8px;}
-.desc {font-size:13px;color:#666;margin-top:6px;}
-.form {margin-top:4px;color:#0a84ff;font-size:13px;}
+/* GRID */
+#list {
+    display:grid;
+    gap:14px;
+    padding:10px;
+    grid-template-columns:1fr;
+}
+@media (min-width:600px){ #list{grid-template-columns:repeat(2,1fr);} }
+@media (min-width:1024px){ #list{grid-template-columns:repeat(3,1fr);} }
 
-.btn {margin-top:12px;background:#0a84ff;color:white;padding:10px;text-align:center;border-radius:12px;cursor:pointer;}
+/* CARD */
+.card {
+    background:white;
+    border-radius:18px;
+    padding:12px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.08);
+    position:relative;
+}
 
-.empty {padding:30px;text-align:center;color:#888;}
-.recent-title {padding:10px;font-weight:600;color:#555;}
+.fav {
+    position:absolute;
+    right:12px;
+    top:10px;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.card img {
+    width:100%;
+    height:150px;
+    object-fit:contain;
+    background:#f7f7f7;
+    border-radius:12px;
+}
+
+.title {
+    font-size:16px;
+    font-weight:600;
+    margin-top:8px;
+}
+
+.desc {
+    font-size:13px;
+    color:#666;
+    margin-top:6px;
+}
+
+.form {
+    margin-top:4px;
+    font-size:13px;
+    color:#0a84ff;
+}
+
+.btn {
+    margin-top:12px;
+    background:#0a84ff;
+    color:white;
+    padding:10px;
+    text-align:center;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+/* EMPTY */
+.empty {
+    padding:30px;
+    text-align:center;
+    color:#888;
+}
 </style>
 </head>
 
@@ -46,13 +134,13 @@ input {width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee
 <div class="tabs">
     <div class="tab active" id="tab-all" onclick="setTab('all')">Все</div>
     <div class="tab" id="tab-fav" onclick="setTab('fav')">Избранное</div>
+    <div class="tab" id="tab-recent" onclick="setTab('recent')">Недавно</div>
 </div>
 
 <div class="top">
     <input id="search" placeholder="Поиск по названию и симптомам..." oninput="debounceSearch()">
 </div>
 
-<div id="recent"></div>
 <div id="list"></div>
 
 <script>
@@ -62,6 +150,7 @@ tg.expand();
 
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 let recent = JSON.parse(localStorage.getItem("recent") || "[]");
+
 let currentTab = "all";
 let currentList = [...drugs];
 let debounceTimer = null;
@@ -75,9 +164,10 @@ const synonyms = {
 // ===== TAB =====
 function setTab(tab){
     currentTab = tab;
-    document.getElementById("tab-all").classList.remove("active");
-    document.getElementById("tab-fav").classList.remove("active");
+
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
     document.getElementById("tab-"+tab).classList.add("active");
+
     search();
 }
 
@@ -113,13 +203,22 @@ function expandQuery(q){
 function search(){
     let q = norm(document.getElementById("search").value);
 
-    let base = currentTab === "fav"
-        ? drugs.filter(d=>favorites.includes(d.name))
-        : drugs;
+    let base;
+
+    if(currentTab === "fav"){
+        base = drugs.filter(d=>favorites.includes(d.name));
+    } 
+    else if(currentTab === "recent"){
+        base = recent
+            .map(name => drugs.find(d=>d.name === name))
+            .filter(Boolean);
+    } 
+    else {
+        base = drugs;
+    }
 
     if(!q){
         render(base);
-        showRecent();
         return;
     }
 
@@ -127,12 +226,10 @@ function search(){
 
     let result = base.filter(d=>{
         let text = norm(d.name + " " + d.indications);
-
         return expandedWords.some(word => text.includes(word));
     });
 
     render(result);
-    document.getElementById("recent").innerHTML = "";
 }
 
 // ===== RECENT =====
@@ -143,25 +240,6 @@ function addRecent(name){
     localStorage.setItem("recent", JSON.stringify(recent));
 }
 
-function showRecent(){
-    if(recent.length === 0) return;
-
-    let items = recent
-        .map(name => drugs.find(d=>d.name === name))
-        .filter(Boolean);
-
-    let html = `<div class="recent-title">Недавно просмотренные</div>`;
-
-    items.forEach(d=>{
-        html += `<div class="card">
-            <div class="title">${d.name}</div>
-            <div class="btn" onclick="openDrugByName('${d.name}')">Открыть</div>
-        </div>`;
-    });
-
-    document.getElementById("recent").innerHTML = html;
-}
-
 // ===== RENDER =====
 function render(data){
     currentList = data;
@@ -169,6 +247,12 @@ function render(data){
     if(currentTab === "fav" && favorites.length === 0){
         document.getElementById("list").innerHTML =
         `<div class="empty">У вас пока нет избранных ❤️</div>`;
+        return;
+    }
+
+    if(currentTab === "recent" && recent.length === 0){
+        document.getElementById("list").innerHTML =
+        `<div class="empty">Вы ещё ничего не смотрели 👀</div>`;
         return;
     }
 
@@ -212,8 +296,6 @@ function openDrug(i){
     let d = currentList[i];
     addRecent(d.name);
 
-    document.getElementById("recent").innerHTML = "";
-
     document.getElementById("list").innerHTML = `
     <div class="card">
         ${d.photo ? `<img src="${d.photo}">` : ''}
@@ -225,14 +307,6 @@ function openDrug(i){
         </div>
         <div class="btn" onclick="search()">← Назад</div>
     </div>`;
-}
-
-function openDrugByName(name){
-    let d = drugs.find(x=>x.name === name);
-    if(!d) return;
-
-    currentList = [d];
-    openDrug(0);
 }
 
 // ===== DEBOUNCE =====
