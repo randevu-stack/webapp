@@ -9,131 +9,35 @@
 <script src="data.js"></script>
 
 <style>
-body {
-    margin:0;
-    font-family:-apple-system, Arial;
-    background:#f2f2f7;
-    max-width:1200px;
-    margin:auto;
-}
+body {margin:0;font-family:-apple-system,Arial;background:#f2f2f7;max-width:1200px;margin:auto;}
 
-/* HEADER */
-.header {
-    background:#f4f4f4;
-    padding:12px;
-    border-bottom:1px solid #ddd;
-}
+.header{background:#f4f4f4;padding:12px;border-bottom:1px solid #ddd;}
+.header-top{display:flex;align-items:center;gap:10px;}
+.logo{width:42px;}
+.brand{font-weight:700;color:#1f4fa3;}
+.sub{font-size:11px;color:#666;}
 
-.header-top {
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+.contacts{margin-top:8px;font-size:12px;}
+.contact{display:flex;gap:6px;}
 
-.logo { width:42px;height:42px; }
+.tabs{display:flex;gap:8px;padding:10px;}
+.tab{flex:1;padding:10px;border-radius:10px;background:#e9e9ee;text-align:center;cursor:pointer;}
+.tab.active{background:#0a84ff;color:white;}
 
-.brand {
-    font-weight:700;
-    font-size:16px;
-    color:#1f4fa3;
-}
+.top{padding:10px;}
+input{width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee;}
 
-.sub { font-size:11px;color:#666; }
+#list{display:grid;gap:14px;padding:10px;}
+@media(min-width:600px){#list{grid-template-columns:repeat(2,1fr);}}
+@media(min-width:1024px){#list{grid-template-columns:repeat(3,1fr);}}
 
-.contacts {
-    margin-top:8px;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-    font-size:12px;
-}
+.card{background:white;border-radius:18px;padding:12px;box-shadow:0 4px 18px rgba(0,0,0,0.08);}
+.title{font-weight:600;margin-top:8px;}
+.desc{font-size:13px;color:#666;margin-top:6px;}
 
-.contact { display:flex; gap:6px; }
-.icon { width:18px; text-align:center; }
-
-/* TABS */
-.tabs { display:flex;gap:8px;padding:10px; }
-
-.tab {
-    flex:1;
-    padding:10px;
-    border-radius:10px;
-    background:#e9e9ee;
-    text-align:center;
-    cursor:pointer;
-}
-
-.tab.active { background:#0a84ff;color:white; }
-
-/* SEARCH */
-.top { padding:10px; }
-
-input {
-    width:100%;
-    padding:12px;
-    border-radius:12px;
-    border:none;
-    background:#e9e9ee;
-}
-
-/* GRID */
-#list {
-    display:grid;
-    gap:14px;
-    padding:10px;
-}
-
-@media (min-width:600px){
-    #list { grid-template-columns:repeat(2,1fr); }
-}
-
-@media (min-width:1024px){
-    #list { grid-template-columns:repeat(3,1fr); }
-}
-
-/* CARD */
-.card {
-    background:white;
-    border-radius:18px;
-    padding:12px;
-    box-shadow:0 4px 18px rgba(0,0,0,0.08);
-    position:relative;
-}
-
-.fav {
-    position:absolute;
-    right:12px;
-    top:10px;
-    font-size:20px;
-    cursor:pointer;
-}
-
-.card img {
-    width:100%;
-    height:150px;
-    object-fit:contain;
-    background:#f7f7f7;
-    border-radius:12px;
-}
-
-.title { font-size:16px;font-weight:600;margin-top:8px; }
-.desc { font-size:13px;color:#666;margin-top:6px; }
-.form { margin-top:4px;color:#0a84ff;font-size:13px; }
-
-.btn {
-    margin-top:10px;
-    background:#0a84ff;
-    color:white;
-    padding:10px;
-    text-align:center;
-    border-radius:12px;
-    cursor:pointer;
-}
-
-.btn.green { background:#34c759; }
-.btn.gray { background:#8e8e93; }
-
-.empty { padding:30px;text-align:center;color:#888; }
+.btn{margin-top:10px;background:#0a84ff;color:white;padding:10px;text-align:center;border-radius:12px;cursor:pointer;}
+.btn.green{background:#34c759;}
+.btn.gray{background:#8e8e93;}
 </style>
 </head>
 
@@ -144,25 +48,19 @@ input {
         <img src="logo.png" class="logo">
         <div>
             <div class="brand">JURABEK<br>Laboratories LTD</div>
-            <div class="sub">Производство лекарственных средств широкого спектра</div>
+            <div class="sub">Производство лекарственных средств</div>
         </div>
     </div>
 
     <div class="contacts">
-        <div class="contact"><span class="icon">📞</span> +998 (78) 150-03-03</div>
-        <div class="contact"><span class="icon">✉️</span> info@jurabek.uz</div>
-        <div class="contact"><span class="icon">📅</span> Пн–Пт 9:00–18:00</div>
+        <div class="contact">📞 +998 (78) 150-03-03</div>
+        <div class="contact">✉️ info@jurabek.uz</div>
+        <div class="contact">📅 Пн–Пт 9:00–18:00</div>
     </div>
 </div>
 
-<div class="tabs">
-    <div class="tab active" id="tab-all" onclick="setTab('all')">Все</div>
-    <div class="tab" id="tab-fav" onclick="setTab('fav')">Избранное</div>
-    <div class="tab" id="tab-recent" onclick="setTab('recent')">Недавно</div>
-</div>
-
 <div class="top">
-    <input id="search" placeholder="Поиск..." oninput="debounceSearch()">
+    <input id="search" placeholder="Поиск..." oninput="search()">
 </div>
 
 <div id="list"></div>
@@ -170,176 +68,77 @@ input {
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
-tg.enableClosingConfirmation();
 
-let isDetailOpen=false;
-let scrollPos=0;
+let currentList = [...drugs];
 
-let favorites=JSON.parse(localStorage.getItem("fav")||"[]");
-let recent=JSON.parse(localStorage.getItem("recent")||"[]");
-
-let currentTab="all";
-let currentList=[...drugs];
-let debounceTimer=null;
-
-function norm(t){return (t||"").toLowerCase().trim();}
-
-/* СИНОНИМЫ */
-const synonyms={
-"сердце":["кардио","гипертон","давлен"],
-"кашель":["кашл","бронх"]
-};
-
-/* ИНДЕКС */
-let searchIndex=drugs.map(d=>({
-ref:d,
-name:norm(d.name),
-ind:norm(d.indications),
-sost:norm(d.sostav)
-}));
-
-function setTab(tab){
-currentTab=tab;
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-document.getElementById("tab-"+tab).classList.add("active");
-search();
-}
-
-function toggleFav(name){
-favorites.includes(name)
-?favorites=favorites.filter(f=>f!==name)
-:favorites.push(name);
-
-localStorage.setItem("fav",JSON.stringify(favorites));
-search();
-}
+function norm(t){return (t||"").toLowerCase();}
 
 function search(){
-isDetailOpen=false;
-tg.BackButton.hide();
+    let q = norm(document.getElementById("search").value);
 
-let q=norm(document.getElementById("search").value);
+    if(!q){ render(drugs); return; }
 
-let base=currentTab==="fav"
-?drugs.filter(d=>favorites.includes(d.name))
-:currentTab==="recent"
-?recent.map(n=>drugs.find(d=>d.name===n)).filter(Boolean)
-:drugs;
+    let res = drugs.filter(d=>{
+        return norm(d.name + d.indications + d.sostav).includes(q);
+    });
 
-if(!q){render(base);return;}
-
-let words=q.split(" ");
-words.forEach(w=>{
-if(synonyms[w])words.push(...synonyms[w]);
-});
-
-let result=searchIndex
-.map(item=>{
-let score=0;
-words.forEach(w=>{
-if(item.name.includes(w))score+=3;
-if(item.ind.includes(w))score+=2;
-if(item.sost.includes(w))score+=1;
-});
-return {ref:item.ref,score};
-})
-.filter(r=>r.score>0 && base.includes(r.ref))
-.sort((a,b)=>b.score-a.score)
-.map(r=>r.ref);
-
-render(result);
+    render(res);
 }
 
 function render(data){
-currentList=data;
+    currentList = data;
 
-if(data.length===0){
-document.getElementById("list").innerHTML=`<div class="empty">Ничего не найдено</div>`;
-return;
-}
+    let html="";
+    data.forEach((d,i)=>{
+        html+=`
+        <div class="card">
+            ${d.photo?`<img src="${d.photo}" style="width:100%">`:''}
+            <div class="title">${d.name}</div>
+            <div class="desc">${d.sostav||''}</div>
+            <div class="btn" onclick="openDrug(${i})">Открыть</div>
+        </div>`;
+    });
 
-let html="";
-
-data.forEach((d,i)=>{
-html+=`
-<div class="card">
-<div class="fav" onclick="toggleFav('${d.name}')">
-${favorites.includes(d.name)?"❤️":"🤍"}
-</div>
-
-${d.photo?`<img src="${d.photo}" loading="lazy">`:''}
-
-<div class="title">${d.name}</div>
-<div class="desc">${d.sostav||''}</div>
-
-${(d.form||d.dosage)?`
-<div class="form">
-${d.form||''} (${d.dosage||''})
-</div>`:''}
-
-<div class="btn" onclick="openDrug(${i})">Открыть</div>
-</div>`;
-});
-
-document.getElementById("list").innerHTML=html;
+    document.getElementById("list").innerHTML=html;
 }
 
 function openDrug(i){
-let d=currentList[i];
+    let d = currentList[i];
 
-scrollPos=window.scrollY;
-isDetailOpen=true;
-tg.BackButton.show();
+    document.getElementById("list").innerHTML=`
+    <div class="card">
+        ${d.photo?`<img src="${d.photo}" style="width:100%">`:''}
+        <div class="title">${d.name}</div>
 
-document.getElementById("list").innerHTML=`
-<div class="card">
+        <div class="desc">
+        <b>Состав:</b><br>${d.sostav||'-'}<br><br>
+        <b>Показания:</b><br>${d.indications||'-'}
+        </div>
 
-${d.photo?`<img src="${d.photo}">`:''}
+        <div class="btn" onclick="search()">← Назад</div>
 
-<div class="title">${d.name}</div>
+        ${d.url?`
+        <div class="btn green" onclick="tg.openLink('${d.url}')">
+        🌐 Открыть сайт
+        </div>`:''}
 
-<div class="desc">
-<b>Состав:</b><br>${d.sostav||'-'}<br><br>
-<b>Форма:</b><br>${d.form||''} (${d.dosage||''})<br><br>
-<b>Показания:</b><br>${d.indications||'-'}
-</div>
-
-<div class="btn" onclick="goBack()">← Назад</div>
-
-${d.url?`
-<div class="btn green" onclick="tg.openLink('${d.url}')">
-🌐 Открыть на сайте
-</div>`:''}
-
-<div class="btn gray" onclick="shareDrug('${d.name}')">
-📤 Поделиться
-</div>
-
-</div>`;
+        <div class="btn gray" onclick='shareViaBot(${JSON.stringify(d)})'>
+        📤 Поделиться через бота
+        </div>
+    </div>`;
 }
 
-/* SHARE */
-function shareDrug(name){
-let text=`Посмотри препарат: ${name}`;
-let url=`https://t.me/share/url?text=${encodeURIComponent(text)}`;
-tg.openLink(url);
+/* 🔥 ШАРИНГ ЧЕРЕЗ БОТА */
+function shareViaBot(d){
+    tg.sendData(JSON.stringify({
+        type:"share",
+        drug:d
+    }));
+
+    tg.close(); // закрываем WebApp после отправки
 }
 
-function goBack(){
-isDetailOpen=false;
-tg.BackButton.hide();
-search();
-setTimeout(()=>window.scrollTo(0,scrollPos),0);
-}
-
-tg.BackButton.onClick(()=>{if(isDetailOpen)goBack();});
-
-function debounceSearch(){
-clearTimeout(debounceTimer);
-debounceTimer=setTimeout(search,200);
-}
-
-search();
+render(drugs);
 </script>
 
 </body>
