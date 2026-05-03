@@ -9,10 +9,6 @@
 <script src="data.js"></script>
 
 <style>
-html {
-    scroll-behavior: smooth; /* плавный скролл */
-}
-
 body {
     margin:0;
     font-family:-apple-system, Arial;
@@ -32,7 +28,6 @@ body {
 }
 
 .header-left { display:flex; align-items:center; gap:10px; }
-
 .logo { width:42px;height:42px; }
 
 .brand {
@@ -145,7 +140,6 @@ input {
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
     <div class="header-left">
         <img src="logo.png" class="logo">
@@ -167,14 +161,12 @@ input {
     </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
     <div class="tab active" id="tab-all" onclick="setTab('all')">Все</div>
     <div class="tab" id="tab-fav" onclick="setTab('fav')">Избранное</div>
     <div class="tab" id="tab-recent" onclick="setTab('recent')">Недавно</div>
 </div>
 
-<!-- SEARCH -->
 <div class="top">
     <input id="search" placeholder="Поиск..." oninput="debounceSearch()">
 </div>
@@ -196,7 +188,6 @@ let currentTab = "all";
 let currentList = [...drugs];
 let debounceTimer = null;
 
-/* SEARCH LOGIC */
 function norm(t){ return (t||"").toLowerCase().trim(); }
 
 function setTab(tab){
@@ -244,7 +235,6 @@ function addRecent(name){
     localStorage.setItem("recent", JSON.stringify(recent));
 }
 
-/* RENDER */
 function render(data){
     currentList = data;
 
@@ -280,11 +270,10 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
-/* OPEN */
 function openDrug(i){
     let d = currentList[i];
 
-    scrollPos = window.scrollY; // сохраняем позицию
+    scrollPos = window.scrollY;
     addRecent(d.name);
 
     isDetailOpen = true;
@@ -303,7 +292,6 @@ function openDrug(i){
     </div>`;
 }
 
-/* BACK */
 function goBack(){
     isDetailOpen = false;
     tg.BackButton.hide();
@@ -311,11 +299,8 @@ function goBack(){
     search();
 
     setTimeout(()=>{
-        window.scrollTo({
-            top: scrollPos,
-            behavior: "smooth"
-        });
-    }, 50);
+        window.scrollTo(0, scrollPos);
+    }, 0);
 }
 
 tg.BackButton.onClick(()=>{
