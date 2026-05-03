@@ -51,11 +51,24 @@ body {
     color:#666;
 }
 
-/* RIGHT */
+/* CONTACTS */
 .header-right {
-    text-align:right;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
     font-size:12px;
     color:#444;
+}
+
+.contact {
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.icon {
+    width:18px;
+    text-align:center;
 }
 
 /* MOBILE */
@@ -67,7 +80,6 @@ body {
     }
 
     .header-right {
-        text-align:left;
         font-size:11px;
     }
 }
@@ -200,9 +212,9 @@ input {
     </div>
 
     <div class="header-right">
-        <div>📞 +998 (78) 150-03-03</div>
-        <div>✉️ info@jurabek.uz</div>
-        <div>Пн–Пт 9:00–18:00</div>
+        <div class="contact"><span class="icon">📞</span> +998 (78) 150-03-03</div>
+        <div class="contact"><span class="icon">✉️</span> info@jurabek.uz</div>
+        <div class="contact"><span class="icon">📅</span> Пн–Пт 9:00–18:00</div>
     </div>
 </div>
 
