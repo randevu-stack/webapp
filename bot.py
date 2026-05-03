@@ -16,7 +16,7 @@ WEB_APP_URL = "https://webapp-alpha-nine-95.vercel.app"
 logging.basicConfig(level=logging.INFO)
 
 # =========================
-# 📦 ПРИМЕР БАЗЫ (замени на свою)
+# 📦 БАЗА
 # =========================
 DRUGS = {
     1: {
@@ -25,7 +25,7 @@ DRUGS = {
         "form": "Раствор для инъекций",
         "dosage": "5 мг/мл 4 мл",
         "group": "Диуретик",
-        "indications": "Лечение при отеках и/или выпотах, вызванных сердечной недостаточностью, если необходимо в/в применение лекарственного средства, например, в случае отека легких вследствие острой сердечной недостаточности.",
+        "indications": "Лечение при отеках и/или выпотах, вызванных сердечной недостаточностью...",
         "photo": "https://jurabek.uz/d/torassa_4_ml_no10_8162uzp01.png",
         "url": "https://jurabek.uz/magazin/product/torassa"
     }
@@ -35,29 +35,48 @@ DRUGS = {
 # 🚀 START
 # =========================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    args = context.args
 
-    if args:
-        raw = args[0]
+    payload = None
 
-        if "drug_" in raw:
-            drug_id = raw.replace("drug_", "").replace("_preview", "")
-            drug_id = int(drug_id)
+    # ✅ 1. стандартный start (args)
+    if context.args:
+        payload = context.args[0]
 
-            d = DRUGS.get(drug_id)
+    # ✅ 2. fallback (для startapp)
+    elif update.message and update.message.text:
+        text = update.message.text
 
-            if d:
-                await send_preview(update, d, drug_id)
-                return
+        if "startapp=" in text:
+            payload = text.split("startapp=")[1]
 
+    # =========================
+    # 🔍 ОБРАБОТКА
+    # =========================
+    if payload and "drug_" in payload:
+        try:
+            drug_id = int(payload.replace("drug_", "").replace("_preview", ""))
+        except:
+            await update.message.reply_text("⚠️ Ошибка ID")
+            return
+
+        d = DRUGS.get(drug_id)
+
+        if d:
+            await send_preview(update, d, drug_id)
+            return
+
+    # =========================
+    # ❗ FALLBACK
+    # =========================
     await update.message.reply_text(
-    "💊 Нажми START и получишь препарат"
-)
+        "💊 Нажми START ещё раз или открой каталог"
+    )
 
 # =========================
-# 🔥 PREVIEW КАРТОЧКА
+# 🔥 PREVIEW
 # =========================
 async def send_preview(update: Update, d, drug_id):
+
     short_indications = d["indications"][:140] + "..."
 
     text = f"""💊 <b>{d['name']}</b>
