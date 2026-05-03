@@ -9,174 +9,42 @@
 <script src="data.js"></script>
 
 <style>
-body {
-    margin:0;
-    font-family:-apple-system, Arial;
-    background:#f2f2f7;
-    max-width:1200px;
-    margin:0 auto;
-}
+body {margin:0;font-family:-apple-system,Arial;background:#f2f2f7;max-width:1200px;margin:auto;}
 
-/* HEADER */
-.header {
-    padding:14px;
-    font-size:18px;
-    font-weight:600;
-}
+.header {padding:14px;font-size:18px;font-weight:600;}
 
-/* TABS */
-.tabs {
-    display:flex;
-    gap:10px;
-    padding:0 10px 10px;
-}
+.tabs {display:flex;gap:10px;padding:10px;}
+.tab {flex:1;padding:10px;border-radius:10px;background:#e9e9ee;text-align:center;cursor:pointer;}
+.tab.active {background:#0a84ff;color:white;}
 
-.tab {
-    flex:1;
-    padding:10px;
-    border-radius:10px;
-    background:#e9e9ee;
-    text-align:center;
-    cursor:pointer;
-}
+.top {padding:10px;position:relative;}
+input {width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee;}
 
-.tab.active {
-    background:#0a84ff;
-    color:white;
-}
-
-/* SEARCH */
-.top {
-    padding:10px;
-    position:relative;
-}
-
-input {
-    width:100%;
-    padding:12px;
-    border-radius:12px;
-    border:none;
-    background:#e9e9ee;
-}
-
-/* SUGGESTIONS */
-.suggestions {
-    position:absolute;
-    top:52px;
-    left:10px;
-    right:10px;
-    background:white;
-    border-radius:12px;
-    box-shadow:0 6px 20px rgba(0,0,0,0.1);
-    z-index:1000;
-}
-
-.suggestion {
-    padding:10px;
-    border-bottom:1px solid #eee;
-    cursor:pointer;
-}
-
-/* GRID */
-#list {
-    display:grid;
-    gap:14px;
-    padding:10px;
-    grid-template-columns: 1fr;
-}
-
-@media (min-width:600px){
-    #list { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (min-width:1024px){
-    #list { grid-template-columns: repeat(3, 1fr); }
-}
+#list {display:grid;gap:14px;padding:10px;grid-template-columns:1fr;}
+@media (min-width:600px){#list{grid-template-columns:repeat(2,1fr);}}
+@media (min-width:1024px){#list{grid-template-columns:repeat(3,1fr);}}
 
 /* CARD */
-.card {
-    background:white;
-    border-radius:18px;
-    padding:12px;
-    box-shadow:0 4px 18px rgba(0,0,0,0.08);
-    position:relative;
-}
+.card {background:white;border-radius:18px;padding:12px;box-shadow:0 4px 18px rgba(0,0,0,0.08);position:relative;}
+.fav {position:absolute;right:12px;top:10px;font-size:20px;cursor:pointer;}
+.card img {width:100%;height:150px;object-fit:contain;background:#f7f7f7;border-radius:12px;}
+.title {font-size:17px;font-weight:600;margin-top:8px;}
+.desc {font-size:13px;color:#666;margin-top:6px;}
+.form {margin-top:4px;color:#0a84ff;font-size:13px;}
+.btn {margin-top:12px;background:#0a84ff;color:white;padding:10px;text-align:center;border-radius:12px;cursor:pointer;}
 
-/* FAVORITE */
-.fav {
-    position:absolute;
-    right:12px;
-    top:10px;
-    font-size:20px;
-    cursor:pointer;
-}
-
-/* IMAGE */
-.card img {
-    width:100%;
-    height:150px;
-    object-fit:contain;
-    background:#f7f7f7;
-    border-radius:12px;
-}
-
-.big-img { height:220px !important; cursor:pointer; }
-
-/* TEXT */
-.title {
-    font-size:17px;
-    font-weight:600;
-    margin-top:8px;
-}
-
-.highlight {
-    background:yellow;
-}
-
-.desc {
-    font-size:13px;
-    color:#666;
-    margin-top:6px;
-}
-
-.form {
-    margin-top:4px;
-    font-size:13px;
-    color:#0a84ff;
-}
-
-/* BUTTON */
-.btn {
-    margin-top:12px;
-    background:#0a84ff;
-    color:white;
-    padding:10px;
+/* EMPTY */
+.empty {
+    padding:30px;
     text-align:center;
-    border-radius:12px;
-    cursor:pointer;
+    color:#888;
 }
 
-/* ZOOM */
-.zoom-modal {
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.9);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-}
-
-.zoom-modal img { max-width:90%; max-height:90%; }
-
-.zoom-close {
-    position:absolute;
-    top:20px;
-    right:20px;
-    font-size:28px;
-    color:white;
-    cursor:pointer;
+/* RECENT */
+.recent-title {
+    padding:10px;
+    font-weight:600;
+    color:#555;
 }
 </style>
 </head>
@@ -185,44 +53,41 @@ input {
 
 <div class="header">Jurabek Laboratories 🧬</div>
 
-<!-- TABS -->
 <div class="tabs">
-    <div class="tab active" onclick="setTab('all')" id="tab-all">Все</div>
-    <div class="tab" onclick="setTab('fav')" id="tab-fav">Избранное</div>
+    <div class="tab active" id="tab-all" onclick="setTab('all')">Все</div>
+    <div class="tab" id="tab-fav" onclick="setTab('fav')">Избранное</div>
 </div>
 
 <div class="top">
     <input id="search" placeholder="Поиск..." oninput="debounceSearch()">
-    <div id="suggestions" class="suggestions"></div>
 </div>
 
+<div id="recent"></div>
 <div id="list"></div>
-
-<!-- ZOOM -->
-<div id="zoomModal" class="zoom-modal" onclick="closeZoom()">
-    <span class="zoom-close">✕</span>
-    <img id="zoomImg">
-</div>
 
 <script>
 
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-let currentList = [...drugs];
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
-let debounceTimer = null;
+let recent = JSON.parse(localStorage.getItem("recent") || "[]");
 let currentTab = "all";
+let currentList = [...drugs];
+let debounceTimer = null;
+
+// ===== СИНОНИМЫ =====
+const synonyms = {
+    "сердце": ["кардио", "ишемия", "стенокардия"],
+    "боль": ["болит", "болевой"]
+};
 
 // ===== TAB =====
 function setTab(tab){
     currentTab = tab;
-
     document.getElementById("tab-all").classList.remove("active");
     document.getElementById("tab-fav").classList.remove("active");
-
     document.getElementById("tab-"+tab).classList.add("active");
-
     search();
 }
 
@@ -238,20 +103,88 @@ function toggleFav(name){
 }
 
 // ===== NORMALIZE =====
-function norm(t){ return (t||"").toLowerCase().trim(); }
+function norm(t){ return (t||"").toLowerCase(); }
 
-// ===== HIGHLIGHT =====
-function highlight(text, q){
-    if(!q) return text;
-    let reg = new RegExp(`(${q})`, "gi");
-    return text.replace(reg, `<span class="highlight">$1</span>`);
+// ===== УМНЫЙ ПОИСК =====
+function expandQuery(q){
+    let words = q.split(" ");
+    let expanded = [...words];
+
+    words.forEach(w=>{
+        if(synonyms[w]){
+            expanded.push(...synonyms[w]);
+        }
+    });
+
+    return expanded.join(" ");
+}
+
+// ===== SEARCH =====
+function search(){
+    let q = norm(document.getElementById("search").value);
+    let base = currentTab === "fav"
+        ? drugs.filter(d=>favorites.includes(d.name))
+        : drugs;
+
+    if(!q){
+        render(base);
+        showRecent();
+        return;
+    }
+
+    let expanded = expandQuery(q);
+
+    let result = base.filter(d=>{
+        let text = norm(d.name + " " + d.indications);
+        return text.includes(expanded);
+    });
+
+    render(result);
+    document.getElementById("recent").innerHTML = "";
+}
+
+// ===== RECENT =====
+function addRecent(name){
+    recent = recent.filter(r=>r!==name);
+    recent.unshift(name);
+    recent = recent.slice(0,5);
+    localStorage.setItem("recent", JSON.stringify(recent));
+}
+
+function showRecent(){
+    if(recent.length === 0) return;
+
+    let items = recent
+        .map(name => drugs.find(d=>d.name === name))
+        .filter(Boolean);
+
+    let html = `<div class="recent-title">Недавно просмотренные</div>`;
+
+    items.forEach(d=>{
+        html += `<div class="card">
+            <div class="title">${d.name}</div>
+            <div class="btn" onclick="openDrugByName('${d.name}')">Открыть</div>
+        </div>`;
+    });
+
+    document.getElementById("recent").innerHTML = html;
 }
 
 // ===== RENDER =====
 function render(data){
     currentList = data;
 
-    let q = norm(document.getElementById("search").value);
+    if(currentTab === "fav" && favorites.length === 0){
+        document.getElementById("list").innerHTML =
+        `<div class="empty">У вас пока нет избранных ❤️</div>`;
+        return;
+    }
+
+    if(data.length === 0){
+        document.getElementById("list").innerHTML =
+        `<div class="empty">Ничего не найдено</div>`;
+        return;
+    }
 
     let html = "";
 
@@ -260,22 +193,20 @@ function render(data){
 
         html += `
         <div class="card">
-
             <div class="fav" onclick="toggleFav('${d.name}')">
                 ${fav ? "❤️" : "🤍"}
             </div>
 
-            ${d.photo ? `<img src="${d.photo}">` : ''}
+            ${d.photo ? `<img src="${d.photo}" loading="lazy">` : ''}
 
-            <div class="title">${highlight(d.name, q)}</div>
+            <div class="title">${d.name}</div>
 
             <div class="desc">${d.sostav || ''}</div>
 
             ${(d.form || d.dosage) ? `
                 <div class="form">
-                    ${d.form || ''} ${d.dosage ? '('+d.dosage+')' : ''}
-                </div>
-            ` : ''}
+                    ${d.form || ''} (${d.dosage || ''})
+                </div>` : ''}
 
             <div class="btn" onclick="openDrug(${i})">Открыть</div>
         </div>`;
@@ -284,61 +215,16 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
-// ===== SEARCH =====
-function search(){
-    let q = norm(document.getElementById("search").value);
-    document.getElementById("suggestions").innerHTML = "";
-
-    let base = currentTab === "fav"
-        ? drugs.filter(d=>favorites.includes(d.name))
-        : drugs;
-
-    if(!q){
-        render(base);
-        return;
-    }
-
-    let result = base.filter(d=>{
-        return norm(d.name).includes(q) ||
-               norm(d.indications).includes(q);
-    });
-
-    render(result);
-    showSuggestions(q);
-}
-
-// ===== SUGGESTIONS =====
-function showSuggestions(q){
-    let list = drugs
-        .filter(d=>norm(d.name).includes(q))
-        .slice(0,5);
-
-    let html = list.map(d =>
-        `<div class="suggestion" onclick="selectSuggestion('${d.name}')">${d.name}</div>`
-    ).join("");
-
-    document.getElementById("suggestions").innerHTML = html;
-}
-
-function selectSuggestion(text){
-    document.getElementById("search").value = text;
-    document.getElementById("suggestions").innerHTML = "";
-    search();
-}
-
-// ===== DEBOUNCE =====
-function debounceSearch(){
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(search, 200);
-}
-
 // ===== OPEN =====
 function openDrug(i){
     let d = currentList[i];
+    addRecent(d.name);
+
+    document.getElementById("recent").innerHTML = "";
 
     document.getElementById("list").innerHTML = `
     <div class="card">
-        ${d.photo ? `<img src="${d.photo}" class="big-img" onclick="openZoom('${d.photo}')">` : ''}
+        ${d.photo ? `<img src="${d.photo}">` : ''}
         <div class="title">${d.name}</div>
         <div class="desc">
             <b>Состав:</b><br>${d.sostav || '-'}<br><br>
@@ -349,17 +235,19 @@ function openDrug(i){
     </div>`;
 }
 
-// ===== ZOOM =====
-function openZoom(src){
-    document.getElementById("zoomImg").src = src;
-    document.getElementById("zoomModal").style.display = "flex";
+function openDrugByName(name){
+    let i = currentList.findIndex(d=>d.name===name);
+    if(i !== -1) openDrug(i);
 }
-function closeZoom(){
-    document.getElementById("zoomModal").style.display = "none";
+
+// ===== DEBOUNCE =====
+function debounceSearch(){
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(search, 200);
 }
 
 // ===== START =====
-render(drugs);
+search();
 
 </script>
 
