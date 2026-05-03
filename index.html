@@ -8,86 +8,160 @@
 <script src="data.js"></script>
 
 <style>
-body {
+body{
     margin:0;
     font-family:-apple-system, Arial;
     background:#f2f2f7;
-    max-width:1200px;
-    margin:auto;
 }
 
-.header {
-    background:#f4f4f4;
-    padding:12px;
-    border-bottom:1px solid #ddd;
+/* ===== HEADER ===== */
+.header{
+    background:#fff;
+    padding:14px;
+    border-bottom:1px solid #eee;
 }
 
-.brand {
+.header-top{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.logo{ width:42px; }
+
+.brand{
     font-weight:700;
     color:#1f4fa3;
+    line-height:1.2;
 }
 
-.top { padding:10px; }
+.sub{
+    font-size:11px;
+    color:#666;
+}
 
-input {
+.contacts{
+    margin-top:8px;
+    font-size:12px;
+    color:#444;
+}
+
+/* ===== SEARCH ===== */
+.top{ padding:10px; }
+
+input{
     width:100%;
     padding:12px;
-    border-radius:12px;
     border:none;
+    border-radius:12px;
     background:#e9e9ee;
 }
 
-#list {
+/* ===== GRID ===== */
+#list{
     display:grid;
     gap:14px;
     padding:10px;
 }
 
-@media (min-width:600px){
-    #list { grid-template-columns:repeat(2,1fr); }
-}
-@media (min-width:1024px){
-    #list { grid-template-columns:repeat(3,1fr); }
+@media(min-width:600px){
+    #list{ grid-template-columns:repeat(2,1fr); }
 }
 
-.card {
+@media(min-width:1024px){
+    #list{ grid-template-columns:repeat(3,1fr); }
+}
+
+/* ===== CARD ===== */
+.card{
     background:white;
     border-radius:18px;
     padding:12px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.06);
 }
 
-.card img {
+.card img{
     width:100%;
     height:150px;
     object-fit:contain;
+    background:#f7f7f7;
+    border-radius:12px;
 }
 
-.title { font-weight:600;margin-top:8px; }
+.big-img{
+    height:220px;
+}
 
-.form { color:#0a84ff;font-size:13px;margin-top:4px; }
+/* ===== TEXT ===== */
+.title{
+    font-weight:600;
+    margin-top:8px;
+}
 
-.btn {
+.form{
+    font-size:13px;
+    color:#0a84ff;
+    margin-top:4px;
+}
+
+.desc{
+    font-size:13px;
+    color:#666;
+    margin-top:6px;
+}
+
+/* ===== BUTTON ===== */
+.btn{
     margin-top:10px;
     background:#0a84ff;
     color:white;
     padding:10px;
-    text-align:center;
     border-radius:12px;
+    text-align:center;
     cursor:pointer;
+}
+
+.btn.green{
+    background:#34c759;
+}
+
+.empty{
+    padding:30px;
+    text-align:center;
+    color:#888;
 }
 </style>
 </head>
 
 <body>
 
+<!-- ===== HEADER (НЕ ТРОГАТЬ) ===== -->
 <div class="header">
-    <div class="brand">JURABEK Laboratories LTD</div>
+    <div class="header-top">
+        <img src="logo.png" class="logo">
+        <div>
+            <div class="brand">
+                JURABEK<br>Laboratories LTD
+            </div>
+            <div class="sub">
+                Производство лекарственных средств широкого спектра
+            </div>
+        </div>
+    </div>
+
+    <div class="contacts">
+        📞 +998 (78) 150-03-03<br>
+        ✉️ info@jurabek.uz<br>
+        📅 Пн–Пт 9:00–18:00
+    </div>
 </div>
 
+<!-- ===== SEARCH ===== -->
 <div class="top">
     <input id="search" placeholder="Поиск..." oninput="search()">
 </div>
 
+<!-- ===== LIST ===== -->
 <div id="list"></div>
 
 <script>
@@ -96,6 +170,7 @@ tg.expand();
 
 let currentList = [...drugs];
 let isDetailOpen = false;
+let scrollPos = 0;
 
 /* ===== ПОИСК ===== */
 function search(){
@@ -117,12 +192,19 @@ function search(){
 function render(data){
     currentList = data;
 
+    if(data.length === 0){
+        document.getElementById("list").innerHTML =
+            '<div class="empty">Ничего не найдено</div>';
+        return;
+    }
+
     let html = "";
 
     data.forEach((d,i)=>{
         html += `
         <div class="card">
-            ${d.photo ? `<img src="${d.photo}">` : ''}
+
+            ${d.photo ? `<img src="${d.photo}" loading="lazy">` : ''}
 
             <div class="title">${d.name}</div>
 
@@ -131,7 +213,10 @@ function render(data){
                 ${d.form || ''} ${d.dosage ? '(' + d.dosage + ')' : ''}
             </div>` : ''}
 
-            <div class="btn" onclick="openDrug(${i})">Открыть</div>
+            <div class="btn" onclick="openDrug(${i})">
+                Открыть
+            </div>
+
         </div>
         `;
     });
@@ -142,26 +227,33 @@ function render(data){
 /* ===== ОТКРЫТИЕ ===== */
 function openDrug(i){
     let d = currentList[i];
+
+    scrollPos = window.scrollY;
     isDetailOpen = true;
     tg.BackButton.show();
 
     document.getElementById("list").innerHTML = `
     <div class="card">
 
-        ${d.photo ? `<img src="${d.photo}">` : ''}
+        ${d.photo ? `<img src="${d.photo}" class="big-img">` : ''}
 
         <div class="title">${d.name}</div>
 
-        <div>
-            <b>Состав:</b><br>${d.sostav}<br><br>
-            <b>Показания:</b><br>${d.indications}
+        <div class="desc">
+            <b>Состав:</b><br>${d.sostav || '-'}<br><br>
+
+            <b>Форма:</b><br>
+            ${d.form || '-'} ${d.dosage ? '(' + d.dosage + ')' : ''}<br><br>
+
+            <b>Показания:</b><br>
+            ${d.indications || '-'}
         </div>
 
         <div class="btn" onclick="goBack()">← Назад</div>
 
         ${d.url ? `
-        <div class="btn" onclick="tg.openLink('${d.url}')">
-            🌐 Сайт
+        <div class="btn green" onclick="tg.openLink('${d.url}')">
+            🌐 Открыть сайт
         </div>` : ''}
 
         <div class="btn" onclick="share(${d.id})">
@@ -172,12 +264,11 @@ function openDrug(i){
     `;
 }
 
-/* ===== SHARE (ID) ===== */
+/* ===== SHARE ===== */
 function share(id){
-    let bot = "jurabek_helper_bot";
+    let bot = "jurabek_helper_bot"; //
 
-    let payload = "drug_" + id + "_preview";
-    let link = "https://t.me/" + bot + "?start=" + payload;
+    let link = "https://t.me/" + bot + "?start=drug_" + id + "_preview";
 
     tg.openLink("https://t.me/share/url?url=" + encodeURIComponent(link));
 }
@@ -187,11 +278,15 @@ function goBack(){
     isDetailOpen = false;
     tg.BackButton.hide();
     render(drugs);
+
+    setTimeout(()=>{
+        window.scrollTo(0, scrollPos);
+    }, 0);
 }
 
 /* ===== AUTO OPEN ===== */
 function autoOpen(){
-    const params = new URLSearchParams(window.location.search);
+    let params = new URLSearchParams(window.location.search);
     let id = params.get("drug");
 
     if(!id) return;
@@ -209,6 +304,7 @@ tg.BackButton.onClick(()=>{
     if(isDetailOpen) goBack();
 });
 
+/* СТАРТ */
 render(drugs);
 autoOpen();
 </script>
