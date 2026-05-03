@@ -19,21 +19,33 @@ from telegram.ext import (
 )
 
 TOKEN = "8708262770:AAEoDWw4SBmj3Za_1DYW9OAjwkluleoKYj4"
+WEB_APP_URL = "https://webapp-alpha-nine-95.vercel.app"
 
 logging.basicConfig(level=logging.INFO)
 
 # =========================
-# 🚀 СТАРТ (КНОПКА WEB APP)
+# 📦 ПРИМЕР БАЗЫ
 # =========================
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [
-        [KeyboardButton(
-            text="📱 Открыть каталог",
-            web_app=WebAppInfo(
-                url="https://webapp-alpha-nine-95.vercel.app"
-            )
-        )]
-    ]
+# ⚠️ потом можно подключить data.js / Excel
+DRUGS = {
+    "орса": {
+        "name": "Орса",
+        "sostav": "Описание состава...",
+        "indications": "Длинное описание показаний препарата. Может быть очень длинным текстом без ограничений.",
+        "photo": "https://via.placeholder.com/500",
+        "url": "https://example.com"
+    }
+}
+
+
+# =========================
+# 🧠 ПОКАЗ КАТАЛОГА
+# =========================
+async def show_main(update: Update):
+    keyboard = [[KeyboardButton(
+        text="📱 Открыть каталог",
+        web_app=WebAppInfo(url=WEB_APP_URL)
+    )]]
 
     await update.message.reply_text(
         "💊 Открой каталог препаратов:",
@@ -42,64 +54,103 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # =========================
-# 📦 ПОЛУЧЕНИЕ ДАННЫХ ИЗ WEB APP
+# 🔥 PREVIEW (короткая карточка)
+# =========================
+async def send_preview(update: Update, d):
+    short_text = f"""💊 {d['name']}
+
+🩺 {d['indications'][:120]}...
+"""
+
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton(
+            "🔍 Подробнее",
+            web_app=WebAppInfo(
+                url=f"{WEB_APP_URL}?drug={d['name']}"
+            )
+        )]
+    ])
+
+    if d.get("photo"):
+        await update.message.reply_photo(
+            photo=d["photo"],
+            caption=short_text,
+            reply_markup=keyboard
+        )
+    else:
+        await update.message.reply_text(
+            short_text,
+            reply_markup=keyboard
+        )
+
+
+# =========================
+# 💊 ПОЛНЫЙ ТОВАР
+# =========================
+async def send_drug(update: Update, d):
+    text = f"""💊 {d['name']}
+
+📋 Состав:
+{d['sostav']}
+
+🩺 Показания:
+{d['indications']}
+"""
+
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🌐 Открыть сайт", url=d["url"])]
+    ]) if d.get("url") else None
+
+    # фото отдельно (чтобы не обрезался текст)
+    if d.get("photo"):
+        await update.message.reply_photo(photo=d["photo"])
+
+    await update.message.reply_text(
+        text,
+        reply_markup=keyboard
+    )
+
+
+# =========================
+# 🚀 START (deep link)
+# =========================
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    args = context.args
+
+    if args:
+        raw = args[0]
+
+        is_preview = "preview" in raw
+        key = raw.replace("drug_", "").replace("_preview", "").lower()
+
+        d = DRUGS.get(key)
+
+        if d:
+            if is_preview:
+                await send_preview(update, d)
+            else:
+                await send_drug(update, d)
+            return
+
+    await show_main(update)
+
+
+# =========================
+# 📦 WEB APP DATA (опционально)
 # =========================
 async def web_app_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         data = json.loads(update.message.web_app_data.data)
-
-        # 👉 проверяем что это шаринг
-        if data.get("type") == "share":
-            d = data.get("drug", {})
-
-            name = d.get("name", "-")
-            sostav = d.get("sostav", "-")
-            indications = d.get("indications", "-")
-            photo = d.get("photo")
-            url = d.get("url")
-
-            caption = f"""💊 {name}
-
-📋 Состав:
-{sostav}
-
-🩺 Показания:
-{indications}
-"""
-
-            # 👉 кнопка "Открыть сайт"
-            keyboard = None
-            if url:
-                keyboard = InlineKeyboardMarkup([
-                    [InlineKeyboardButton("🌐 Открыть сайт", url=url)]
-                ])
-
-            # 👉 если есть фото
-            if photo:
-                await update.message.reply_photo(
-                    photo=photo,
-                    caption=caption,
-                    reply_markup=keyboard
-                )
-            else:
-                await update.message.reply_text(
-                    caption,
-                    reply_markup=keyboard
-                )
-
-        else:
-            await update.message.reply_text("⚠️ Неизвестный тип данных")
-
+        await update.message.reply_text(f"📦 {data}")
     except Exception as e:
         logging.error(e)
-        await update.message.reply_text("⚠️ Ошибка обработки данных")
 
 
 # =========================
-# 🧠 ОСТАЛЬНОЙ ТЕКСТ
+# 🧠 ТЕКСТ
 # =========================
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Нажми кнопку 📱 Открыть каталог")
+    await update.message.reply_text("Нажми 📱 Открыть каталог")
 
 
 # =========================
@@ -108,11 +159,8 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 app = ApplicationBuilder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
-
-# 🔥 ВАЖНО — ЭТОТ ХЕНДЛЕР
 app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, web_app_data))
-
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
 
-print("🚀 WebApp бот запущен")
+print("🚀 бот запущен")
 app.run_polling()

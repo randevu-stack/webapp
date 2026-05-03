@@ -140,17 +140,21 @@ input {
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-let isDetailOpen=false;
-let scrollPos=0;
-let currentList=[...drugs];
-
 function norm(t){return (t||"").toLowerCase();}
 
-/* ===== GET PARAM ===== */
-function getParam(){
-    const params = new URLSearchParams(window.location.search);
-    return params.get("drug");
+/* ===== SHARE (НОВАЯ ВЕРСИЯ) ===== */
+function shareDeepLink(name){
+    let bot = "YOUR_BOT_USERNAME"; // без @
+
+    // 👉 передаём preview + имя
+    let payload = `drug_${encodeURIComponent(name)}_preview`;
+
+    let link = `https://t.me/${bot}?start=${payload}`;
+    let url = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
+
+    tg.openLink(url);
 }
+</script>
 
 /* ===== ПОИСК ===== */
 function search(){
