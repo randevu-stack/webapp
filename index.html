@@ -264,7 +264,7 @@ function shareDrug(name){
     // 🔥 кодируем имя правильно
     let encoded = encodeURIComponent(name);
 
-    let deepLink = `https://t.me/${bot}?start=drug_${encoded}`;
+    let deepLink = `https://t.me/${bot}?startapp=drug_${encoded}`;
 
     let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(deepLink)}`;
 
