@@ -36,12 +36,10 @@ body {
     font-weight:700;
     font-size:16px;
     color:#1f4fa3;
-    line-height:1.2;
 }
 
 .sub { font-size:11px;color:#666; }
 
-/* контакты теперь снизу */
 .contacts {
     margin-top:8px;
     display:flex;
@@ -50,12 +48,7 @@ body {
     font-size:12px;
 }
 
-.contact {
-    display:flex;
-    align-items:center;
-    gap:6px;
-}
-
+.contact { display:flex; gap:6px; }
 .icon { width:18px; text-align:center; }
 
 /* TABS */
@@ -88,7 +81,6 @@ input {
     display:grid;
     gap:14px;
     padding:10px;
-    grid-template-columns:1fr;
 }
 
 @media (min-width:600px){
@@ -129,7 +121,7 @@ input {
 .form { margin-top:4px;color:#0a84ff;font-size:13px; }
 
 .btn {
-    margin-top:12px;
+    margin-top:10px;
     background:#0a84ff;
     color:white;
     padding:10px;
@@ -138,6 +130,9 @@ input {
     cursor:pointer;
 }
 
+.btn.green { background:#34c759; }
+.btn.gray { background:#8e8e93; }
+
 .empty { padding:30px;text-align:center;color:#888; }
 </style>
 </head>
@@ -145,27 +140,19 @@ input {
 <body>
 
 <div class="header">
-
     <div class="header-top">
         <img src="logo.png" class="logo">
         <div>
-            <div class="brand">
-                JURABEK<br>
-                Laboratories LTD
-            </div>
-            <div class="sub">
-                Производство лекарственных средств широкого спектра
-            </div>
+            <div class="brand">JURABEK<br>Laboratories LTD</div>
+            <div class="sub">Производство лекарственных средств широкого спектра</div>
         </div>
     </div>
 
-    <!-- контакты теперь ПОД -->
     <div class="contacts">
         <div class="contact"><span class="icon">📞</span> +998 (78) 150-03-03</div>
         <div class="contact"><span class="icon">✉️</span> info@jurabek.uz</div>
         <div class="contact"><span class="icon">📅</span> Пн–Пт 9:00–18:00</div>
     </div>
-
 </div>
 
 <div class="tabs">
@@ -185,157 +172,171 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 tg.enableClosingConfirmation();
 
-let isDetailOpen = false;
-let scrollPos = 0;
+let isDetailOpen=false;
+let scrollPos=0;
 
-let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
-let recent = JSON.parse(localStorage.getItem("recent") || "[]");
+let favorites=JSON.parse(localStorage.getItem("fav")||"[]");
+let recent=JSON.parse(localStorage.getItem("recent")||"[]");
 
-let currentTab = "all";
-let currentList = [...drugs];
-let debounceTimer = null;
+let currentTab="all";
+let currentList=[...drugs];
+let debounceTimer=null;
 
-function norm(t){ return (t||"").toLowerCase().trim(); }
+function norm(t){return (t||"").toLowerCase().trim();}
 
-const synonyms = {
-    "сердце":["кардио","гипертон","давлен"],
-    "кашель":["кашл","бронх"]
+/* СИНОНИМЫ */
+const synonyms={
+"сердце":["кардио","гипертон","давлен"],
+"кашель":["кашл","бронх"]
 };
 
-let searchIndex = drugs.map(d=>({
-    ref:d,
-    name:norm(d.name),
-    ind:norm(d.indications),
-    sost:norm(d.sostav)
+/* ИНДЕКС */
+let searchIndex=drugs.map(d=>({
+ref:d,
+name:norm(d.name),
+ind:norm(d.indications),
+sost:norm(d.sostav)
 }));
 
-function fuzzy(text,q){
-    return text.includes(q);
-}
-
 function setTab(tab){
-    currentTab = tab;
-    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-    document.getElementById("tab-"+tab).classList.add("active");
-    search();
+currentTab=tab;
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+document.getElementById("tab-"+tab).classList.add("active");
+search();
 }
 
 function toggleFav(name){
-    if(favorites.includes(name)){
-        favorites = favorites.filter(f=>f!==name);
-    } else favorites.push(name);
+favorites.includes(name)
+?favorites=favorites.filter(f=>f!==name)
+:favorites.push(name);
 
-    localStorage.setItem("fav", JSON.stringify(favorites));
-    search();
+localStorage.setItem("fav",JSON.stringify(favorites));
+search();
 }
 
 function search(){
-    isDetailOpen = false;
-    tg.BackButton.hide();
+isDetailOpen=false;
+tg.BackButton.hide();
 
-    let q = norm(document.getElementById("search").value);
+let q=norm(document.getElementById("search").value);
 
-    let base = currentTab==="fav"
-        ? drugs.filter(d=>favorites.includes(d.name))
-        : currentTab==="recent"
-        ? recent.map(n=>drugs.find(d=>d.name===n)).filter(Boolean)
-        : drugs;
+let base=currentTab==="fav"
+?drugs.filter(d=>favorites.includes(d.name))
+:currentTab==="recent"
+?recent.map(n=>drugs.find(d=>d.name===n)).filter(Boolean)
+:drugs;
 
-    if(!q){ render(base); return; }
+if(!q){render(base);return;}
 
-    let words = q.split(" ");
-    words.forEach(w=>{
-        if(synonyms[w]) words.push(...synonyms[w]);
-    });
+let words=q.split(" ");
+words.forEach(w=>{
+if(synonyms[w])words.push(...synonyms[w]);
+});
 
-    let result = searchIndex
-    .map(item=>{
-        let score = 0;
+let result=searchIndex
+.map(item=>{
+let score=0;
+words.forEach(w=>{
+if(item.name.includes(w))score+=3;
+if(item.ind.includes(w))score+=2;
+if(item.sost.includes(w))score+=1;
+});
+return {ref:item.ref,score};
+})
+.filter(r=>r.score>0 && base.includes(r.ref))
+.sort((a,b)=>b.score-a.score)
+.map(r=>r.ref);
 
-        words.forEach(w=>{
-            if(fuzzy(item.name,w)) score+=3;
-            if(fuzzy(item.ind,w)) score+=2;
-            if(fuzzy(item.sost,w)) score+=1;
-        });
-
-        return {ref:item.ref,score};
-    })
-    .filter(r=>r.score>0 && base.includes(r.ref))
-    .sort((a,b)=>b.score-a.score)
-    .map(r=>r.ref);
-
-    render(result);
+render(result);
 }
 
 function render(data){
-    currentList = data;
+currentList=data;
 
-    if(data.length===0){
-        document.getElementById("list").innerHTML =
-        `<div class="empty">Ничего не найдено</div>`;
-        return;
-    }
+if(data.length===0){
+document.getElementById("list").innerHTML=`<div class="empty">Ничего не найдено</div>`;
+return;
+}
 
-    let html="";
+let html="";
 
-    data.forEach((d,i)=>{
-        html+=`
-        <div class="card">
-            <div class="fav" onclick="toggleFav('${d.name}')">
-                ${favorites.includes(d.name)?"❤️":"🤍"}
-            </div>
+data.forEach((d,i)=>{
+html+=`
+<div class="card">
+<div class="fav" onclick="toggleFav('${d.name}')">
+${favorites.includes(d.name)?"❤️":"🤍"}
+</div>
 
-            ${d.photo?`<img src="${d.photo}" loading="lazy">`:''}
+${d.photo?`<img src="${d.photo}" loading="lazy">`:''}
 
-            <div class="title">${d.name}</div>
-            <div class="desc">${d.sostav||''}</div>
+<div class="title">${d.name}</div>
+<div class="desc">${d.sostav||''}</div>
 
-            ${(d.form||d.dosage)?`
-            <div class="form">
-                ${d.form||''} (${d.dosage||''})
-            </div>`:''}
+${(d.form||d.dosage)?`
+<div class="form">
+${d.form||''} (${d.dosage||''})
+</div>`:''}
 
-            <div class="btn" onclick="openDrug(${i})">Открыть</div>
-        </div>`;
-    });
+<div class="btn" onclick="openDrug(${i})">Открыть</div>
+</div>`;
+});
 
-    document.getElementById("list").innerHTML = html;
+document.getElementById("list").innerHTML=html;
 }
 
 function openDrug(i){
-    let d = currentList[i];
+let d=currentList[i];
 
-    scrollPos = window.scrollY;
-    isDetailOpen = true;
-    tg.BackButton.show();
+scrollPos=window.scrollY;
+isDetailOpen=true;
+tg.BackButton.show();
 
-    document.getElementById("list").innerHTML = `
-    <div class="card">
-        ${d.photo?`<img src="${d.photo}">`:''}
-        <div class="title">${d.name}</div>
-        <div class="desc">
-            <b>Состав:</b><br>${d.sostav||'-'}<br><br>
-            <b>Форма:</b><br>${d.form||''} (${d.dosage||''})<br><br>
-            <b>Показания:</b><br>${d.indications||'-'}
-        </div>
-        <div class="btn" onclick="goBack()">← Назад</div>
-    </div>`;
+document.getElementById("list").innerHTML=`
+<div class="card">
+
+${d.photo?`<img src="${d.photo}">`:''}
+
+<div class="title">${d.name}</div>
+
+<div class="desc">
+<b>Состав:</b><br>${d.sostav||'-'}<br><br>
+<b>Форма:</b><br>${d.form||''} (${d.dosage||''})<br><br>
+<b>Показания:</b><br>${d.indications||'-'}
+</div>
+
+<div class="btn" onclick="goBack()">← Назад</div>
+
+${d.url?`
+<div class="btn green" onclick="tg.openLink('${d.url}')">
+🌐 Открыть на сайте
+</div>`:''}
+
+<div class="btn gray" onclick="shareDrug('${d.name}')">
+📤 Поделиться
+</div>
+
+</div>`;
+}
+
+/* SHARE */
+function shareDrug(name){
+let text=`Посмотри препарат: ${name}`;
+let url=`https://t.me/share/url?text=${encodeURIComponent(text)}`;
+tg.openLink(url);
 }
 
 function goBack(){
-    isDetailOpen = false;
-    tg.BackButton.hide();
-    search();
-    setTimeout(()=>window.scrollTo(0,scrollPos),0);
+isDetailOpen=false;
+tg.BackButton.hide();
+search();
+setTimeout(()=>window.scrollTo(0,scrollPos),0);
 }
 
-tg.BackButton.onClick(()=>{
-    if(isDetailOpen) goBack();
-});
+tg.BackButton.onClick(()=>{if(isDetailOpen)goBack();});
 
 function debounceSearch(){
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(search,200);
+clearTimeout(debounceTimer);
+debounceTimer=setTimeout(search,200);
 }
 
 search();
