@@ -3,41 +3,121 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jurabek Laboratories</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="data.js"></script>
 
 <style>
-body {margin:0;font-family:-apple-system,Arial;background:#f2f2f7;max-width:1200px;margin:auto;}
+body {
+    margin:0;
+    font-family:-apple-system, Arial;
+    background:#f2f2f7;
+    max-width:1200px;
+    margin:auto;
+}
 
-.header{background:#f4f4f4;padding:12px;border-bottom:1px solid #ddd;}
-.header-top{display:flex;align-items:center;gap:10px;}
-.logo{width:42px;}
-.brand{font-weight:700;color:#1f4fa3;}
-.sub{font-size:11px;color:#666;}
+/* HEADER */
+.header {
+    background:#f4f4f4;
+    padding:12px;
+    border-bottom:1px solid #ddd;
+}
 
-.contacts{margin-top:8px;font-size:12px;}
-.contact{display:flex;gap:6px;}
+.header-top {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
 
-.tabs{display:flex;gap:8px;padding:10px;}
-.tab{flex:1;padding:10px;border-radius:10px;background:#e9e9ee;text-align:center;cursor:pointer;}
-.tab.active{background:#0a84ff;color:white;}
+.logo { width:42px;height:42px; }
 
-.top{padding:10px;}
-input{width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee;}
+.brand {
+    font-weight:700;
+    color:#1f4fa3;
+    line-height:1.2;
+}
 
-#list{display:grid;gap:14px;padding:10px;}
-@media(min-width:600px){#list{grid-template-columns:repeat(2,1fr);}}
-@media(min-width:1024px){#list{grid-template-columns:repeat(3,1fr);}}
+.sub { font-size:11px;color:#666; }
 
-.card{background:white;border-radius:18px;padding:12px;box-shadow:0 4px 18px rgba(0,0,0,0.08);}
-.title{font-weight:600;margin-top:8px;}
-.desc{font-size:13px;color:#666;margin-top:6px;}
+.contacts {
+    margin-top:8px;
+    font-size:12px;
+}
 
-.btn{margin-top:10px;background:#0a84ff;color:white;padding:10px;text-align:center;border-radius:12px;cursor:pointer;}
-.btn.green{background:#34c759;}
-.btn.gray{background:#8e8e93;}
+.contact {
+    display:flex;
+    gap:6px;
+}
+
+/* SEARCH */
+.top { padding:10px; }
+
+input {
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:none;
+    background:#e9e9ee;
+}
+
+/* GRID */
+#list {
+    display:grid;
+    gap:14px;
+    padding:10px;
+}
+
+@media (min-width:600px){
+    #list { grid-template-columns:repeat(2,1fr); }
+}
+
+@media (min-width:1024px){
+    #list { grid-template-columns:repeat(3,1fr); }
+}
+
+/* CARD */
+.card {
+    background:white;
+    border-radius:18px;
+    padding:12px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.08);
+}
+
+.card img {
+    width:100%;
+    height:150px;
+    object-fit:contain;
+    background:#f7f7f7;
+    border-radius:12px;
+}
+
+/* БОЛЬШАЯ КАРТИНКА */
+.big-img {
+    width:100%;
+    height:220px;
+    object-fit:contain;
+    background:#f7f7f7;
+    border-radius:12px;
+}
+
+.title { font-weight:600;margin-top:8px; }
+.desc { font-size:13px;color:#666;margin-top:6px; }
+.form { margin-top:4px;color:#0a84ff;font-size:13px; }
+
+.btn {
+    margin-top:10px;
+    background:#0a84ff;
+    color:white;
+    padding:10px;
+    text-align:center;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.btn.green { background:#34c759; }
+.btn.gray { background:#8e8e93; }
+
+.empty { padding:30px;text-align:center;color:#888; }
 </style>
 </head>
 
@@ -48,7 +128,7 @@ input{width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee;
         <img src="logo.png" class="logo">
         <div>
             <div class="brand">JURABEK<br>Laboratories LTD</div>
-            <div class="sub">Производство лекарственных средств</div>
+            <div class="sub">Производство лекарственных средств широкого спектра</div>
         </div>
     </div>
 
@@ -69,11 +149,17 @@ input{width:100%;padding:12px;border-radius:12px;border:none;background:#e9e9ee;
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-let currentList = [...drugs];
+let isDetailOpen=false;
+let scrollPos=0;
+let currentList=[...drugs];
 
 function norm(t){return (t||"").toLowerCase();}
 
+/* ПОИСК */
 function search(){
+    isDetailOpen=false;
+    tg.BackButton.hide();
+
     let q = norm(document.getElementById("search").value);
 
     if(!q){ render(drugs); return; }
@@ -85,58 +171,100 @@ function search(){
     render(res);
 }
 
+/* РЕНДЕР */
 function render(data){
-    currentList = data;
+    currentList=data;
+
+    if(data.length===0){
+        document.getElementById("list").innerHTML =
+        `<div class="empty">Ничего не найдено</div>`;
+        return;
+    }
 
     let html="";
+
     data.forEach((d,i)=>{
         html+=`
         <div class="card">
-            ${d.photo?`<img src="${d.photo}" style="width:100%">`:''}
+
+            ${d.photo?`<img src="${d.photo}" loading="lazy">`:''}
+
             <div class="title">${d.name}</div>
+
             <div class="desc">${d.sostav||''}</div>
+
+            ${(d.form||d.dosage)?`
+            <div class="form">
+                ${d.form||''} ${d.dosage ? '('+d.dosage+')' : ''}
+            </div>`:''}
+
             <div class="btn" onclick="openDrug(${i})">Открыть</div>
+
         </div>`;
     });
 
-    document.getElementById("list").innerHTML=html;
+    document.getElementById("list").innerHTML = html;
 }
 
+/* ОТКРЫТИЕ */
 function openDrug(i){
     let d = currentList[i];
 
-    document.getElementById("list").innerHTML=`
+    scrollPos = window.scrollY;
+    isDetailOpen = true;
+    tg.BackButton.show();
+
+    document.getElementById("list").innerHTML = `
     <div class="card">
-        ${d.photo?`<img src="${d.photo}" style="width:100%">`:''}
+
+        ${d.photo?`<img src="${d.photo}" class="big-img">`:''}
+
         <div class="title">${d.name}</div>
 
         <div class="desc">
-        <b>Состав:</b><br>${d.sostav||'-'}<br><br>
-        <b>Показания:</b><br>${d.indications||'-'}
+            <b>Состав:</b><br>${d.sostav||'-'}<br><br>
+
+            <b>Форма:</b><br>
+            ${d.form || '-'} ${d.dosage ? '(' + d.dosage + ')' : ''}<br><br>
+
+            <b>Показания:</b><br>
+            ${d.indications||'-'}
         </div>
 
-        <div class="btn" onclick="search()">← Назад</div>
+        <div class="btn" onclick="goBack()">← Назад</div>
 
         ${d.url?`
         <div class="btn green" onclick="tg.openLink('${d.url}')">
-        🌐 Открыть сайт
+            🌐 Открыть сайт
         </div>`:''}
 
         <div class="btn gray" onclick='shareViaBot(${JSON.stringify(d)})'>
-        📤 Поделиться через бота
+            📤 Поделиться
         </div>
+
     </div>`;
 }
 
-/* 🔥 ШАРИНГ ЧЕРЕЗ БОТА */
+/* ШАРИНГ */
 function shareViaBot(d){
     tg.sendData(JSON.stringify({
         type:"share",
         drug:d
     }));
-
-    tg.close(); // закрываем WebApp после отправки
+    tg.close();
 }
+
+/* НАЗАД */
+function goBack(){
+    isDetailOpen=false;
+    tg.BackButton.hide();
+    search();
+    setTimeout(()=>window.scrollTo(0,scrollPos),0);
+}
+
+tg.BackButton.onClick(()=>{
+    if(isDetailOpen) goBack();
+});
 
 render(drugs);
 </script>
