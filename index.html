@@ -233,7 +233,7 @@ function shareDeepLink(name){
 
     let payload = "drug_" + encodeURIComponent(name);
 
-    let link = `https://t.me/${bot}?startapp=${payload}`;
+    let link = `https://t.me/${bot}?start=${payload}`;
 
     let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
 
