@@ -16,9 +16,33 @@ body {
     margin:auto;
 }
 
-.header { padding:12px;background:#f4f4f4;border-bottom:1px solid #ddd; }
-.logo { width:42px; }
+/* HEADER */
+.header {
+    background:#f4f4f4;
+    padding:12px;
+    border-bottom:1px solid #ddd;
+}
 
+.header-top {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo { width:42px;height:42px; }
+
+.brand {
+    font-weight:700;
+    color:#1f4fa3;
+    line-height:1.2;
+}
+
+.sub { font-size:11px;color:#666; }
+
+.contacts { margin-top:8px;font-size:12px; }
+.contact { display:flex; gap:6px; }
+
+/* SEARCH */
 .top { padding:10px; }
 
 input {
@@ -29,6 +53,7 @@ input {
     background:#e9e9ee;
 }
 
+/* GRID */
 #list {
     display:grid;
     gap:14px;
@@ -38,10 +63,12 @@ input {
 @media (min-width:600px){
     #list { grid-template-columns:repeat(2,1fr); }
 }
+
 @media (min-width:1024px){
     #list { grid-template-columns:repeat(3,1fr); }
 }
 
+/* CARD */
 .card {
     background:white;
     border-radius:18px;
@@ -78,13 +105,29 @@ input {
     border-radius:12px;
     cursor:pointer;
 }
+
+.btn.green { background:#34c759; }
+
+.empty { padding:30px;text-align:center;color:#888; }
 </style>
 </head>
 
 <body>
 
 <div class="header">
-    <b>JURABEK Laboratories LTD</b>
+    <div class="header-top">
+        <img src="logo.png" class="logo">
+        <div>
+            <div class="brand">JURABEK<br>Laboratories LTD</div>
+            <div class="sub">Производство лекарственных средств широкого спектра</div>
+        </div>
+    </div>
+
+    <div class="contacts">
+        <div class="contact">📞 +998 (78) 150-03-03</div>
+        <div class="contact">✉️ info@jurabek.uz</div>
+        <div class="contact">📅 Пн–Пт 9:00–18:00</div>
+    </div>
 </div>
 
 <div class="top">
@@ -98,11 +141,12 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 let isDetailOpen=false;
+let scrollPos=0;
 let currentList=[...drugs];
 
 function norm(t){return (t||"").toLowerCase();}
 
-/* ===== ПОЛУЧАЕМ ПАРАМЕТР ===== */
+/* ===== GET PARAM ===== */
 function getParam(){
     const params = new URLSearchParams(window.location.search);
     return params.get("drug");
@@ -110,6 +154,9 @@ function getParam(){
 
 /* ===== ПОИСК ===== */
 function search(){
+    isDetailOpen=false;
+    tg.BackButton.hide();
+
     let q = norm(document.getElementById("search").value);
 
     if(!q){ render(drugs); return; }
@@ -125,12 +172,20 @@ function search(){
 function render(data){
     currentList=data;
 
+    if(data.length===0){
+        document.getElementById("list").innerHTML =
+        `<div class="empty">Ничего не найдено</div>`;
+        return;
+    }
+
     let html="";
 
     data.forEach((d,i)=>{
         html+=`
         <div class="card">
-            ${d.photo?`<img src="${d.photo}">`:''}
+
+            ${d.photo?`<img src="${d.photo}" loading="lazy">`:''}
+
             <div class="title">${d.name}</div>
 
             ${(d.form||d.dosage)?`
@@ -139,18 +194,22 @@ function render(data){
             </div>`:''}
 
             <div class="btn" onclick="openDrug(${i})">Открыть</div>
+
         </div>`;
     });
 
-    document.getElementById("list").innerHTML=html;
+    document.getElementById("list").innerHTML = html;
 }
 
 /* ===== ОТКРЫТИЕ ===== */
 function openDrug(i){
-    let d=currentList[i];
-    isDetailOpen=true;
+    let d = currentList[i];
 
-    document.getElementById("list").innerHTML=`
+    scrollPos = window.scrollY;
+    isDetailOpen = true;
+    tg.BackButton.show();
+
+    document.getElementById("list").innerHTML = `
     <div class="card">
 
         ${d.photo?`<img src="${d.photo}" class="big-img">`:''}
@@ -161,35 +220,58 @@ function openDrug(i){
             <b>Состав:</b><br>${d.sostav||'-'}<br><br>
 
             <b>Форма:</b><br>
-            ${d.form||'-'} ${d.dosage ? '('+d.dosage+')' : ''}<br><br>
+            ${d.form || '-'} ${d.dosage ? '(' + d.dosage + ')' : ''}<br><br>
 
             <b>Показания:</b><br>
             ${d.indications||'-'}
         </div>
 
         <div class="btn" onclick="goBack()">← Назад</div>
+
+        ${d.url?`
+        <div class="btn green" onclick="tg.openLink('${d.url}')">
+            🌐 Открыть сайт
+        </div>`:''}
+
+        <div class="btn" onclick="shareDeepLink('${d.name}')">
+            📤 Поделиться
+        </div>
+
     </div>`;
+}
+
+/* ===== SHARE ===== */
+function shareDeepLink(name){
+    let bot = "YOUR_BOT_USERNAME";
+    let link = `https://t.me/${bot}?start=drug_${encodeURIComponent(name)}`;
+    let url = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
+    tg.openLink(url);
 }
 
 /* ===== НАЗАД ===== */
 function goBack(){
     isDetailOpen=false;
-    render(drugs);
+    tg.BackButton.hide();
+    search();
+    setTimeout(()=>window.scrollTo(0,scrollPos),0);
 }
 
-/* ===== 🔥 АВТО ОТКРЫТИЕ ===== */
+/* ===== AUTO OPEN (НЕ ЛОМАЕТ UI) ===== */
 function autoOpen(){
     let key = getParam();
     if(!key) return;
 
-    let found = drugs.find(d => norm(d.name) === norm(key));
-    if(found){
-        currentList = [found];
-        openDrug(0);
+    let index = drugs.findIndex(d => norm(d.name) === norm(key));
+    if(index !== -1){
+        openDrug(index);
     }
 }
 
-/* ===== СТАРТ ===== */
+tg.BackButton.onClick(()=>{
+    if(isDetailOpen) goBack();
+});
+
+/* СТАРТ */
 render(drugs);
 autoOpen();
 </script>
