@@ -23,7 +23,7 @@ DRUGS = {
         "form": "Раствор для инъекций",
         "dosage": "5 мг/мл 4 мл",
         "group": "Диуретик",
-        "indications": "Лечение при отеках и/или выпотах, вызванных сердечной недостаточностью...",
+        "indications": "Лечение при отеках и/или выпотах, вызванных сердечной недостаточностью, если необходимо в/в применение лекарственного средства, например, в случае отека легких вследствие острой сердечной недостаточности.",
         "photo": "https://jurabek.uz/d/torassa_4_ml_no10_8162uzp01.png",
         "url": "https://jurabek.uz/magazin/product/torassa"
     }
@@ -33,16 +33,16 @@ DRUGS = {
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     payload = None
 
-    # 👉 ЛОВИМ payload
+    # 👉 пытаемся получить payload
     if context.args:
         payload = context.args[0]
 
-    # ===== ЕСЛИ ЕСТЬ ПАРАМЕТР =====
+    # ===== ЕСЛИ ЕСТЬ PAYLOAD =====
     if payload and "drug_" in payload:
         try:
             drug_id = int(payload.replace("drug_", ""))
         except:
-            await update.message.reply_text("⚠️ Ошибка ID")
+            await fallback(update)
             return
 
         d = DRUGS.get(drug_id)
@@ -51,10 +51,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await send_preview(update, d, drug_id)
             return
 
-    # ===== ОБЫЧНЫЙ СТАРТ =====
-    await update.message.reply_text(
-        "💊 Нажми ссылку с препаратом"
-    )
+    # ===== ЕСЛИ НЕТ PAYLOAD =====
+    await fallback(update)
 
 # ===== PREVIEW =====
 async def send_preview(update: Update, d, drug_id):
@@ -81,6 +79,12 @@ async def send_preview(update: Update, d, drug_id):
                 "🌐 Открыть сайт",
                 url=d["url"]
             )
+        ],
+        [
+            InlineKeyboardButton(
+                "📱 Открыть каталог",
+                url=WEB_APP_URL
+            )
         ]
     ])
 
@@ -89,6 +93,20 @@ async def send_preview(update: Update, d, drug_id):
         caption=text,
         parse_mode="HTML",
         reply_markup=keyboard
+    )
+
+# ===== FALLBACK =====
+async def fallback(update: Update):
+    await update.message.reply_text(
+        "💊 Открой каталог препаратов:",
+        reply_markup=InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(
+                    "📱 Открыть приложение",
+                    url=WEB_APP_URL
+                )
+            ]
+        ])
     )
 
 # ===== ЗАПУСК =====

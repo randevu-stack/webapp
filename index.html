@@ -12,22 +12,24 @@ body{
     margin:0;
     font-family:-apple-system, Arial;
     background:#f2f2f7;
+    max-width:1200px;
+    margin:auto;
 }
 
 /* HEADER */
 .header{
-    background:#fff;
-    padding:14px;
-    border-bottom:1px solid #eee;
+    background:#f4f4f4;
+    padding:12px;
+    border-bottom:1px solid #ddd;
 }
 
 .header-top{
     display:flex;
-    gap:10px;
     align-items:center;
+    gap:10px;
 }
 
-.logo{ width:42px; }
+.logo{ width:42px;height:42px; }
 
 .brand{
     font-weight:700;
@@ -35,15 +37,10 @@ body{
     line-height:1.2;
 }
 
-.sub{
-    font-size:11px;
-    color:#666;
-}
+.sub{ font-size:11px;color:#666; }
 
-.contacts{
-    margin-top:8px;
-    font-size:12px;
-}
+.contacts{ margin-top:8px;font-size:12px; }
+.contact{ display:flex; gap:6px; }
 
 /* SEARCH */
 .top{ padding:10px; }
@@ -51,8 +48,8 @@ body{
 input{
     width:100%;
     padding:12px;
-    border:none;
     border-radius:12px;
+    border:none;
     background:#e9e9ee;
 }
 
@@ -63,11 +60,11 @@ input{
     padding:10px;
 }
 
-@media(min-width:600px){
+@media (min-width:600px){
     #list{ grid-template-columns:repeat(2,1fr); }
 }
 
-@media(min-width:1024px){
+@media (min-width:1024px){
     #list{ grid-template-columns:repeat(3,1fr); }
 }
 
@@ -76,7 +73,7 @@ input{
     background:white;
     border-radius:18px;
     padding:12px;
-    box-shadow:0 4px 18px rgba(0,0,0,0.06);
+    box-shadow:0 4px 18px rgba(0,0,0,0.08);
 }
 
 .card img{
@@ -87,44 +84,31 @@ input{
     border-radius:12px;
 }
 
-.big-img{ height:220px; }
-
-.title{
-    font-weight:600;
-    margin-top:8px;
+.big-img{
+    width:100%;
+    height:220px;
+    object-fit:contain;
+    background:#f7f7f7;
+    border-radius:12px;
 }
 
-.form{
-    font-size:13px;
-    color:#0a84ff;
-    margin-top:4px;
-}
-
-.desc{
-    font-size:13px;
-    color:#666;
-    margin-top:6px;
-}
+.title{ font-weight:600;margin-top:8px; }
+.desc{ font-size:13px;color:#666;margin-top:6px; }
+.form{ margin-top:4px;color:#0a84ff;font-size:13px; }
 
 .btn{
     margin-top:10px;
     background:#0a84ff;
     color:white;
     padding:10px;
-    border-radius:12px;
     text-align:center;
+    border-radius:12px;
     cursor:pointer;
 }
 
-.btn.green{
-    background:#34c759;
-}
+.btn.green{ background:#34c759; }
 
-.empty{
-    padding:30px;
-    text-align:center;
-    color:#888;
-}
+.empty{ padding:30px;text-align:center;color:#888; }
 </style>
 </head>
 
@@ -135,19 +119,15 @@ input{
     <div class="header-top">
         <img src="logo.png" class="logo">
         <div>
-            <div class="brand">
-                JURABEK<br>Laboratories LTD
-            </div>
-            <div class="sub">
-                Производство лекарственных средств широкого спектра
-            </div>
+            <div class="brand">JURABEK<br>Laboratories LTD</div>
+            <div class="sub">Производство лекарственных средств широкого спектра</div>
         </div>
     </div>
 
     <div class="contacts">
-        📞 +998 (78) 150-03-03<br>
-        ✉️ info@jurabek.uz<br>
-        📅 Пн–Пт 9:00–18:00
+        <div class="contact">📞 +998 (78) 150-03-03</div>
+        <div class="contact">✉️ info@jurabek.uz</div>
+        <div class="contact">📅 Пн–Пт 9:00–18:00</div>
     </div>
 </div>
 
@@ -163,57 +143,62 @@ input{
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-let currentList = [...drugs];
-let isDetailOpen = false;
-let scrollPos = 0;
+let isDetailOpen=false;
+let scrollPos=0;
+let currentList=[...drugs];
+
+function norm(t){return (t||"").toLowerCase();}
+
+/* ===== GET PARAM ===== */
+function getParam(){
+    const params = new URLSearchParams(window.location.search);
+    return params.get("drug");
+}
 
 /* ===== ПОИСК ===== */
 function search(){
-    let q = (document.getElementById("search").value || "").toLowerCase();
+    isDetailOpen=false;
+    tg.BackButton.hide();
 
-    if(!q){
-        render(drugs);
-        return;
-    }
+    let q = norm(document.getElementById("search").value);
 
-    let res = drugs.filter(d =>
-        (d.name + d.indications + d.sostav).toLowerCase().includes(q)
-    );
+    if(!q){ render(drugs); return; }
+
+    let res = drugs.filter(d=>{
+        return norm(d.name + d.indications + d.sostav).includes(q);
+    });
 
     render(res);
 }
 
 /* ===== РЕНДЕР ===== */
 function render(data){
-    currentList = data;
+    currentList=data;
 
-    if(data.length === 0){
+    if(data.length===0){
         document.getElementById("list").innerHTML =
-            '<div class="empty">Ничего не найдено</div>';
+        `<div class="empty">Ничего не найдено</div>`;
         return;
     }
 
-    let html = "";
+    let html="";
 
     data.forEach((d,i)=>{
-        html += `
+        html+=`
         <div class="card">
 
-            ${d.photo ? `<img src="${d.photo}" loading="lazy">` : ''}
+            ${d.photo?`<img src="${d.photo}" loading="lazy">`:''}
 
             <div class="title">${d.name}</div>
 
-            ${(d.form || d.dosage) ? `
+            ${(d.form||d.dosage)?`
             <div class="form">
-                ${d.form || ''} ${d.dosage ? '(' + d.dosage + ')' : ''}
-            </div>` : ''}
+                ${d.form||''} ${d.dosage ? '('+d.dosage+')' : ''}
+            </div>`:''}
 
-            <div class="btn" onclick="openDrug(${i})">
-                Открыть
-            </div>
+            <div class="btn" onclick="openDrug(${i})">Открыть</div>
 
-        </div>
-        `;
+        </div>`;
     });
 
     document.getElementById("list").innerHTML = html;
@@ -230,62 +215,56 @@ function openDrug(i){
     document.getElementById("list").innerHTML = `
     <div class="card">
 
-        ${d.photo ? `<img src="${d.photo}" class="big-img">` : ''}
+        ${d.photo?`<img src="${d.photo}" class="big-img">`:''}
 
         <div class="title">${d.name}</div>
 
         <div class="desc">
-            <b>Состав:</b><br>${d.sostav || '-'}<br><br>
+            <b>Состав:</b><br>${d.sostav||'-'}<br><br>
 
             <b>Форма:</b><br>
             ${d.form || '-'} ${d.dosage ? '(' + d.dosage + ')' : ''}<br><br>
 
             <b>Показания:</b><br>
-            ${d.indications || '-'}
+            ${d.indications||'-'}
         </div>
 
         <div class="btn" onclick="goBack()">← Назад</div>
 
-        ${d.url ? `
+        ${d.url?`
         <div class="btn green" onclick="tg.openLink('${d.url}')">
             🌐 Открыть сайт
-        </div>` : ''}
+        </div>`:''}
 
-        <div class="btn" onclick="share(${d.id})">
+        <div class="btn" onclick="shareDeepLink(${d.id})">
             📤 Поделиться
         </div>
 
-    </div>
-    `;
+    </div>`;
 }
 
-/* ===== SHARE (НОВАЯ ЛОГИКА) ===== */
-function share(id){
-    let bot = "jurabek_helper_bot"; // без @
+/* ===== SHARE (FIXED) ===== */
+function shareDeepLink(id){
+    let bot = "jurabek_helper_bot"; // 
 
     let link = `https://t.me/${bot}?start=drug_${id}`;
 
-    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
+    let url = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
 
-    tg.openLink(shareUrl);
+    tg.openLink(url);
 }
 
 /* ===== НАЗАД ===== */
 function goBack(){
-    isDetailOpen = false;
+    isDetailOpen=false;
     tg.BackButton.hide();
-    render(drugs);
-
-    setTimeout(()=>{
-        window.scrollTo(0, scrollPos);
-    }, 0);
+    search();
+    setTimeout(()=>window.scrollTo(0,scrollPos),0);
 }
 
 /* ===== AUTO OPEN ===== */
 function autoOpen(){
-    let params = new URLSearchParams(window.location.search);
-    let id = params.get("drug");
-
+    let id = getParam();
     if(!id) return;
 
     id = Number(id);
