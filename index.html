@@ -55,6 +55,28 @@ input{
     background:#e9e9ee;
 }
 
+/* TABS */
+.tabs{
+    display:flex;
+    gap:10px;
+    padding:10px;
+}
+
+.tab{
+    flex:1;
+    text-align:center;
+    padding:10px;
+    background:#e9e9ee;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.tab.active{
+    background:#0a84ff;
+    color:white;
+}
+
 /* GRID */
 #list{
     display:grid;
@@ -136,7 +158,7 @@ input{
         <img src="logo.png" class="logo">
         <div>
             <div class="brand">JURABEK<br>Laboratories LTD</div>
-            <div class="sub">Производство лекарственных средств</div>
+            <div class="sub">Производство лекарственных средств широкого спектра</div>
         </div>
     </div>
 
@@ -151,6 +173,12 @@ input{
     <input id="search" placeholder="Поиск..." oninput="search()">
 </div>
 
+<div class="tabs">
+    <div class="tab active" onclick="switchTab('all', this)">Товары</div>
+    <div class="tab" onclick="switchTab('fav', this)">Избранное</div>
+    <div class="tab" onclick="switchTab('recent', this)">Недавние</div>
+</div>
+
 <div id="list"></div>
 
 <script>
@@ -159,36 +187,58 @@ tg.expand();
 
 let isDetailOpen = false;
 let scrollPos = 0;
+let currentTab = "all";
 let currentList = [...drugs];
+
+let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
+let recent = JSON.parse(localStorage.getItem("recent") || "[]");
 
 /* ===== НОРМАЛИЗАЦИЯ ===== */
 function norm(t){
     return (t||"").toLowerCase().trim();
 }
 
-/* ===== ПАРАМЕТР ===== */
-function getParam(){
-    return new URLSearchParams(window.location.search).get("drug");
-}
-
 /* ===== ПОИСК ===== */
 function search(){
-    isDetailOpen = false;
-    tg.BackButton.hide();
-
     let q = norm(document.getElementById("search").value);
 
+    let base = getBaseList();
+
     if(!q){
-        render(drugs);
+        render(base);
         return;
     }
 
-    let res = drugs.filter(d=>{
-        let text = norm(d.name + d.indications + d.sostav);
+    let res = base.filter(d=>{
+        let text = norm([d.name, d.indications, d.sostav].join(" "));
         return text.includes(q);
     });
 
     render(res);
+}
+
+/* ===== БАЗА ПО ВКЛАДКЕ ===== */
+function getBaseList(){
+    if(currentTab === "all") return drugs;
+
+    if(currentTab === "fav"){
+        return drugs.filter(d => favorites.includes(d.name));
+    }
+
+    if(currentTab === "recent"){
+        return drugs.filter(d => recent.includes(d.name));
+    }
+}
+
+/* ===== ВКЛАДКИ ===== */
+function switchTab(tab, el){
+    currentTab = tab;
+
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    el.classList.add("active");
+
+    document.getElementById("search").value = "";
+    render(getBaseList());
 }
 
 /* ===== РЕНДЕР ===== */
@@ -203,7 +253,7 @@ function render(data){
 
     let html = "";
 
-    data.forEach((d,i)=>{
+    data.forEach(d=>{
         html += `
         <div class="card">
 
@@ -216,8 +266,12 @@ function render(data){
                 ${d.form || ''} ${d.dosage ? '('+d.dosage+')' : ''}
             </div>` : ''}
 
-            <div class="btn" onclick="openDrug(${i})">
+            <div class="btn" onclick="openDrug('${d.name}')">
                 Открыть
+            </div>
+
+            <div class="btn" onclick="toggleFav('${d.name}')">
+                ${favorites.includes(d.name) ? '⭐ Убрать из избранного' : '☆ В избранное'}
             </div>
 
         </div>`;
@@ -227,12 +281,20 @@ function render(data){
 }
 
 /* ===== ОТКРЫТЬ ===== */
-function openDrug(i){
-    let d = currentList[i];
+function openDrug(name){
+    let d = drugs.find(x => norm(x.name) === norm(name));
+    if(!d) return;
 
     scrollPos = window.scrollY;
     isDetailOpen = true;
     tg.BackButton.show();
+
+    // recent
+    if(!recent.includes(d.name)){
+        recent.unshift(d.name);
+        if(recent.length > 20) recent.pop();
+        localStorage.setItem("recent", JSON.stringify(recent));
+    }
 
     document.getElementById("list").innerHTML = `
     <div class="card">
@@ -254,9 +316,13 @@ function openDrug(i){
         <div class="btn" onclick="goBack()">← Назад</div>
 
         ${d.url ? `
-        <div class="btn green" onclick="tg.openLink('${d.url}')">
+        <div class="btn green" onclick="tg.openLink(\`${d.url}\`)">
             🌐 Открыть сайт
         </div>` : ''}
+
+        <div class="btn" onclick="toggleFav('${d.name}')">
+            ${favorites.includes(d.name) ? '⭐ Убрать из избранного' : '☆ В избранное'}
+        </div>
 
         <div class="btn" onclick="shareLink('${d.name}')">
             🔗 Поделиться
@@ -265,38 +331,30 @@ function openDrug(i){
     </div>`;
 }
 
-/* ===== SHARE ССЫЛКА ===== */
+/* ===== ИЗБРАННОЕ ===== */
+function toggleFav(name){
+    if(favorites.includes(name)){
+        favorites = favorites.filter(x => x !== name);
+    } else {
+        favorites.push(name);
+    }
+
+    localStorage.setItem("fav", JSON.stringify(favorites));
+    render(getBaseList());
+}
+
+/* ===== SHARE ===== */
 function shareLink(name){
-    let encoded = encodeURIComponent(name);
-
-    let link = `https://webapp-alpha-nine-95.vercel.app?drug=${encoded}`;
-
-    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
-
-    tg.openLink(shareUrl);
+    let link = `https://webapp-alpha-nine-95.vercel.app?drug=${encodeURIComponent(name)}`;
+    tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(link)}`);
 }
 
 /* ===== НАЗАД ===== */
 function goBack(){
     isDetailOpen = false;
     tg.BackButton.hide();
-    render(drugs);
-
+    render(getBaseList());
     setTimeout(()=>window.scrollTo(0, scrollPos), 0);
-}
-
-/* ===== AUTO OPEN ===== */
-function autoOpen(){
-    let key = getParam();
-    if(!key) return;
-
-    key = decodeURIComponent(key);
-
-    let index = drugs.findIndex(d => norm(d.name) === norm(key));
-
-    if(index !== -1){
-        openDrug(index);
-    }
 }
 
 tg.BackButton.onClick(()=>{
@@ -304,8 +362,7 @@ tg.BackButton.onClick(()=>{
 });
 
 /* СТАРТ */
-render(drugs);
-autoOpen();
+render(getBaseList());
 </script>
 
 </body>
