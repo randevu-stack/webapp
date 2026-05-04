@@ -51,7 +51,10 @@ body{
 }
 
 /* SEARCH */
-.top{ padding:10px; }
+.top{
+    padding:10px;
+    transition:0.2s;
+}
 
 input{
     width:100%;
@@ -204,7 +207,7 @@ input{
     </div>
 </div>
 
-<div class="top">
+<div class="top" id="searchBlock">
     <input id="search" placeholder="Поиск по товарам и симптомам..." oninput="search()">
 </div>
 
@@ -300,7 +303,9 @@ function openDrug(name){
 
     isDetailOpen = true;
     tg.BackButton.show();
+
     document.getElementById("tabs").style.display = "none";
+    document.getElementById("searchBlock").style.display = "none";
 
     document.getElementById("list").innerHTML = `
     <div class="card">
@@ -349,7 +354,10 @@ function openSite(url){
 function goBack(){
     isDetailOpen = false;
     tg.BackButton.hide();
+
     document.getElementById("tabs").style.display = "flex";
+    document.getElementById("searchBlock").style.display = "block";
+
     render(getBase());
 }
 
