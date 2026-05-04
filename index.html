@@ -109,14 +109,14 @@ input{
     object-fit:contain;
     background:#f7f7f7;
     border-radius:12px;
-    cursor:pointer;
 }
 
 .big-img{
     height:220px;
+    cursor:zoom-in;
 }
 
-/* HEART (NEW STYLE) */
+/* HEART */
 .fav{
     position:absolute;
     top:8px;
@@ -132,14 +132,9 @@ input{
 
     background:rgba(255,255,255,0.6);
     backdrop-filter:blur(6px);
-    -webkit-backdrop-filter:blur(6px);
 
     color:#555;
     transition:all 0.2s ease;
-}
-
-.fav:hover{
-    background:rgba(255,255,255,0.8);
 }
 
 .fav.active{
@@ -198,12 +193,6 @@ input{
     z-index:9999;
 }
 
-.zoom-overlay img{
-    max-width:90%;
-    max-height:90%;
-    border-radius:12px;
-}
-
 .zoom-close{
     position:absolute;
     top:20px;
@@ -240,7 +229,6 @@ input{
 <div class="tabs" id="tabs">
     <div class="tab active" onclick="switchTab('all', this)">Товары</div>
     <div class="tab" onclick="switchTab('fav', this)">Избранное</div>
-    <div class="tab" onclick="switchTab('recent', this)">Недавние</div>
 </div>
 
 <div id="list"></div>
@@ -254,7 +242,6 @@ let scrollPos = 0;
 let currentTab = "all";
 
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
-let recent = JSON.parse(localStorage.getItem("recent") || "[]");
 
 function norm(t){
     return (t||"").toLowerCase().trim();
@@ -263,7 +250,6 @@ function norm(t){
 function getBaseList(){
     if(currentTab === "all") return drugs;
     if(currentTab === "fav") return drugs.filter(d => favorites.includes(d.name));
-    if(currentTab === "recent") return drugs.filter(d => recent.includes(d.name));
 }
 
 function search(){
@@ -305,7 +291,7 @@ function render(data){
         <div class="card">
 
             <div class="card-img-wrap">
-                ${d.photo ? `<img src="${d.photo}" onclick="openZoom('${d.photo}')">` : ''}
+                ${d.photo ? `<img src="${d.photo}">` : ''}
 
                 <div class="fav ${favorites.includes(d.name) ? 'active' : ''}"
                      onclick="toggleFav('${d.name}'); event.stopPropagation();">
@@ -339,12 +325,6 @@ function openDrug(name){
     tg.BackButton.show();
 
     document.getElementById("tabs").style.display = "none";
-
-    if(!recent.includes(d.name)){
-        recent.unshift(d.name);
-        if(recent.length > 20) recent.pop();
-        localStorage.setItem("recent", JSON.stringify(recent));
-    }
 
     document.getElementById("list").innerHTML = `
     <div class="card">
@@ -384,7 +364,7 @@ function openZoom(src){
     document.body.insertAdjacentHTML("beforeend", `
         <div class="zoom-overlay" onclick="closeZoom()">
             <div class="zoom-close">✕</div>
-            <img src="${src}">
+            <img src="${src}" style="max-width:90%; max-height:90%;">
         </div>
     `);
 }
