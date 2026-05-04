@@ -100,6 +100,11 @@ input{
     box-shadow:0 4px 18px rgba(0,0,0,0.08);
 }
 
+/* IMAGE + HEART */
+.card-img-wrap{
+    position:relative;
+}
+
 .card img{
     width:100%;
     height:150px;
@@ -110,6 +115,26 @@ input{
 
 .big-img{
     height:220px;
+}
+
+.fav{
+    position:absolute;
+    top:8px;
+    right:8px;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+.fav.active{
+    color:red;
 }
 
 .title{
@@ -188,20 +213,25 @@ tg.expand();
 let isDetailOpen = false;
 let scrollPos = 0;
 let currentTab = "all";
-let currentList = [...drugs];
 
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 let recent = JSON.parse(localStorage.getItem("recent") || "[]");
 
-/* ===== НОРМАЛИЗАЦИЯ ===== */
+/* ===== НОРМ ===== */
 function norm(t){
     return (t||"").toLowerCase().trim();
+}
+
+/* ===== БАЗА ===== */
+function getBaseList(){
+    if(currentTab === "all") return drugs;
+    if(currentTab === "fav") return drugs.filter(d => favorites.includes(d.name));
+    if(currentTab === "recent") return drugs.filter(d => recent.includes(d.name));
 }
 
 /* ===== ПОИСК ===== */
 function search(){
     let q = norm(document.getElementById("search").value);
-
     let base = getBaseList();
 
     if(!q){
@@ -217,19 +247,6 @@ function search(){
     render(res);
 }
 
-/* ===== БАЗА ПО ВКЛАДКЕ ===== */
-function getBaseList(){
-    if(currentTab === "all") return drugs;
-
-    if(currentTab === "fav"){
-        return drugs.filter(d => favorites.includes(d.name));
-    }
-
-    if(currentTab === "recent"){
-        return drugs.filter(d => recent.includes(d.name));
-    }
-}
-
 /* ===== ВКЛАДКИ ===== */
 function switchTab(tab, el){
     currentTab = tab;
@@ -243,8 +260,6 @@ function switchTab(tab, el){
 
 /* ===== РЕНДЕР ===== */
 function render(data){
-    currentList = data;
-
     if(!data.length){
         document.getElementById("list").innerHTML =
             '<div class="empty">Ничего не найдено</div>';
@@ -257,7 +272,14 @@ function render(data){
         html += `
         <div class="card">
 
-            ${d.photo ? `<img src="${d.photo}">` : ''}
+            <div class="card-img-wrap">
+                ${d.photo ? `<img src="${d.photo}">` : ''}
+
+                <div class="fav ${favorites.includes(d.name) ? 'active' : ''}"
+                     onclick="toggleFav('${d.name}'); event.stopPropagation();">
+                    ${favorites.includes(d.name) ? '❤️' : '🤍'}
+                </div>
+            </div>
 
             <div class="title">${d.name}</div>
 
@@ -268,10 +290,6 @@ function render(data){
 
             <div class="btn" onclick="openDrug('${d.name}')">
                 Открыть
-            </div>
-
-            <div class="btn" onclick="toggleFav('${d.name}')">
-                ${favorites.includes(d.name) ? '⭐ Убрать из избранного' : '☆ В избранное'}
             </div>
 
         </div>`;
@@ -289,7 +307,6 @@ function openDrug(name){
     isDetailOpen = true;
     tg.BackButton.show();
 
-    // recent
     if(!recent.includes(d.name)){
         recent.unshift(d.name);
         if(recent.length > 20) recent.pop();
@@ -299,7 +316,14 @@ function openDrug(name){
     document.getElementById("list").innerHTML = `
     <div class="card">
 
-        ${d.photo ? `<img src="${d.photo}" class="big-img">` : ''}
+        <div class="card-img-wrap">
+            ${d.photo ? `<img src="${d.photo}" class="big-img">` : ''}
+
+            <div class="fav ${favorites.includes(d.name) ? 'active' : ''}"
+                 onclick="toggleFav('${d.name}')">
+                ${favorites.includes(d.name) ? '❤️' : '🤍'}
+            </div>
+        </div>
 
         <div class="title">${d.name}</div>
 
@@ -320,10 +344,6 @@ function openDrug(name){
             🌐 Открыть сайт
         </div>` : ''}
 
-        <div class="btn" onclick="toggleFav('${d.name}')">
-            ${favorites.includes(d.name) ? '⭐ Убрать из избранного' : '☆ В избранное'}
-        </div>
-
         <div class="btn" onclick="shareLink('${d.name}')">
             🔗 Поделиться
         </div>
@@ -340,7 +360,12 @@ function toggleFav(name){
     }
 
     localStorage.setItem("fav", JSON.stringify(favorites));
-    render(getBaseList());
+
+    if(!isDetailOpen){
+        render(getBaseList());
+    } else {
+        openDrug(name);
+    }
 }
 
 /* ===== SHARE ===== */
