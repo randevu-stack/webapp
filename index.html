@@ -69,7 +69,6 @@ input{
     background:#e9e9ee;
     border-radius:10px;
     cursor:pointer;
-    font-size:14px;
 }
 
 .tab.active{
@@ -100,7 +99,6 @@ input{
     box-shadow:0 4px 18px rgba(0,0,0,0.08);
 }
 
-/* IMAGE + HEART */
 .card-img-wrap{
     position:relative;
 }
@@ -117,6 +115,7 @@ input{
     height:220px;
 }
 
+/* HEART */
 .fav{
     position:absolute;
     top:8px;
@@ -344,10 +343,6 @@ function openDrug(name){
             🌐 Открыть сайт
         </div>` : ''}
 
-        <div class="btn" onclick="shareLink('${d.name}')">
-            🔗 Поделиться
-        </div>
-
     </div>`;
 }
 
@@ -366,19 +361,6 @@ function toggleFav(name){
     } else {
         openDrug(name);
     }
-}
-
-/* ===== SHARE ===== */
-function shareLink(name){
-    let encoded = encodeURIComponent(name);
-
-    let bot = "jurabek_helper_bot"; //
-
-    let link = `https://t.me/${bot}?startapp=drug_${encoded}`;
-
-    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
-
-    tg.openLink(shareUrl);
 }
 
 /* ===== НАЗАД ===== */
