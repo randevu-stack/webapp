@@ -31,7 +31,7 @@ body{
 
 .brand{
     font-weight:700;
-    color:#1f4fa3;
+    color:#000;
 }
 
 .sub{
@@ -42,7 +42,7 @@ body{
 .contacts{
     margin-top:6px;
     font-size:12px;
-    color:#555;
+    color:#666;
 }
 
 .contacts a{
@@ -74,7 +74,6 @@ input{
     padding:10px;
     background:#e9e9ee;
     border-radius:10px;
-    cursor:pointer;
 }
 
 .tab.active{
@@ -111,31 +110,29 @@ input{
 }
 
 .title{
-    font-weight:600;
+    font-weight:700;
     margin-top:8px;
-}
-
-/* FORM (список — синий) */
-.form{
-    font-size:13px;
-    color:#0a84ff;
-    margin-top:6px;
-}
-
-/* DETAIL (внутри товара — спокойный стиль) */
-.detail .form{
-    color:#555;
-    font-size:14px;
-}
-
-.detail .form b{
     color:#000;
 }
 
-.desc{
+/* LIST FORM */
+.form{
+    font-size:13px;
+    color:#000;
+    margin-top:4px;
+}
+
+/* DETAIL BLOCK */
+.detail-block{
+    margin-top:10px;
     font-size:13px;
     color:#666;
-    margin-top:6px;
+}
+
+.detail-block b{
+    display:block;
+    color:#000;
+    margin-bottom:2px;
 }
 
 /* HEART */
@@ -306,25 +303,30 @@ function openDrug(name){
     document.getElementById("tabs").style.display = "none";
 
     document.getElementById("list").innerHTML = `
-    <div class="card detail">
+    <div class="card">
 
         <img src="${d.photo}" class="big-img" onclick="zoom('${d.photo}')">
 
         <div class="title">${d.name}</div>
 
-        <div class="form">
-            <b>Форма:</b><br>
+        <div class="detail-block">
+            <b>Форма</b>
             ${d.form || '-'}
         </div>
 
-        <div class="form">
-            <b>Дозировка:</b><br>
+        <div class="detail-block">
+            <b>Дозировка</b>
             ${d.dosage || '-'}
         </div>
 
-        <div class="desc">
-            <b>Состав:</b><br>${d.sostav || '-'}<br><br>
-            <b>Показания:</b><br>${d.indications || '-'}
+        <div class="detail-block">
+            <b>Состав</b>
+            ${d.sostav || '-'}
+        </div>
+
+        <div class="detail-block">
+            <b>Показания</b>
+            ${d.indications || '-'}
         </div>
 
         <div class="btn green" onclick="openSite('${d.url || ''}')">
