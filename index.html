@@ -92,11 +92,42 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 let isDetailOpen = false;
+let isZoomOpen = false;
 let currentTab = "all";
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
 let scrollPos = 0;
 let searchQuery = "";
+let touchStartX = 0;
+
+/* SWIPE */
+document.addEventListener("touchstart", e=>{
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", e=>{
+    let diff = touchStartX - e.changedTouches[0].screenX;
+
+    if(diff > 80){
+
+        if(isZoomOpen){
+            closeZoom();
+            return;
+        }
+
+        if(isDetailOpen){
+            goBack();
+            return;
+        }
+
+        if(searchQuery){
+            searchQuery = "";
+            document.getElementById("search").value = "";
+            render(getBase());
+            window.scrollTo(0,0);
+        }
+    }
+});
 
 /* SEARCH */
 function norm(t){ return (t||"").toLowerCase(); }
@@ -200,12 +231,19 @@ function openDrug(name){
     </div>`;
 }
 
-/* BACK BUTTON LOGIC */
+/* BACK BUTTON */
 tg.BackButton.onClick(()=>{
+    if(isZoomOpen){
+        closeZoom();
+        return;
+    }
+
     if(isDetailOpen){
         goBack();
+        return;
     }
-    else if(searchQuery){
+
+    if(searchQuery){
         searchQuery = "";
         document.getElementById("search").value = "";
         render(getBase());
@@ -236,6 +274,8 @@ function openSite(url){
 
 /* ZOOM */
 function zoom(src){
+    isZoomOpen = true;
+
     document.body.insertAdjacentHTML("beforeend", `
         <div class="zoom" onclick="closeZoom()">
             <div class="zoom-close" onclick="event.stopPropagation(); closeZoom()">✕</div>
@@ -245,6 +285,7 @@ function zoom(src){
 }
 
 function closeZoom(){
+    isZoomOpen = false;
     document.querySelector(".zoom")?.remove();
 }
 
