@@ -125,7 +125,7 @@ input{
     margin-top:4px;
 }
 
-/* DETAIL BLOCK */
+/* DETAIL */
 .detail-block{
     margin-top:10px;
     font-size:13px;
@@ -226,6 +226,7 @@ let isDetailOpen = false;
 let currentTab = "all";
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
+let scrollPos = 0;
 let touchStartX = 0;
 
 /* SWIPE */
@@ -301,6 +302,8 @@ function render(data){
 function openDrug(name){
     let d = drugs.find(x=>norm(x.name)===norm(name));
 
+    scrollPos = window.scrollY;
+
     isDetailOpen = true;
     tg.BackButton.show();
 
@@ -359,6 +362,8 @@ function goBack(){
     document.getElementById("searchBlock").style.display = "block";
 
     render(getBase());
+
+    setTimeout(()=>window.scrollTo(0, scrollPos), 0);
 }
 
 tg.BackButton.onClick(()=>goBack());
