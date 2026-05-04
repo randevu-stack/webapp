@@ -97,29 +97,6 @@ let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
 let scrollPos = 0;
 let searchQuery = "";
-let touchStartX = 0;
-
-/* SWIPE FIX */
-document.addEventListener("touchstart", e=>{
-    touchStartX = e.changedTouches[0].screenX;
-});
-
-document.addEventListener("touchend", e=>{
-    let diff = touchStartX - e.changedTouches[0].screenX;
-
-    if(diff > 80){
-
-        if(isDetailOpen){
-            goBack();
-        }
-        else if(searchQuery){
-            searchQuery = "";
-            document.getElementById("search").value = "";
-            render(getBase());
-            window.scrollTo(0,0);
-        }
-    }
-});
 
 /* SEARCH */
 function norm(t){ return (t||"").toLowerCase(); }
@@ -135,7 +112,11 @@ function search(){
     let q = norm(searchQuery);
     let base = getBase();
 
-    if(!q) return render(base);
+    if(!q){
+        render(base);
+        if(!isDetailOpen) tg.BackButton.hide();
+        return;
+    }
 
     let res = base.filter(d=>{
         let text = norm(d.name + " " + d.indications);
@@ -143,6 +124,8 @@ function search(){
     });
 
     render(res);
+
+    if(!isDetailOpen) tg.BackButton.show();
 }
 
 /* TABS */
@@ -154,6 +137,7 @@ function switchTab(tab, el){
     document.getElementById("search").value = "";
     searchQuery = "";
 
+    tg.BackButton.hide();
     render(getBase());
 }
 
@@ -216,17 +200,23 @@ function openDrug(name){
     </div>`;
 }
 
-/* SITE */
-function openSite(url){
-    if(!url) return;
-    if(!url.startsWith("http")) url = "https://" + url;
-    tg.openLink(url);
-}
+/* BACK BUTTON LOGIC */
+tg.BackButton.onClick(()=>{
+    if(isDetailOpen){
+        goBack();
+    }
+    else if(searchQuery){
+        searchQuery = "";
+        document.getElementById("search").value = "";
+        render(getBase());
+        window.scrollTo(0,0);
+        tg.BackButton.hide();
+    }
+});
 
 /* BACK */
 function goBack(){
     isDetailOpen = false;
-    tg.BackButton.hide();
 
     document.getElementById("tabs").style.display = "flex";
     document.getElementById("searchBlock").style.display = "block";
@@ -237,7 +227,12 @@ function goBack(){
     setTimeout(()=>window.scrollTo(0, scrollPos), 0);
 }
 
-tg.BackButton.onClick(()=>goBack());
+/* SITE */
+function openSite(url){
+    if(!url) return;
+    if(!url.startsWith("http")) url = "https://" + url;
+    tg.openLink(url);
+}
 
 /* ZOOM */
 function zoom(src){
