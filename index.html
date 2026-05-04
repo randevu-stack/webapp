@@ -14,7 +14,6 @@ body{
     background:#f2f2f7;
 }
 
-/* HEADER */
 .header{
     background:#f4f4f4;
     padding:12px;
@@ -44,7 +43,6 @@ body{
     font-size:12px;
 }
 
-/* SEARCH */
 .top{ padding:10px; }
 
 input{
@@ -55,7 +53,6 @@ input{
     background:#e9e9ee;
 }
 
-/* TABS */
 .tabs{
     display:flex;
     gap:10px;
@@ -76,7 +73,6 @@ input{
     color:white;
 }
 
-/* GRID */
 #list{
     display:grid;
     gap:14px;
@@ -91,7 +87,6 @@ input{
     #list{ grid-template-columns:repeat(3,1fr); }
 }
 
-/* CARD */
 .card{
     background:white;
     border-radius:18px;
@@ -116,7 +111,6 @@ input{
     cursor:zoom-in;
 }
 
-/* HEART */
 .fav{
     position:absolute;
     top:8px;
@@ -179,7 +173,6 @@ input{
     color:#888;
 }
 
-/* ZOOM */
 .zoom-overlay{
     position:fixed;
     top:0;
@@ -191,15 +184,6 @@ input{
     align-items:center;
     justify-content:center;
     z-index:9999;
-}
-
-.zoom-close{
-    position:absolute;
-    top:20px;
-    right:20px;
-    color:white;
-    font-size:28px;
-    cursor:pointer;
 }
 </style>
 </head>
@@ -223,7 +207,7 @@ input{
 </div>
 
 <div class="top">
-    <input id="search" placeholder="Поиск..." oninput="search()">
+    <input id="search" placeholder="Поиск по товарам и показаниям..." oninput="search()">
 </div>
 
 <div class="tabs" id="tabs">
@@ -252,6 +236,7 @@ function getBaseList(){
     if(currentTab === "fav") return drugs.filter(d => favorites.includes(d.name));
 }
 
+/* 🔥 ПРОКАЧАННЫЙ ПОИСК */
 function search(){
     let q = norm(document.getElementById("search").value);
     let base = getBaseList();
@@ -261,10 +246,47 @@ function search(){
         return;
     }
 
-    let res = base.filter(d=>{
-        let text = norm([d.name, d.indications, d.sostav].join(" "));
-        return text.includes(q);
-    });
+    let words = q.split(" ").filter(w => w);
+
+    const synonyms = {
+        "сердце": ["кардио","сердеч","сосуд"],
+        "давление": ["гипертония","давлен"],
+        "боль": ["обезбол","анальг"],
+        "кашель": ["простуда","бронх"],
+        "температура": ["жар","лихорад"],
+        "желудок": ["жкт","гастрит"],
+    };
+
+    function expand(word){
+        let list = [word];
+        Object.keys(synonyms).forEach(key=>{
+            if(word.includes(key)){
+                list = list.concat(synonyms[key]);
+            }
+        });
+        return list;
+    }
+
+    let res = base
+        .map(d=>{
+            let name = norm(d.name);
+            let indications = norm(d.indications);
+            let score = 0;
+
+            words.forEach(w=>{
+                let variants = expand(w);
+
+                variants.forEach(v=>{
+                    if(name.includes(v)) score += 5;
+                    if(indications.includes(v)) score += 2;
+                });
+            });
+
+            return {d, score};
+        })
+        .filter(x => x.score > 0)
+        .sort((a,b)=> b.score - a.score)
+        .map(x => x.d);
 
     render(res);
 }
@@ -289,7 +311,6 @@ function render(data){
     data.forEach(d=>{
         html += `
         <div class="card">
-
             <div class="card-img-wrap">
                 ${d.photo ? `<img src="${d.photo}">` : ''}
 
@@ -309,7 +330,6 @@ function render(data){
             <div class="btn" onclick="openDrug('${d.name}')">
                 Открыть
             </div>
-
         </div>`;
     });
 
@@ -328,7 +348,6 @@ function openDrug(name){
 
     document.getElementById("list").innerHTML = `
     <div class="card">
-
         <div class="card-img-wrap">
             ${d.photo ? `<img src="${d.photo}" class="big-img" onclick="openZoom('${d.photo}')">` : ''}
 
@@ -342,12 +361,8 @@ function openDrug(name){
 
         <div class="desc">
             <b>Состав:</b><br>${d.sostav || '-'}<br><br>
-
-            <b>Форма:</b><br>
-            ${d.form || '-'} ${d.dosage ? '('+d.dosage+')' : ''}<br><br>
-
-            <b>Показания:</b><br>
-            ${d.indications || '-'}
+            <b>Форма:</b><br>${d.form || '-'} ${d.dosage ? '('+d.dosage+')' : ''}<br><br>
+            <b>Показания:</b><br>${d.indications || '-'}
         </div>
 
         <div class="btn" onclick="goBack()">← Назад</div>
@@ -356,14 +371,13 @@ function openDrug(name){
         <div class="btn green" onclick="tg.openLink(\`${d.url}\`)">
             🌐 Открыть сайт
         </div>` : ''}
-
     </div>`;
 }
 
 function openZoom(src){
     document.body.insertAdjacentHTML("beforeend", `
         <div class="zoom-overlay" onclick="closeZoom()">
-            <div class="zoom-close">✕</div>
+            <div style="position:absolute;top:20px;right:20px;color:white;font-size:28px;">✕</div>
             <img src="${src}" style="max-width:90%; max-height:90%;">
         </div>
     `);
