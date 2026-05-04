@@ -14,7 +14,6 @@ body{
     background:#f2f2f7;
 }
 
-/* HEADER */
 .header{
     background:#f4f4f4;
     padding:12px;
@@ -27,9 +26,7 @@ body{
     align-items:center;
 }
 
-.logo{
-    width:42px;
-}
+.logo{ width:42px; }
 
 .brand{
     font-weight:700;
@@ -46,7 +43,6 @@ body{
     font-size:12px;
 }
 
-/* SEARCH */
 .top{ padding:10px; }
 
 input{
@@ -57,7 +53,6 @@ input{
     background:#e9e9ee;
 }
 
-/* TABS */
 .tabs{
     display:flex;
     gap:10px;
@@ -78,31 +73,17 @@ input{
     color:white;
 }
 
-/* GRID */
 #list{
     display:grid;
     gap:14px;
     padding:10px;
 }
 
-@media(min-width:600px){
-    #list{ grid-template-columns:repeat(2,1fr); }
-}
-
-@media(min-width:1024px){
-    #list{ grid-template-columns:repeat(3,1fr); }
-}
-
-/* CARD */
 .card{
     background:white;
     border-radius:18px;
     padding:12px;
     box-shadow:0 4px 18px rgba(0,0,0,0.08);
-}
-
-.card-img-wrap{
-    position:relative;
 }
 
 .card img{
@@ -115,10 +96,9 @@ input{
 
 .big-img{
     height:220px;
-    cursor:zoom-in;
+    cursor:pointer;
 }
 
-/* HEART */
 .fav{
     position:absolute;
     top:8px;
@@ -131,32 +111,12 @@ input{
     justify-content:center;
     font-size:18px;
     cursor:pointer;
-
     background:rgba(255,255,255,0.6);
-    backdrop-filter:blur(6px);
     color:#555;
 }
 
 .fav.active{
-    background:rgba(255,255,255,0.9);
     color:#ff3b30;
-}
-
-.title{
-    font-weight:600;
-    margin-top:8px;
-}
-
-.form{
-    font-size:13px;
-    color:#0a84ff;
-    margin-top:4px;
-}
-
-.desc{
-    font-size:13px;
-    color:#666;
-    margin-top:6px;
 }
 
 .btn{
@@ -173,20 +133,13 @@ input{
     background:#34c759;
 }
 
-.empty{
-    padding:30px;
-    text-align:center;
-    color:#888;
-}
-
-/* ZOOM */
-.zoom-overlay{
+.zoom{
     position:fixed;
     top:0;
     left:0;
     width:100%;
     height:100%;
-    background:rgba(0,0,0,0.9);
+    background:black;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -199,19 +152,11 @@ input{
 
 <div class="header">
     <div class="header-top">
-        <!-- ВАЖНО: файл должен быть на Vercel -->
         <img src="logo.png" class="logo">
-
         <div>
             <div class="brand">JURABEK Laboratories</div>
             <div class="sub">Производство лекарственных средств широкого спектра</div>
         </div>
-    </div>
-
-    <div class="contacts">
-        📞 +998 (78) 150-03-03<br>
-        ✉️ info@jurabek.uz<br>
-        📅 Пн–Пт 9:00–18:00
     </div>
 </div>
 
@@ -231,63 +176,66 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 let isDetailOpen = false;
-let scrollPos = 0;
 let currentTab = "all";
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
-function norm(t){
-    return (t||"").toLowerCase().trim();
-}
+let touchStartX = 0;
 
-function getBaseList(){
-    if(currentTab === "all") return drugs;
-    if(currentTab === "fav") return drugs.filter(d => favorites.includes(d.name));
+// ===== SWIPE =====
+document.addEventListener("touchstart", e=>{
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener("touchend", e=>{
+    let diff = touchStartX - e.changedTouches[0].screenX;
+
+    if(diff > 80 && isDetailOpen){
+        goBack();
+    }
+});
+
+// ===== SEARCH =====
+function norm(t){ return (t||"").toLowerCase(); }
+
+function getBase(){
+    if(currentTab==="all") return drugs;
+    return drugs.filter(d=>favorites.includes(d.name));
 }
 
 function search(){
     let q = norm(document.getElementById("search").value);
-    let base = getBaseList();
+    let base = getBase();
 
-    if(!q){
-        render(base);
-        return;
-    }
-
-    let words = q.split(" ").filter(w => w);
+    if(!q) return render(base);
 
     let res = base.filter(d=>{
         let text = norm(d.name + " " + d.indications);
-        return words.every(w => text.includes(w));
+        return text.includes(q);
     });
 
     render(res);
 }
 
+// ===== TABS =====
 function switchTab(tab, el){
     currentTab = tab;
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
     el.classList.add("active");
-    render(getBaseList());
+    render(getBase());
 }
 
+// ===== RENDER =====
 function render(data){
-    if(!data.length){
-        document.getElementById("list").innerHTML =
-            '<div class="empty">Ничего не найдено</div>';
-        return;
-    }
-
     let html = "";
 
     data.forEach(d=>{
         html += `
         <div class="card">
-            <div class="card-img-wrap">
-                ${d.photo ? `<img src="${d.photo}">` : ''}
-
-                <div class="fav ${favorites.includes(d.name) ? 'active' : ''}"
-                     onclick="toggleFav('${d.name}')">
-                    ${favorites.includes(d.name) ? '❤' : '♡'}
+            <div style="position:relative">
+                <img src="${d.photo}">
+                <div class="fav ${favorites.includes(d.name)?'active':''}"
+                    onclick="toggleFav('${d.name}')">
+                    ${favorites.includes(d.name)?'❤':'♡'}
                 </div>
             </div>
 
@@ -302,14 +250,18 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
+// ===== OPEN =====
 function openDrug(name){
-    let d = drugs.find(x => norm(x.name) === norm(name));
+    let d = drugs.find(x=>norm(x.name)===norm(name));
 
+    isDetailOpen = true;
+    tg.BackButton.show();
     document.getElementById("tabs").style.display = "none";
 
     document.getElementById("list").innerHTML = `
     <div class="card">
-        <img src="${d.photo}" class="big-img" onclick="openZoom('${d.photo}')">
+
+        <img src="${d.photo}" class="big-img" onclick="zoom('${d.photo}')">
 
         <div class="title">${d.name}</div>
 
@@ -318,35 +270,54 @@ function openDrug(name){
             <b>Показания:</b><br>${d.indications}
         </div>
 
+        <div class="btn green" onclick="openSite('${d.url || ''}')">
+            🌐 Открыть сайт
+        </div>
+
         <div class="btn" onclick="goBack()">← Назад</div>
+
     </div>`;
 }
 
-function openZoom(src){
+// ===== SITE =====
+function openSite(url){
+    if(!url) return;
+    if(!url.startsWith("http")) url = "https://" + url;
+    tg.openLink(url);
+}
+
+// ===== BACK =====
+function goBack(){
+    isDetailOpen = false;
+    tg.BackButton.hide();
+    document.getElementById("tabs").style.display = "flex";
+    render(getBase());
+}
+
+tg.BackButton.onClick(()=>goBack());
+
+// ===== ZOOM =====
+function zoom(src){
     document.body.insertAdjacentHTML("beforeend", `
-        <div class="zoom-overlay" onclick="this.remove()">
+        <div class="zoom" onclick="this.remove()">
             <img src="${src}" style="max-width:90%">
         </div>
     `);
 }
 
+// ===== FAV =====
 function toggleFav(name){
     if(favorites.includes(name)){
-        favorites = favorites.filter(x => x !== name);
-    } else {
+        favorites = favorites.filter(x=>x!==name);
+    }else{
         favorites.push(name);
     }
-
     localStorage.setItem("fav", JSON.stringify(favorites));
-    render(getBaseList());
+    render(getBase());
 }
 
-function goBack(){
-    document.getElementById("tabs").style.display = "flex";
-    render(getBaseList());
-}
-
-render(getBaseList());
+// START
+render(getBase());
 </script>
 
 </body>
