@@ -14,6 +14,7 @@ body{
     background:#f2f2f7;
 }
 
+/* HEADER */
 .header{
     background:#f4f4f4;
     padding:12px;
@@ -26,7 +27,9 @@ body{
     align-items:center;
 }
 
-.logo{ width:42px; }
+.logo{
+    width:42px;
+}
 
 .brand{
     font-weight:700;
@@ -43,6 +46,7 @@ body{
     font-size:12px;
 }
 
+/* SEARCH */
 .top{ padding:10px; }
 
 input{
@@ -53,6 +57,7 @@ input{
     background:#e9e9ee;
 }
 
+/* TABS */
 .tabs{
     display:flex;
     gap:10px;
@@ -73,6 +78,7 @@ input{
     color:white;
 }
 
+/* GRID */
 #list{
     display:grid;
     gap:14px;
@@ -87,6 +93,7 @@ input{
     #list{ grid-template-columns:repeat(3,1fr); }
 }
 
+/* CARD */
 .card{
     background:white;
     border-radius:18px;
@@ -111,6 +118,7 @@ input{
     cursor:zoom-in;
 }
 
+/* HEART */
 .fav{
     position:absolute;
     top:8px;
@@ -126,9 +134,7 @@ input{
 
     background:rgba(255,255,255,0.6);
     backdrop-filter:blur(6px);
-
     color:#555;
-    transition:all 0.2s ease;
 }
 
 .fav.active{
@@ -173,6 +179,7 @@ input{
     color:#888;
 }
 
+/* ZOOM */
 .zoom-overlay{
     position:fixed;
     top:0;
@@ -192,9 +199,11 @@ input{
 
 <div class="header">
     <div class="header-top">
+        <!-- ВАЖНО: файл должен быть на Vercel -->
         <img src="logo.png" class="logo">
+
         <div>
-            <div class="brand">JURABEK<br>Laboratories LTD</div>
+            <div class="brand">JURABEK Laboratories</div>
             <div class="sub">Производство лекарственных средств широкого спектра</div>
         </div>
     </div>
@@ -224,7 +233,6 @@ tg.expand();
 let isDetailOpen = false;
 let scrollPos = 0;
 let currentTab = "all";
-
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
 function norm(t){
@@ -236,7 +244,6 @@ function getBaseList(){
     if(currentTab === "fav") return drugs.filter(d => favorites.includes(d.name));
 }
 
-/* 🔥 ПРОКАЧАННЫЙ ПОИСК */
 function search(){
     let q = norm(document.getElementById("search").value);
     let base = getBaseList();
@@ -248,45 +255,10 @@ function search(){
 
     let words = q.split(" ").filter(w => w);
 
-    const synonyms = {
-        "сердце": ["кардио","сердеч","сосуд"],
-        "давление": ["гипертония","давлен"],
-        "боль": ["обезбол","анальг"],
-        "кашель": ["простуда","бронх"],
-        "температура": ["жар","лихорад"],
-        "желудок": ["жкт","гастрит"],
-    };
-
-    function expand(word){
-        let list = [word];
-        Object.keys(synonyms).forEach(key=>{
-            if(word.includes(key)){
-                list = list.concat(synonyms[key]);
-            }
-        });
-        return list;
-    }
-
-    let res = base
-        .map(d=>{
-            let name = norm(d.name);
-            let indications = norm(d.indications);
-            let score = 0;
-
-            words.forEach(w=>{
-                let variants = expand(w);
-
-                variants.forEach(v=>{
-                    if(name.includes(v)) score += 5;
-                    if(indications.includes(v)) score += 2;
-                });
-            });
-
-            return {d, score};
-        })
-        .filter(x => x.score > 0)
-        .sort((a,b)=> b.score - a.score)
-        .map(x => x.d);
+    let res = base.filter(d=>{
+        let text = norm(d.name + " " + d.indications);
+        return words.every(w => text.includes(w));
+    });
 
     render(res);
 }
@@ -295,7 +267,6 @@ function switchTab(tab, el){
     currentTab = tab;
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
     el.classList.add("active");
-    document.getElementById("search").value = "";
     render(getBaseList());
 }
 
@@ -315,17 +286,12 @@ function render(data){
                 ${d.photo ? `<img src="${d.photo}">` : ''}
 
                 <div class="fav ${favorites.includes(d.name) ? 'active' : ''}"
-                     onclick="toggleFav('${d.name}'); event.stopPropagation();">
+                     onclick="toggleFav('${d.name}')">
                     ${favorites.includes(d.name) ? '❤' : '♡'}
                 </div>
             </div>
 
             <div class="title">${d.name}</div>
-
-            ${(d.form || d.dosage) ? `
-            <div class="form">
-                ${d.form || ''} ${d.dosage ? '('+d.dosage+')' : ''}
-            </div>` : ''}
 
             <div class="btn" onclick="openDrug('${d.name}')">
                 Открыть
@@ -338,53 +304,30 @@ function render(data){
 
 function openDrug(name){
     let d = drugs.find(x => norm(x.name) === norm(name));
-    if(!d) return;
-
-    scrollPos = window.scrollY;
-    isDetailOpen = true;
-    tg.BackButton.show();
 
     document.getElementById("tabs").style.display = "none";
 
     document.getElementById("list").innerHTML = `
     <div class="card">
-        <div class="card-img-wrap">
-            ${d.photo ? `<img src="${d.photo}" class="big-img" onclick="openZoom('${d.photo}')">` : ''}
-
-            <div class="fav ${favorites.includes(d.name) ? 'active' : ''}"
-                 onclick="toggleFav('${d.name}')">
-                ${favorites.includes(d.name) ? '❤' : '♡'}
-            </div>
-        </div>
+        <img src="${d.photo}" class="big-img" onclick="openZoom('${d.photo}')">
 
         <div class="title">${d.name}</div>
 
         <div class="desc">
-            <b>Состав:</b><br>${d.sostav || '-'}<br><br>
-            <b>Форма:</b><br>${d.form || '-'} ${d.dosage ? '('+d.dosage+')' : ''}<br><br>
-            <b>Показания:</b><br>${d.indications || '-'}
+            <b>Состав:</b><br>${d.sostav}<br><br>
+            <b>Показания:</b><br>${d.indications}
         </div>
 
         <div class="btn" onclick="goBack()">← Назад</div>
-
-        ${d.url ? `
-        <div class="btn green" onclick="tg.openLink(\`${d.url}\`)">
-            🌐 Открыть сайт
-        </div>` : ''}
     </div>`;
 }
 
 function openZoom(src){
     document.body.insertAdjacentHTML("beforeend", `
-        <div class="zoom-overlay" onclick="closeZoom()">
-            <div style="position:absolute;top:20px;right:20px;color:white;font-size:28px;">✕</div>
-            <img src="${src}" style="max-width:90%; max-height:90%;">
+        <div class="zoom-overlay" onclick="this.remove()">
+            <img src="${src}" style="max-width:90%">
         </div>
     `);
-}
-
-function closeZoom(){
-    document.querySelector(".zoom-overlay")?.remove();
 }
 
 function toggleFav(name){
@@ -395,25 +338,13 @@ function toggleFav(name){
     }
 
     localStorage.setItem("fav", JSON.stringify(favorites));
-
-    if(!isDetailOpen){
-        render(getBaseList());
-    } else {
-        openDrug(name);
-    }
+    render(getBaseList());
 }
 
 function goBack(){
-    isDetailOpen = false;
-    tg.BackButton.hide();
     document.getElementById("tabs").style.display = "flex";
     render(getBaseList());
-    setTimeout(()=>window.scrollTo(0, scrollPos), 0);
 }
-
-tg.BackButton.onClick(()=>{
-    if(isDetailOpen) goBack();
-});
 
 render(getBaseList());
 </script>
