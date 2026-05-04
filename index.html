@@ -14,7 +14,6 @@ body{
     background:#f2f2f7;
 }
 
-/* HEADER */
 .header{
     background:#f4f4f4;
     padding:12px;
@@ -50,10 +49,8 @@ body{
     text-decoration:none;
 }
 
-/* SEARCH */
 .top{
     padding:10px;
-    transition:0.2s;
 }
 
 input{
@@ -64,7 +61,6 @@ input{
     background:#e9e9ee;
 }
 
-/* TABS */
 .tabs{
     display:flex;
     gap:10px;
@@ -84,14 +80,12 @@ input{
     color:white;
 }
 
-/* GRID */
 #list{
     display:grid;
     gap:14px;
     padding:10px;
 }
 
-/* CARD */
 .card{
     background:white;
     border-radius:18px;
@@ -118,14 +112,12 @@ input{
     color:#000;
 }
 
-/* LIST FORM */
 .form{
     font-size:13px;
     color:#000;
     margin-top:4px;
 }
 
-/* DETAIL */
 .detail-block{
     margin-top:10px;
     font-size:13px;
@@ -138,7 +130,6 @@ input{
     margin-bottom:2px;
 }
 
-/* HEART */
 .fav{
     position:absolute;
     top:8px;
@@ -158,7 +149,6 @@ input{
     color:#ff3b30;
 }
 
-/* BUTTON */
 .btn{
     margin-top:10px;
     background:#0a84ff;
@@ -173,7 +163,6 @@ input{
     background:#34c759;
 }
 
-/* ZOOM */
 .zoom{
     position:fixed;
     top:0;
@@ -227,6 +216,7 @@ let currentTab = "all";
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
 let scrollPos = 0;
+let searchQuery = "";
 let touchStartX = 0;
 
 /* SWIPE */
@@ -248,7 +238,9 @@ function getBase(){
 }
 
 function search(){
-    let q = norm(document.getElementById("search").value);
+    searchQuery = document.getElementById("search").value;
+
+    let q = norm(searchQuery);
     let base = getBase();
 
     if(!q) return render(base);
@@ -266,6 +258,10 @@ function switchTab(tab, el){
     currentTab = tab;
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
     el.classList.add("active");
+
+    document.getElementById("search").value = "";
+    searchQuery = "";
+
     render(getBase());
 }
 
@@ -317,30 +313,12 @@ function openDrug(name){
 
         <div class="title">${d.name}</div>
 
-        <div class="detail-block">
-            <b>Форма</b>
-            ${d.form || '-'}
-        </div>
+        <div class="detail-block"><b>Форма</b>${d.form || '-'}</div>
+        <div class="detail-block"><b>Дозировка</b>${d.dosage || '-'}</div>
+        <div class="detail-block"><b>Состав</b>${d.sostav || '-'}</div>
+        <div class="detail-block"><b>Показания</b>${d.indications || '-'}</div>
 
-        <div class="detail-block">
-            <b>Дозировка</b>
-            ${d.dosage || '-'}
-        </div>
-
-        <div class="detail-block">
-            <b>Состав</b>
-            ${d.sostav || '-'}
-        </div>
-
-        <div class="detail-block">
-            <b>Показания</b>
-            ${d.indications || '-'}
-        </div>
-
-        <div class="btn green" onclick="openSite('${d.url || ''}')">
-            🌐 Открыть сайт
-        </div>
-
+        <div class="btn green" onclick="openSite('${d.url || ''}')">🌐 Открыть сайт</div>
         <div class="btn" onclick="goBack()">← Назад</div>
 
     </div>`;
@@ -361,7 +339,8 @@ function goBack(){
     document.getElementById("tabs").style.display = "flex";
     document.getElementById("searchBlock").style.display = "block";
 
-    render(getBase());
+    document.getElementById("search").value = searchQuery;
+    search();
 
     setTimeout(()=>window.scrollTo(0, scrollPos), 0);
 }
@@ -385,7 +364,7 @@ function toggleFav(name){
         favorites.push(name);
     }
     localStorage.setItem("fav", JSON.stringify(favorites));
-    render(getBase());
+    search();
 }
 
 /* START */
