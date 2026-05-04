@@ -14,6 +14,7 @@ body{
     background:#f2f2f7;
 }
 
+/* HEADER */
 .header{
     background:#f4f4f4;
     padding:12px;
@@ -110,6 +111,23 @@ input{
     cursor:pointer;
 }
 
+.title{
+    font-weight:600;
+    margin-top:8px;
+}
+
+.form{
+    font-size:13px;
+    color:#0a84ff;
+    margin-top:4px;
+}
+
+.desc{
+    font-size:13px;
+    color:#666;
+    margin-top:6px;
+}
+
 /* HEART */
 .fav{
     position:absolute;
@@ -131,7 +149,7 @@ input{
     color:#ff3b30;
 }
 
-/* BUTTONS */
+/* BUTTON */
 .btn{
     margin-top:10px;
     background:#0a84ff;
@@ -258,6 +276,11 @@ function render(data){
 
             <div class="title">${d.name}</div>
 
+            ${(d.form || d.dosage) ? `
+            <div class="form">
+                ${d.form || ''} ${d.dosage ? '('+d.dosage+')' : ''}
+            </div>` : ''}
+
             <div class="btn" onclick="openDrug('${d.name}')">Открыть</div>
         </div>`;
     });
@@ -280,9 +303,13 @@ function openDrug(name){
 
         <div class="title">${d.name}</div>
 
+        <div class="form">
+            ${d.form || '-'} ${d.dosage ? '('+d.dosage+')' : ''}
+        </div>
+
         <div class="desc">
-            <b>Состав:</b><br>${d.sostav}<br><br>
-            <b>Показания:</b><br>${d.indications}
+            <b>Состав:</b><br>${d.sostav || '-'}<br><br>
+            <b>Показания:</b><br>${d.indications || '-'}
         </div>
 
         <div class="btn green" onclick="openSite('${d.url || ''}')">
