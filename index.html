@@ -370,8 +370,15 @@ function toggleFav(name){
 
 /* ===== SHARE ===== */
 function shareLink(name){
-    let link = `https://webapp-alpha-nine-95.vercel.app?drug=${encodeURIComponent(name)}`;
-    tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(link)}`);
+    let encoded = encodeURIComponent(name);
+
+    let bot = "jurabek_helper_bot"; //
+
+    let link = `https://t.me/${bot}?startapp=drug_${encoded}`;
+
+    let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}`;
+
+    tg.openLink(shareUrl);
 }
 
 /* ===== НАЗАД ===== */
