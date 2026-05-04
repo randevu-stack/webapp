@@ -14,6 +14,7 @@ body{
     background:#f2f2f7;
 }
 
+/* HEADER */
 .header{
     background:#f4f4f4;
     padding:12px;
@@ -49,6 +50,7 @@ body{
     text-decoration:none;
 }
 
+/* SEARCH */
 .top{ padding:10px; }
 
 input{
@@ -59,6 +61,7 @@ input{
     background:#e9e9ee;
 }
 
+/* TABS */
 .tabs{
     display:flex;
     gap:10px;
@@ -71,6 +74,7 @@ input{
     padding:10px;
     background:#e9e9ee;
     border-radius:10px;
+    cursor:pointer;
 }
 
 .tab.active{
@@ -78,12 +82,14 @@ input{
     color:white;
 }
 
+/* GRID */
 #list{
     display:grid;
     gap:14px;
     padding:10px;
 }
 
+/* CARD */
 .card{
     background:white;
     border-radius:18px;
@@ -109,10 +115,21 @@ input{
     margin-top:8px;
 }
 
+/* FORM (список — синий) */
 .form{
     font-size:13px;
     color:#0a84ff;
     margin-top:6px;
+}
+
+/* DETAIL (внутри товара — спокойный стиль) */
+.detail .form{
+    color:#555;
+    font-size:14px;
+}
+
+.detail .form b{
+    color:#000;
 }
 
 .desc{
@@ -121,6 +138,7 @@ input{
     margin-top:6px;
 }
 
+/* HEART */
 .fav{
     position:absolute;
     top:8px;
@@ -140,6 +158,7 @@ input{
     color:#ff3b30;
 }
 
+/* BUTTON */
 .btn{
     margin-top:10px;
     background:#0a84ff;
@@ -154,6 +173,7 @@ input{
     background:#34c759;
 }
 
+/* ZOOM */
 .zoom{
     position:fixed;
     top:0;
@@ -208,6 +228,7 @@ let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 
 let touchStartX = 0;
 
+/* SWIPE */
 document.addEventListener("touchstart", e=>{
     touchStartX = e.changedTouches[0].screenX;
 });
@@ -217,6 +238,7 @@ document.addEventListener("touchend", e=>{
     if(diff > 80 && isDetailOpen) goBack();
 });
 
+/* SEARCH */
 function norm(t){ return (t||"").toLowerCase(); }
 
 function getBase(){
@@ -238,6 +260,7 @@ function search(){
     render(res);
 }
 
+/* TABS */
 function switchTab(tab, el){
     currentTab = tab;
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
@@ -245,6 +268,7 @@ function switchTab(tab, el){
     render(getBase());
 }
 
+/* RENDER */
 function render(data){
     let html = "";
 
@@ -273,6 +297,7 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
+/* OPEN */
 function openDrug(name){
     let d = drugs.find(x=>norm(x.name)===norm(name));
 
@@ -281,7 +306,7 @@ function openDrug(name){
     document.getElementById("tabs").style.display = "none";
 
     document.getElementById("list").innerHTML = `
-    <div class="card">
+    <div class="card detail">
 
         <img src="${d.photo}" class="big-img" onclick="zoom('${d.photo}')">
 
@@ -311,12 +336,14 @@ function openDrug(name){
     </div>`;
 }
 
+/* SITE */
 function openSite(url){
     if(!url) return;
     if(!url.startsWith("http")) url = "https://" + url;
     tg.openLink(url);
 }
 
+/* BACK */
 function goBack(){
     isDetailOpen = false;
     tg.BackButton.hide();
@@ -326,6 +353,7 @@ function goBack(){
 
 tg.BackButton.onClick(()=>goBack());
 
+/* ZOOM */
 function zoom(src){
     document.body.insertAdjacentHTML("beforeend", `
         <div class="zoom" onclick="this.remove()">
@@ -334,6 +362,7 @@ function zoom(src){
     `);
 }
 
+/* FAV */
 function toggleFav(name){
     if(favorites.includes(name)){
         favorites = favorites.filter(x=>x!==name);
@@ -344,6 +373,7 @@ function toggleFav(name){
     render(getBase());
 }
 
+/* START */
 render(getBase());
 </script>
 
