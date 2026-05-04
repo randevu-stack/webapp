@@ -109,31 +109,42 @@ input{
     object-fit:contain;
     background:#f7f7f7;
     border-radius:12px;
+    cursor:pointer;
 }
 
 .big-img{
     height:220px;
 }
 
-/* HEART */
+/* HEART (NEW STYLE) */
 .fav{
     position:absolute;
     top:8px;
     right:8px;
-    width:32px;
-    height:32px;
+    width:34px;
+    height:34px;
     border-radius:50%;
-    background:white;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:18px;
     cursor:pointer;
-    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+
+    background:rgba(255,255,255,0.6);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+
+    color:#555;
+    transition:all 0.2s ease;
+}
+
+.fav:hover{
+    background:rgba(255,255,255,0.8);
 }
 
 .fav.active{
-    color:red;
+    background:rgba(255,255,255,0.9);
+    color:#ff3b30;
 }
 
 .title{
@@ -172,6 +183,35 @@ input{
     text-align:center;
     color:#888;
 }
+
+/* ZOOM */
+.zoom-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.9);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+}
+
+.zoom-overlay img{
+    max-width:90%;
+    max-height:90%;
+    border-radius:12px;
+}
+
+.zoom-close{
+    position:absolute;
+    top:20px;
+    right:20px;
+    color:white;
+    font-size:28px;
+    cursor:pointer;
+}
 </style>
 </head>
 
@@ -197,7 +237,7 @@ input{
     <input id="search" placeholder="Поиск..." oninput="search()">
 </div>
 
-<div class="tabs">
+<div class="tabs" id="tabs">
     <div class="tab active" onclick="switchTab('all', this)">Товары</div>
     <div class="tab" onclick="switchTab('fav', this)">Избранное</div>
     <div class="tab" onclick="switchTab('recent', this)">Недавние</div>
@@ -216,19 +256,16 @@ let currentTab = "all";
 let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
 let recent = JSON.parse(localStorage.getItem("recent") || "[]");
 
-/* ===== НОРМ ===== */
 function norm(t){
     return (t||"").toLowerCase().trim();
 }
 
-/* ===== БАЗА ===== */
 function getBaseList(){
     if(currentTab === "all") return drugs;
     if(currentTab === "fav") return drugs.filter(d => favorites.includes(d.name));
     if(currentTab === "recent") return drugs.filter(d => recent.includes(d.name));
 }
 
-/* ===== ПОИСК ===== */
 function search(){
     let q = norm(document.getElementById("search").value);
     let base = getBaseList();
@@ -246,18 +283,14 @@ function search(){
     render(res);
 }
 
-/* ===== ВКЛАДКИ ===== */
 function switchTab(tab, el){
     currentTab = tab;
-
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
     el.classList.add("active");
-
     document.getElementById("search").value = "";
     render(getBaseList());
 }
 
-/* ===== РЕНДЕР ===== */
 function render(data){
     if(!data.length){
         document.getElementById("list").innerHTML =
@@ -272,11 +305,11 @@ function render(data){
         <div class="card">
 
             <div class="card-img-wrap">
-                ${d.photo ? `<img src="${d.photo}">` : ''}
+                ${d.photo ? `<img src="${d.photo}" onclick="openZoom('${d.photo}')">` : ''}
 
                 <div class="fav ${favorites.includes(d.name) ? 'active' : ''}"
                      onclick="toggleFav('${d.name}'); event.stopPropagation();">
-                    ${favorites.includes(d.name) ? '❤️' : '🤍'}
+                    ${favorites.includes(d.name) ? '❤' : '♡'}
                 </div>
             </div>
 
@@ -297,7 +330,6 @@ function render(data){
     document.getElementById("list").innerHTML = html;
 }
 
-/* ===== ОТКРЫТЬ ===== */
 function openDrug(name){
     let d = drugs.find(x => norm(x.name) === norm(name));
     if(!d) return;
@@ -305,6 +337,8 @@ function openDrug(name){
     scrollPos = window.scrollY;
     isDetailOpen = true;
     tg.BackButton.show();
+
+    document.getElementById("tabs").style.display = "none";
 
     if(!recent.includes(d.name)){
         recent.unshift(d.name);
@@ -316,11 +350,11 @@ function openDrug(name){
     <div class="card">
 
         <div class="card-img-wrap">
-            ${d.photo ? `<img src="${d.photo}" class="big-img">` : ''}
+            ${d.photo ? `<img src="${d.photo}" class="big-img" onclick="openZoom('${d.photo}')">` : ''}
 
             <div class="fav ${favorites.includes(d.name) ? 'active' : ''}"
                  onclick="toggleFav('${d.name}')">
-                ${favorites.includes(d.name) ? '❤️' : '🤍'}
+                ${favorites.includes(d.name) ? '❤' : '♡'}
             </div>
         </div>
 
@@ -346,7 +380,19 @@ function openDrug(name){
     </div>`;
 }
 
-/* ===== ИЗБРАННОЕ ===== */
+function openZoom(src){
+    document.body.insertAdjacentHTML("beforeend", `
+        <div class="zoom-overlay" onclick="closeZoom()">
+            <div class="zoom-close">✕</div>
+            <img src="${src}">
+        </div>
+    `);
+}
+
+function closeZoom(){
+    document.querySelector(".zoom-overlay")?.remove();
+}
+
 function toggleFav(name){
     if(favorites.includes(name)){
         favorites = favorites.filter(x => x !== name);
@@ -363,10 +409,10 @@ function toggleFav(name){
     }
 }
 
-/* ===== НАЗАД ===== */
 function goBack(){
     isDetailOpen = false;
     tg.BackButton.hide();
+    document.getElementById("tabs").style.display = "flex";
     render(getBaseList());
     setTimeout(()=>window.scrollTo(0, scrollPos), 0);
 }
@@ -375,7 +421,6 @@ tg.BackButton.onClick(()=>{
     if(isDetailOpen) goBack();
 });
 
-/* СТАРТ */
 render(getBaseList());
 </script>
 
