@@ -95,7 +95,9 @@ position:absolute;top:20px;right:20px;font-size:28px;color:white;cursor:pointer;
 
 <script>
 const tg = window.Telegram.WebApp;
-tg.expand();
+if (tg.initDataUnsafe?.user) {
+    tg.expand();
+}
 
 let isDetailOpen = false;
 let isZoomOpen = false;
