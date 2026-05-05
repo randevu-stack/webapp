@@ -334,7 +334,9 @@ function toggleFav(name){
 /* CLEAR SEARCH */
 function clearSearch(){
     searchQuery = "";
-    document.getElementById("search").value = "";
+    const input = document.getElementById("search");
+    input.value = "";
+    input.blur();
 
     tg.BackButton.hide();
 
