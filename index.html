@@ -190,13 +190,21 @@ function render(data){
     let html = "";
 
     if(data.length === 0){
-        document.getElementById("list").innerHTML = `
-            <div style="text-align:center;color:#888;padding:40px">
-                Ничего не найдено 😔<br>
-                Попробуйте другое название или симптом
-            </div>`;
-        return;
-    }
+    document.getElementById("list").innerHTML = `
+        <div style="text-align:center;color:#888;padding:40px">
+            Ничего не найдено 😔<br>
+            Попробуйте другое название или симптом
+
+            <div class="btn" style="
+                margin-top:15px;
+                background:#e9e9ee;
+                color:#000;
+            " onclick="clearSearch()">
+                Очистить поиск
+            </div>
+        </div>`;
+    return;
+}
 
     data.forEach(d=>{
         html += `
@@ -321,6 +329,17 @@ function toggleFav(name){
     }
     localStorage.setItem("fav", JSON.stringify(favorites));
     search();
+}
+
+/* CLEAR SEARCH */
+function clearSearch(){
+    searchQuery = "";
+    document.getElementById("search").value = "";
+
+    tg.BackButton.hide();
+
+    render(getBase());
+    window.scrollTo(0,0);
 }
 
 /* START */
